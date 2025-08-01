@@ -179,6 +179,22 @@ export async function criarPedido(dados) {
   return response.data
 }
 
+// PEDIDOS
+export async function getPedidos() {
+  const response = await api.get('/orders/')
+  return response.data
+}
+
+export async function getPedido(id) {
+  const response = await api.get(`/orders/${id}`)
+  return response.data
+}
+
+export async function cancelarPedido(id) {
+  const response = await api.delete(`/orders/${id}`)
+  return response.data
+}
+
 const token = localStorage.getItem('token')
 if (token) {
   api.defaults.headers.common['Authorization'] = `Bearer ${token}`
