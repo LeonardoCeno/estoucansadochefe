@@ -1,12 +1,18 @@
 <template>
     <div class="login-bg">
+      <div class="imagem" >
+        <img src="../components/img/fundodologin.jpeg" alt="">
+      </div>
         <div class="login-card">
-            <router-link to="/">
-            <img :src="logo" alt="Logo" class="login-logo" />
-            </router-link>
+          <button class="voltar-button">VOLTAR</button>
+            <div class="logo-container">
+                <router-link to="/">
+                <img :src="logo" alt="Logo" class="login-logo" />
+                </router-link>
+            </div>
         <h2 v-if="!showRegister">Bem-vindo ao Manya!</h2>
         <h2 v-else>Crie sua conta</h2>
-        <form v-if="!showRegister" @submit.prevent="handleLogin">
+        <form v-if="!showRegister" @submit.prevent="handleLogin" class="login-form">
         <div class="form-group">
             <label for="email">E-mail</label>
             <input type="email" id="email" v-model="email" required placeholder="Digite seu e-mail" />
@@ -19,7 +25,7 @@
         <p v-if="error" class="error">{{ error }}</p>
         <p class="toggle-form">Não tem conta? <a href="#" @click.prevent="showRegister = true">Criar conta</a></p>
         </form>
-        <form v-else @submit.prevent="handleRegister">
+        <form v-else @submit.prevent="handleRegister" class="login-form">
             <div class="form-group">
                 <label for="name">Nome</label>
                 <input type="text" id="name" v-model="registerName" required placeholder="Seu nome completo" />
@@ -101,126 +107,257 @@ async function handleRegister() {
 </script>
 
 <style scoped>
+
+.voltar-button {
+  position: absolute;
+  width: auto;
+  top: 10px;
+  left: 10px;
+  background-color: #fff;
+  border: none;
+}
+
+.imagem {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  width: 50%;
+  height: 90vh;
+  border-radius: 10px 0 0 10px;
+}
+
+.imagem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px 0 0 10px;
+}
+
 .login-bg {
   min-height: 100vh;
   width: 100vw;
   display: flex;
   align-items: center;
-  justify-content: end;
+  justify-content: center;
   background: linear-gradient(120deg, #06080a 0%, #14323b 60%, #4f46e5 100%);
 }
 
 .login-card {
   background: #fff;
-  border-radius: 5px;
-  box-shadow: 0 4px 32px 0 rgba(0,0,0,0.18);
-  padding: 40px 32px 32px 32px;
-  width: 370px;
+  border-radius: 0 10px 10px 0;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  padding: 28px 20px 20px 20px;
+  width: 40%;
+  height: 90vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
-  margin-right: 100px;
+  justify-content: center;
+  gap: 24px;
+  margin-right: 50px;
+  position: relative;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 16px;
+  border-radius: 12px;
+  width: 100%;
 }
 
 .login-logo {
-  width: 140px;
+  width: 200px;
   height: auto;
-  margin-bottom: 8px;
+  transition: transform 0.3s ease;
+}
+
+.login-logo:hover {
+  transform: scale(1.05);
 }
 
 h2 {
   color: #06080a;
-  font-size: 1.5rem;
-  margin-bottom: 10px;
+  font-size: 1.75rem;
+  margin: 0;
   font-weight: 700;
   text-align: center;
+  background: linear-gradient(135deg, #14323b 0%, #4f46e5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .form-group {
-  width: 300px;
-  margin-bottom: 16px;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  gap: 8px;
 }
 
 label {
-  font-weight: 500;
-  margin-bottom: 6px;
+  font-weight: 600;
   color: #14323b;
+  font-size: 0.9rem;
+  margin: 0;
+  letter-spacing: 0.5px;
 }
 
 input {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #bfc9d1;
-  border-radius: 6px;
+  padding: 14px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
   font-size: 16px;
   background: #f8fafc;
-  color: #222;
-  transition: border 0.2s;
+  color: #1e293b;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  font-family: inherit;
 }
+
 input:focus {
-  border: 1.5px solid #4f46e5;
+  border-color: #4f46e5;
   outline: none;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+  transform: translateY(-1px);
+}
+
+input::placeholder {
+  color: #94a3b8;
+  font-size: 14px;
 }
 
 button {
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(90deg, #14323b 0%, #4f46e5 100%);
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #14323b 0%, #4f46e5 100%);
   color: #fff;
   border: none;
-  border-radius: 6px;
-  font-size: 17px;
+  border-radius: 8px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   margin-top: 8px;
-  transition: background 0.2s, filter 0.2s;
-  box-shadow: 0 2px 8px rgba(79,70,229,0.08);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(79,70,229,0.2);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 14px;
 }
+
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79,70,229,0.3);
+}
+
 button:disabled {
-  background: #bfc9d1;
+  background: #cbd5e1;
   cursor: not-allowed;
-  filter: grayscale(0.3);
+  transform: none;
+  box-shadow: none;
 }
 
 .toggle-form {
   width: 100%;
   text-align: center;
-  margin-top: 10px;
-  font-size: 15px;
+  margin-top: 16px;
+  font-size: 14px;
+  color: #64748b;
 }
+
 .toggle-form a {
   color: #4f46e5;
-  text-decoration: underline;
+  text-decoration: none;
   cursor: pointer;
   font-weight: 600;
+  transition: color 0.3s ease;
+  border-bottom: 1px solid transparent;
 }
+
 .toggle-form a:hover {
   color: #14323b;
+  border-bottom-color: #14323b;
 }
 
 .error {
-  color: #e11d48;
-  margin-top: 10px;
+  color: #ef4444;
+  margin-top: 8px;
   text-align: center;
-  font-size: 15px;
+  font-size: 14px;
+  background: #fef2f2;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border-left: 3px solid #ef4444;
 }
+
 .success {
   color: #22c55e;
-  margin-top: 10px;
+  margin-top: 8px;
   text-align: center;
-  font-size: 15px;
+  font-size: 14px;
+  background: #f0fdf4;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border-left: 3px solid #22c55e;
+}
+
+@media (max-width: 768px) {
+  .login-card {
+    width: 90%;
+    max-width: 400px;
+    margin-right: 0;
+    padding: 32px 24px;
+  }
+  
+  .login-logo {
+    width: 100px;
+  }
+  
+  .login-form {
+    max-width: 100%;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
 }
 
 @media (max-width: 600px) {
   .login-card {
-    max-width: 70vw;
+    width: 95%;
+    height: auto;
+    min-height: 80vh;
   }
+  
   .login-logo {
-    width: 100px;
+    width: 80px;
+  }
+  
+  .form-group {
+    gap: 6px;
+  }
+  
+  input {
+    padding: 12px 14px;
+    font-size: 15px;
+  }
+  
+  button {
+    padding: 12px 14px;
+    font-size: 13px;
   }
 }
 </style>
