@@ -277,7 +277,7 @@ function finalizarCompra() {
         toast.error('Carrinho vazio!')
         return
     }
-    toast.info('Funcionalidade de checkout em desenvolvimento!')
+    router.push('/checkout')
 }
 
 onMounted(async () => {

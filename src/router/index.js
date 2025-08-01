@@ -14,6 +14,7 @@ import ADMpedidosView from '../views/ADMpedidos.vue'
 import ADMcuponsView from '../views/ADMcupons.vue'
 import PesquisasView from '../views/pesquisas.vue'
 import ADMmoderadoresView from '../views/ADMmoderadoes.vue'
+import CheckoutView from '../views/Checkout.vue'
 
 
 const router = createRouter({
@@ -93,6 +94,11 @@ const router = createRouter({
           path: '/ADMmoderadores',
           name: 'ADMmoderadores',
           component: ADMmoderadoresView,
+        },
+        {
+          path: '/checkout',
+          name: 'Checkout',
+          component: CheckoutView,
         },
 
       ]

@@ -174,6 +174,11 @@ export async function aplicarCupom(codigo) {
   return cupom
 }
 
+export async function criarPedido(dados) {
+  const response = await api.post('/orders/', dados)
+  return response.data
+}
+
 const token = localStorage.getItem('token')
 if (token) {
   api.defaults.headers.common['Authorization'] = `Bearer ${token}`
