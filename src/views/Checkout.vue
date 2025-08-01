@@ -1,6 +1,6 @@
 <template>
     <div class="checkout-container">
-        <!-- Header -->
+
         <div class="checkout-header">
             <router-link to="/carrinho" class="voltar-btn">← Voltar ao Carrinho</router-link>
             <h1>Finalizar Compra</h1>
@@ -442,7 +442,7 @@ onMounted(async () => {
     height: 100%;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     padding: 20px;
-    overflow-y: auto;
+    overflow-y: hidden;
 }
 
 .checkout-header {
@@ -819,7 +819,7 @@ onMounted(async () => {
 }
 
 #itens-revisao {
-    height: 35vh;
+    height: 28vh;
     overflow-y: auto;
 }
 

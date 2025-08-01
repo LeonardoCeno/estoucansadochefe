@@ -90,12 +90,10 @@ import { getPedidos, cancelarPedido } from '../services/api'
 
 const toast = useToast()
 
-// Estados
 const carregando = ref(true)
 const pedidos = ref([])
 const cancelando = ref(false)
 
-// Modal de cancelamento
 const modalCancelamento = ref({
     ativo: false,
     pedidoId: null
@@ -107,15 +105,15 @@ const pedidosAtivos = computed(() => {
 
 // Funções
 function formatarData(data) {
-    // Criar a data considerando que vem em UTC
-    const dataObj = new Date(data + 'Z') // Adiciona Z para indicar UTC
+    // cria a data sabendo q vem em UTC
+    const dataObj = new Date(data + 'Z')
     return dataObj.toLocaleDateString('pt-BR', {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
-        timeZone: 'America/Sao_Paulo' // Força o fuso horário brasileiro
+        timeZone: 'America/Sao_Paulo' // Força o fuso BR
     })
 }
 
