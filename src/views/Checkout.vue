@@ -108,6 +108,14 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <div v-if="cupomAplicado" class="revisao-secao">
+                            <h3>Cupom Aplicado</h3>
+                            <div class="cupom-revisao">
+                                <p><strong>{{ cupomAplicado.code }}</strong></p>
+                                <p>Desconto de {{ cupomAplicado.discount_percentage }}%</p>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="itens-revisao" class="revisao-secao">
@@ -143,6 +151,10 @@
                     <div class="resumo-linha">
                         <span>Subtotal</span>
                         <span>R$ {{ formatarPreco(subtotal) }}</span>
+                    </div>
+                    <div v-if="cupomAplicado" class="resumo-linha desconto">
+                        <span>Desconto ({{ cupomAplicado.code }})</span>
+                        <span>-R$ {{ formatarPreco(descontoCupom) }}</span>
                     </div>
                     <div class="resumo-linha">
                         <span>Frete</span>
@@ -268,6 +280,7 @@ const finalizando = ref(false)
 const mostrarFormEndereco = ref(false)
 const editandoEndereco = ref(false)
 const salvandoEndereco = ref(false)
+const cupomAplicado = ref(null)
 const formEndereco = ref({
     street: '',
     number: '',
@@ -306,7 +319,12 @@ const subtotal = computed(() => {
     }, 0)
 })
 
-const total = computed(() => subtotal.value)
+const descontoCupom = computed(() => {
+    if (!cupomAplicado.value) return 0
+    return (subtotal.value * cupomAplicado.value.discount_percentage) / 100
+})
+
+const total = computed(() => subtotal.value - descontoCupom.value)
 
 const podeAvancar = computed(() => {
     if (etapa.value === 1) return enderecoSelecionado.value !== null
@@ -344,6 +362,19 @@ async function carregarCarrinho() {
     } catch (error) {
         console.error('Erro ao carregar carrinho:', error)
         toast.error('Erro ao carregar carrinho')
+    }
+}
+
+// Função para carregar cupom do localStorage
+function carregarCupom() {
+    const cupomSalvo = localStorage.getItem('cupomAplicado')
+    if (cupomSalvo) {
+        try {
+            cupomAplicado.value = JSON.parse(cupomSalvo)
+        } catch (error) {
+            console.error('Erro ao carregar cupom:', error)
+            localStorage.removeItem('cupomAplicado')
+        }
     }
 }
 
@@ -416,10 +447,13 @@ async function finalizarPedido() {
         
         await criarPedido({
             address_id: enderecoSelecionado.value.id,
-            coupon_id: null // Pode ser implementado depois
+            coupon_id: cupomAplicado.value?.id || null
         })
         
         toast.success('Pedido finalizado com sucesso!')
+        
+        // Limpar cupom após finalizar pedido
+        localStorage.removeItem('cupomAplicado')
         router.push('/pedidos')
     } catch (error) {
         console.error('Erro ao finalizar pedido:', error)
@@ -434,6 +468,7 @@ onMounted(async () => {
         carregarEnderecos(),
         carregarCarrinho()
     ])
+    carregarCupom()
 })
 </script>
 

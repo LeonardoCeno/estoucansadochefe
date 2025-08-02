@@ -257,6 +257,7 @@ async function aplicarCupomCodigo() {
         aplicandoCupom.value = true
         const resultado = await aplicarCupom(codigoCupom.value.trim())
         cupomAplicado.value = resultado
+        localStorage.setItem('cupomAplicado', JSON.stringify(resultado))
         codigoCupom.value = ''
         toast.success(`Cupom aplicado! Desconto de ${resultado.discount_percentage}%`)
     } catch (error) {
@@ -269,6 +270,7 @@ async function aplicarCupomCodigo() {
 
 function removerCupom() {
     cupomAplicado.value = null
+    localStorage.removeItem('cupomAplicado')
     toast.success('Cupom removido!')
 }
 
@@ -277,6 +279,14 @@ function finalizarCompra() {
         toast.error('Carrinho vazio!')
         return
     }
+    
+    // Salvar cupom no localStorage para persistir no checkout
+    if (cupomAplicado.value) {
+        localStorage.setItem('cupomAplicado', JSON.stringify(cupomAplicado.value))
+    } else {
+        localStorage.removeItem('cupomAplicado')
+    }
+    
     router.push('/checkout')
 }
 
