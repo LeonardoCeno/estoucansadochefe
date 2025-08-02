@@ -140,7 +140,7 @@ async function handleRegister() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(120deg, #06080a 0%, #14323b 60%, #4f46e5 100%);
+  background: linear-gradient(120deg, #06080a50 0%, #14323b59 60%, #4e46e563 100%);
 }
 
 .login-card {

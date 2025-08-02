@@ -4,6 +4,51 @@
             <div class="titulo-secao">
                 <h2>MEUS PEDIDOS</h2>
             </div>
+            
+            <!-- Botões de Filtro -->
+            <div class="filtros-container">
+                <div class="btn-filtro-wrapper">
+                    <button 
+                        @click="filtroAtivo = 'PENDING'"
+                        :class="['btn-filtro', { 'ativo': filtroAtivo === 'PENDING' }]">
+                        PENDENTES
+                    </button>
+                    <span v-if="contadorPendentes > 0" class="filtro-badge">{{ contadorPendentes }}</span>
+                </div>
+                <div class="btn-filtro-wrapper">
+                    <button 
+                        @click="filtroAtivo = 'PROCESSING'"
+                        :class="['btn-filtro', { 'ativo': filtroAtivo === 'PROCESSING' }]">
+                        PROCESSANDO
+                    </button>
+                    <span v-if="contadorProcessando > 0" class="filtro-badge">{{ contadorProcessando }}</span>
+                </div>
+                <div class="btn-filtro-wrapper">
+                    <button 
+                        @click="filtroAtivo = 'SHIPPED'"
+                        :class="['btn-filtro', { 'ativo': filtroAtivo === 'SHIPPED' }]">
+                        ENVIADOS
+                    </button>
+                    <span v-if="contadorEnviados > 0" class="filtro-badge">{{ contadorEnviados }}</span>
+                </div>
+                <div class="btn-filtro-wrapper">
+                    <button 
+                        @click="filtroAtivo = 'COMPLETED'"
+                        :class="['btn-filtro', { 'ativo': filtroAtivo === 'COMPLETED' }]">
+                        ENTREGUES
+                    </button>
+                    <span v-if="contadorEntregues > 0" class="filtro-badge">{{ contadorEntregues }}</span>
+                </div>
+                <div class="btn-filtro-wrapper">
+                    <button 
+                        @click="filtroAtivo = 'CANCELED'"
+                        :class="['btn-filtro', { 'ativo': filtroAtivo === 'CANCELED' }]">
+                        CANCELADOS
+                    </button>
+                    <span v-if="contadorCancelados > 0" class="filtro-badge">{{ contadorCancelados }}</span>
+                </div>
+            </div>
+            
             <div class="soumdetalhe"></div>
             
             <div class="pedidos-content">
@@ -12,7 +57,7 @@
                     <p>Carregando pedidos...</p>
                 </div>
 
-                <div v-else-if="!pedidosAtivos.length" class="estado-pedidos">
+                <div v-else-if="!pedidosFiltrados.length" class="estado-pedidos">
                     <div class="pedidos-vazio">
                         <img src="../components/img/listafinal.png" alt="Nenhum pedido" class="pedidos-vazio-img">
                         <h3>Você ainda não fez nenhum pedido</h3>
@@ -25,7 +70,7 @@
 
                 <!-- Lista de Pedidos -->
                 <div v-else class="pedidos-lista">
-                    <div v-for="pedido in pedidosAtivos" :key="pedido.id" class="pedido-card">
+                    <div v-for="pedido in pedidosFiltrados" :key="pedido.id" class="pedido-card">
                         <div class="pedido-header">
                             <div class="pedido-info">
                                 <h4>Pedido</h4>
@@ -93,14 +138,36 @@ const toast = useToast()
 const carregando = ref(true)
 const pedidos = ref([])
 const cancelando = ref(false)
+const filtroAtivo = ref('PENDING')
 
 const modalCancelamento = ref({
     ativo: false,
     pedidoId: null
 })
 
-const pedidosAtivos = computed(() => {
-    return pedidos.value.filter(pedido => pedido.status === 'PENDING')
+const pedidosFiltrados = computed(() => {
+    return pedidos.value.filter(pedido => pedido.status === filtroAtivo.value)
+})
+
+// Contadores para cada status
+const contadorPendentes = computed(() => {
+    return pedidos.value.filter(pedido => pedido.status === 'PENDING').length
+})
+
+const contadorProcessando = computed(() => {
+    return pedidos.value.filter(pedido => pedido.status === 'PROCESSING').length
+})
+
+const contadorEnviados = computed(() => {
+    return pedidos.value.filter(pedido => pedido.status === 'SHIPPED').length
+})
+
+const contadorEntregues = computed(() => {
+    return pedidos.value.filter(pedido => pedido.status === 'COMPLETED').length
+})
+
+const contadorCancelados = computed(() => {
+    return pedidos.value.filter(pedido => pedido.status === 'CANCELED').length
 })
 
 // Funções
@@ -233,8 +300,67 @@ onMounted(async () => {
     font-weight: bold;
 }
 
+.filtros-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-filtro {
+    padding: 10px 20px;
+    border: 2px solid #4f79a3;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: transparent;
+    color: #4f79a3;
+    min-width: 120px;
+}
+
+.btn-filtro:hover:not(.ativo) {
+    background-color: #4f79a3;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(79, 121, 163, 0.3);
+}
+
+.btn-filtro.ativo {
+    background-color: #4f79a3;
+    color: white;
+    box-shadow: 0 2px 8px rgba(79, 121, 163, 0.4);
+}
+
+.btn-filtro-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.filtro-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #e11d48;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    font-weight: bold;
+    min-width: 18px;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
 .pedidos-content {
-    height: 80%;
+    height: 70%;
     overflow-y: auto;
     padding-right: 10px;
 }
@@ -534,6 +660,25 @@ onMounted(async () => {
     
     .titulo-secao h2 {
         font-size: 20px;
+    }
+    
+    .filtros-container {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .btn-filtro {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .filtro-badge {
+        top: -6px;
+        right: -6px;
+        width: 16px;
+        height: 16px;
+        font-size: 9px;
+        min-width: 16px;
     }
     
     .pedido-card {
