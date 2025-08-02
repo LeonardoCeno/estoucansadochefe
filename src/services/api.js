@@ -195,6 +195,22 @@ export async function cancelarPedido(id) {
   return response.data
 }
 
+// Funções para gerenciamento administrativo de pedidos
+export async function getAllPedidos() {
+  const response = await api.get('/orders/all')
+  return response.data
+}
+
+export async function atualizarStatusPedido(id, status) {
+  const response = await api.put(`/orders/${id}`, { status })
+  return response.data
+}
+
+export async function getPedidosPorAdmin(adminId) {
+  const response = await api.get(`/orders/all/${adminId}`)
+  return response.data
+}
+
 const token = localStorage.getItem('token')
 if (token) {
   api.defaults.headers.common['Authorization'] = `Bearer ${token}`

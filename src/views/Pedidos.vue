@@ -60,8 +60,8 @@
                 <div v-else-if="!pedidosFiltrados.length" class="estado-pedidos">
                     <div class="pedidos-vazio">
                         <img src="../components/img/listafinal.png" alt="Nenhum pedido" class="pedidos-vazio-img">
-                        <h3>Você ainda não fez nenhum pedido</h3>
-                        <p>Comece a comprar para ver seus pedidos aqui!</p>
+                        <h3>Nenhum pedido por aqui</h3>
+                        <p>Por que não aumentar sua coleção?</p>
                         <router-link to="/pesquisas" class="btn-comprar-agora">
                             Comprar Agora
                         </router-link>

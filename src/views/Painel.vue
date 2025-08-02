@@ -23,12 +23,11 @@
         <router-view></router-view>
     </div>
 </div>
-<Footer></Footer>
+
 </template>
 
 <script setup>
 import TopBar from '../components/TopBar.vue'
-import Footer from '../components/Footercomponent.vue'
 import { ref, onMounted } from 'vue'
 import api from '../services/api'
 
