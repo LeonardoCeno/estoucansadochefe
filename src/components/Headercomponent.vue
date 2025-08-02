@@ -53,9 +53,7 @@
                                 <span class="carrinho-item-nome">{{ item.name }}</span>
                                 <span class="carrinho-item-preco">R$ {{ item.unit_price }}</span>
                                 <div class="carrinho-item-quantidade">
-                                    <button @click="diminuirQuantidade(item.product_id)" class="quantidade-btn">-</button>
-                                    <span>{{ item.quantity }}</span>
-                                    <button @click="aumentarQuantidade(item.product_id)" class="quantidade-btn">+</button>
+                                    <span>Qtd: {{ item.quantity }}</span>
                                 </div>
                             </div>
                             <button @click="removerItemCarrinhoLocal(item.product_id)" class="carrinho-remover">
@@ -470,42 +468,7 @@ async function removerItemCarrinhoLocal(produtoId) {
     }
 }
 
-// Função para aumentar quantidade de um item no carrinho
-async function aumentarQuantidade(produtoId) {
-    try {
-        const item = itensCarrinho.value.find(item => item.product_id === produtoId)
-        if (item) {
-            await atualizarQuantidadeCarrinho(produtoId, item.quantity + 1)
-            await carregarCarrinho()
-            
-            // Notificar outros componentes sobre a mudança no carrinho
-            window.dispatchEvent(new Event('carrinho-atualizado'))
-        }
-    } catch (error) {
-        toast.error('Erro ao aumentar quantidade.')
-        console.error('Erro ao aumentar quantidade:', error)
-    }
-}
 
-// Função para diminuir quantidade de um item no carrinho
-async function diminuirQuantidade(produtoId) {
-    try {
-        const item = itensCarrinho.value.find(item => item.product_id === produtoId)
-        if (item && item.quantity > 1) {
-            await atualizarQuantidadeCarrinho(produtoId, item.quantity - 1)
-            await carregarCarrinho()
-            
-            // Notificar outros componentes sobre a mudança no carrinho
-            window.dispatchEvent(new Event('carrinho-atualizado'))
-        } else if (item && item.quantity === 1) {
-            // Se quantidade for 1, remove o item
-            await removerItemCarrinhoLocal(produtoId)
-        }
-    } catch (error) {
-        toast.error('Erro ao diminuir quantidade.')
-        console.error('Erro ao diminuir quantidade:', error)
-    }
-}
 
 function verCarrinhoCompleto() {
     showCarrinhoDropdown.value = false
@@ -1099,30 +1062,7 @@ button:hover img {
     gap: 8px;
 }
 
-.quantidade-btn {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    color: #495057;
-    transition: all 0.2s;
-}
 
-.quantidade-btn:hover {
-    background: #e9ecef;
-    color: #495057;
-}
-
-.quantidade-btn:active {
-    transform: scale(0.95);
-}
 
 .carrinho-remover {
     background: none;

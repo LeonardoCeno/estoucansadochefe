@@ -211,6 +211,37 @@ export async function getPedidosPorAdmin(adminId) {
   return response.data
 }
 
+// Funções para detalhes do produto
+export async function getProduto(id) {
+  const response = await api.get(`/products/${id}`)
+  const produto = response.data
+  
+  // Ajustar a URL da imagem
+  if (produto.image_path) {
+    produto.image_path = produto.image_path.startsWith('http') 
+      ? produto.image_path 
+      : `http://35.196.79.227:8000${produto.image_path}`
+  }
+  
+  return produto
+}
+
+// Funções para favoritos
+export async function getFavoritos() {
+  const response = await api.get('/favorites/')
+  return response.data
+}
+
+export async function adicionarFavorito(produtoId) {
+  const response = await api.post('/favorites/', { product_id: produtoId })
+  return response.data
+}
+
+export async function removerFavorito(produtoId) {
+  const response = await api.delete(`/favorites/${produtoId}`)
+  return response.data
+}
+
 const token = localStorage.getItem('token')
 if (token) {
   api.defaults.headers.common['Authorization'] = `Bearer ${token}`

@@ -38,10 +38,12 @@
             <div class="lista" v-else>
                 <div class="produto" v-for="produto in favoritos" :key="produto.id">
                     <div class="nome-preco-imagem" style="position:relative;">
-                        <img :src="produto.image_path" alt="Imagem do produto" class="produto-imagem" />
-                        <img :src="produto.stock >= 1 ? DISPONIVELREAL : INDISPONIVELREAL" :alt="produto.stock >= 1 ? 'Disponível' : 'Indisponível'" class="disponivel-selo" />
-                        <h4>{{ produto.name }}</h4>
-                        <p>R$ {{ produto.price }}</p>
+                        <router-link :to="`/produto/${produto.id}`" class="produto-link">
+                            <img :src="produto.image_path" alt="Imagem do produto" class="produto-imagem" />
+                            <img :src="produto.stock >= 1 ? DISPONIVELREAL : INDISPONIVELREAL" :alt="produto.stock >= 1 ? 'Disponível' : 'Indisponível'" class="disponivel-selo" />
+                            <h4>{{ produto.name }}</h4>
+                            <p>R$ {{ produto.price }}</p>
+                        </router-link>
                     </div>
                     <div class="add">
                         <button v-if="!produtoEstaNoCarrinho(produto.id)" @click="adicionarAoCarrinho(produto)">

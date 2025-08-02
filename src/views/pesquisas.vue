@@ -117,10 +117,12 @@
             <div v-else-if="!modoum" class="lista-pesquisa">
                 <div class="produto" v-for="produto in produtosPaginados" :key="produto.id">
                     <div class="nome-preco-imagem" style="position:relative;">
-                        <img :src="produto.image_path" alt="Imagem do produto" class="produto-imagem" />
-                        <img :src="produto.stock >= 1 ? DISPONIVELREAL : INDISPONIVELREAL" :alt="produto.stock >= 1 ? 'Disponível' : 'Indisponível'" class="disponivel-selo" />
-                        <h4>{{ produto.name }}</h4>
-                        <p>R$ {{ produto.price }}</p>
+                        <router-link :to="`/produto/${produto.id}`" class="produto-link">
+                            <img :src="produto.image_path" alt="Imagem do produto" class="produto-imagem" />
+                            <img :src="produto.stock >= 1 ? DISPONIVELREAL : INDISPONIVELREAL" :alt="produto.stock >= 1 ? 'Disponível' : 'Indisponível'" class="disponivel-selo" />
+                            <h4>{{ produto.name }}</h4>
+                            <p>R$ {{ produto.price }}</p>
+                        </router-link>
                     </div>
                     <div class="add">
                         <button v-if="!produtoEstaNoCarrinho(produto.id)" @click="adicionarAoCarrinho(produto)">
@@ -138,11 +140,15 @@
             <div v-if="modoum" class="lista-pesquisa2">
                 <div class="produto2" v-for="produto in produtosPaginados" :key="produto.id">
                     <div class="nome-preco-imagem2" style="position:relative;">
-                        <img :src="produto.image_path" alt="Imagem do produto" class="produto-imagem" />
-                        <img :src="produto.stock >= 1 ? DISPONIVELREAL : INDISPONIVELREAL" :alt="produto.stock >= 1 ? 'Disponível' : 'Indisponível'" class="disponivel-selo2" />
+                        <router-link :to="`/produto/${produto.id}`" class="produto-link">
+                            <img :src="produto.image_path" alt="Imagem do produto" class="produto-imagem" />
+                            <img :src="produto.stock >= 1 ? DISPONIVELREAL : INDISPONIVELREAL" :alt="produto.stock >= 1 ? 'Disponível' : 'Indisponível'" class="disponivel-selo2" />
+                        </router-link>
                         <div class="aolado" >
-                        <h4>{{ produto.name }}</h4>
-                        <p>R$ {{ produto.price }}</p>
+                        <router-link :to="`/produto/${produto.id}`" class="produto-link">
+                            <h4>{{ produto.name }}</h4>
+                            <p>R$ {{ produto.price }}</p>
+                        </router-link>
                         <div class="add2" >
                         <button v-if="!produtoEstaNoCarrinho(produto.id)" @click="adicionarAoCarrinho(produto)">
                             <img src="../components/img/maisumcarrinho.png" alt="">
@@ -1273,19 +1279,49 @@ watch(totalPaginas, (novoTotal) => {
     font-size: 12px;
 }
 
-.paginacao-select {
-    padding: 6px 8px;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    background: #fff;
-    font-size: 14px;
-    color: #495057;
-    cursor: pointer;
+    .paginacao-select {
+        padding: 6px 8px;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        background: #fff;
+        font-size: 14px;
+        color: #495057;
+        cursor: pointer;
+    }
+    
+    .paginacao-select:focus {
+        outline: none;
+        border-color: #02060af5;
+    }
+
+/* Estilos para links dos produtos */
+.produto-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.2s ease;
 }
 
-.paginacao-select:focus {
-    outline: none;
-    border-color: #02060af5;
+.produto-link:hover {
+    transform: translateY(-2px);
+}
+
+.produto-link h4 {
+    color: #333;
+    transition: color 0.2s ease;
+}
+
+.produto-link:hover h4 {
+    color: #4f79a3;
+}
+
+.produto-link p {
+    color: #666;
+    transition: color 0.2s ease;
+}
+
+.produto-link:hover p {
+    color: #4f79a3;
 }
 
 @media (max-width: 768px) {
