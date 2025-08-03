@@ -260,12 +260,13 @@ import {
     getEnderecos, 
     criarEndereco, 
     atualizarEndereco,
-    getItensCarrinho,
     criarPedido
 } from '../services/api'
+import { useCartStore } from '../stores/cart'
 
 const router = useRouter()
 const toast = useToast()
+const cartStore = useCartStore()
 
 // Estados
 const etapa = ref(1)
@@ -273,8 +274,10 @@ const carregandoEnderecos = ref(true)
 const enderecos = ref([])
 const enderecoSelecionado = ref(null)
 const formaPagamentoSelecionada = ref(null)
-const itensCarrinho = ref([])
 const finalizando = ref(false)
+
+// Carrinho - usando o store
+const itensCarrinho = computed(() => cartStore.itensCarrinho)
 
 // Estados do formulário
 const mostrarFormEndereco = ref(false)
@@ -350,20 +353,7 @@ async function carregarEnderecos() {
     }
 }
 
-async function carregarCarrinho() {
-    try {
-        const dadosCarrinho = await getItensCarrinho()
-        itensCarrinho.value = (dadosCarrinho.items || []).map(item => ({
-            ...item,
-            image_path: item.image_path && !item.image_path.startsWith('http')
-                ? `http://35.196.79.227:8000${item.image_path}`
-                : item.image_path
-        }))
-    } catch (error) {
-        console.error('Erro ao carregar carrinho:', error)
-        toast.error('Erro ao carregar carrinho')
-    }
-}
+
 
 // Função para carregar cupom do localStorage
 function carregarCupom() {
@@ -466,7 +456,7 @@ async function finalizarPedido() {
 onMounted(async () => {
     await Promise.all([
         carregarEnderecos(),
-        carregarCarrinho()
+        cartStore.carregarCarrinho()
     ])
     carregarCupom()
 })

@@ -64,18 +64,19 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import api, { adicionarItemCarrinho, removerItemCarrinho, getItensCarrinho } from '../services/api'
+import api from '../services/api'
+import { useCartStore } from '../stores/cart'
 import { useToast } from 'vue-toastification'
 import DISPONIVELREAL from '../components/img/DISPONIVELREAL.png'
 import INDISPONIVELREAL from '../components/img/INDISPONIVELREAL.png'
 
 const toast = useToast()
+const cartStore = useCartStore()
 
 // Estados reativos
 const favoritos = ref([])
 const carregando = ref(true)
 const erro = ref('')
-const itensCarrinho = ref([])
 const mostrarModal = ref(false)
 
 // Verificar se o usuário está logado
@@ -84,11 +85,14 @@ const isLoggedIn = computed(() => {
     return !!token && !!api.defaults.headers.common['Authorization']
 })
 
+// Carrinho - usando o store
+const itensCarrinho = computed(() => cartStore.itensCarrinho)
+
 // Carregar dados
 onMounted(async () => {
     await carregarFavoritos()
     if (isLoggedIn.value) {
-        await carregarCarrinho()
+        await cartStore.carregarCarrinho()
     }
 })
 
@@ -127,22 +131,11 @@ async function carregarFavoritos() {
     }
 }
 
-// Função para carregar carrinho
-async function carregarCarrinho() {
-    if (!isLoggedIn.value) return
-    
-    try {
-        const dadosCarrinho = await getItensCarrinho()
-        itensCarrinho.value = dadosCarrinho.items || []
-    } catch (error) {
-        console.error('Erro ao carregar carrinho:', error)
-        itensCarrinho.value = []
-    }
-}
+
 
 // Função para verificar se um produto está no carrinho
 const produtoEstaNoCarrinho = (produtoId) => {
-    return itensCarrinho.value.some(item => item.product_id === produtoId)
+    return cartStore.produtoEstaNoCarrinho(produtoId)
 }
 
 // Função para adicionar produto ao carrinho
@@ -174,12 +167,7 @@ async function adicionarAoCarrinho(produto) {
         // Converter preço para número se for string
         const precoUnitario = typeof produto.price === 'string' ? parseFloat(produto.price) : produto.price
         
-        await adicionarItemCarrinho(produto.id, 1, precoUnitario)
-        toast.success('Produto adicionado ao carrinho!', { timeout: 3500 })
-        await carregarCarrinho() // Recarregar carrinho
-        
-        // Notificar outros componentes sobre a mudança no carrinho
-        window.dispatchEvent(new Event('carrinho-atualizado'))
+        await cartStore.adicionarItem(produto.id, 1, precoUnitario)
     } catch (error) {
         console.error('Erro ao adicionar produto:', error)
         toast.error('Erro ao adicionar produto ao carrinho.')
@@ -188,17 +176,7 @@ async function adicionarAoCarrinho(produto) {
 
 // Função para remover produto do carrinho
 async function removerDoCarrinho(produto) {
-    try {
-        await removerItemCarrinho(produto.id)
-        toast.success('Produto removido do carrinho!', { timeout: 3500 })
-        await carregarCarrinho() // Recarregar carrinho
-        
-        // Notificar outros componentes sobre a mudança no carrinho
-        window.dispatchEvent(new Event('carrinho-atualizado'))
-    } catch (error) {
-        console.error('Erro ao remover produto:', error)
-        toast.error('Erro ao remover produto do carrinho.')
-    }
+    await cartStore.removerItem(produto.id)
 }
 
 // Função para remover dos favoritos

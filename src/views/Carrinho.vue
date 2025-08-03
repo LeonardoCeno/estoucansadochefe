@@ -139,34 +139,23 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import api, { 
-    getItensCarrinho, 
-    atualizarQuantidadeCarrinho, 
-    removerItemCarrinho, 
-    limparCarrinho as limparCarrinhoAPI,
-    aplicarCupom
-} from '../services/api'
+import { useCartStore } from '../stores/cart'
+import { aplicarCupom } from '../services/api'
 
 const router = useRouter()
 const toast = useToast()
+const cartStore = useCartStore()
 
 // Estados
-const carregando = ref(true)
-const itensCarrinho = ref([])
 const cupomAplicado = ref(null)
 const codigoCupom = ref('')
 const aplicandoCupom = ref(false)
 
-// Computed
-const totalItens = computed(() => {
-    return itensCarrinho.value.reduce((total, item) => total + item.quantity, 0)
-})
-
-const subtotal = computed(() => {
-    return itensCarrinho.value.reduce((total, item) => {
-        return total + (item.unit_price * item.quantity)
-    }, 0)
-})
+// Computed - usando o store
+const carregando = computed(() => cartStore.carregando)
+const itensCarrinho = computed(() => cartStore.itensCarrinho)
+const totalItens = computed(() => cartStore.totalItens)
+const subtotal = computed(() => cartStore.totalPreco)
 
 const descontoCupom = computed(() => {
     if (!cupomAplicado.value) return 0
@@ -182,69 +171,20 @@ function formatarPreco(preco) {
     return preco.toFixed(2).replace('.', ',')
 }
 
-async function carregarCarrinho() {
-    try {
-        carregando.value = true
-        const dadosCarrinho = await getItensCarrinho()
-        // Processar imagens dos itens do carrinho
-        itensCarrinho.value = (dadosCarrinho.items || []).map(item => ({
-            ...item,
-            image_path: item.image_path && !item.image_path.startsWith('http')
-                ? `http://35.196.79.227:8000${item.image_path}`
-                : item.image_path
-        }))
-    } catch (error) {
-        console.error('Erro ao carregar carrinho:', error)
-        toast.error('Erro ao carregar carrinho')
-        itensCarrinho.value = []
-    } finally {
-        carregando.value = false
-    }
-}
-
 async function aumentarQuantidade(item) {
-    try {
-        const novaQuantidade = item.quantity + 1
-        await atualizarQuantidadeCarrinho(item.product_id, novaQuantidade)
-        item.quantity = novaQuantidade
-    } catch (error) {
-        console.error('Erro ao aumentar quantidade:', error)
-        toast.error('Erro ao atualizar quantidade')
-    }
+    await cartStore.aumentarQuantidade(item)
 }
 
 async function diminuirQuantidade(item) {
-    if (item.quantity <= 1) return
-    try {
-        const novaQuantidade = item.quantity - 1
-        await atualizarQuantidadeCarrinho(item.product_id, novaQuantidade)
-        item.quantity = novaQuantidade
-    } catch (error) {
-        console.error('Erro ao diminuir quantidade:', error)
-        toast.error('Erro ao atualizar quantidade')
-    }
+    await cartStore.diminuirQuantidade(item)
 }
 
 async function removerItem(item) {
-    try {
-        await removerItemCarrinho(item.product_id)
-        itensCarrinho.value = itensCarrinho.value.filter(i => i.id !== item.id)
-        toast.success('Item removido do carrinho!')
-    } catch (error) {
-        console.error('Erro ao remover item:', error)
-        toast.error('Erro ao remover item')
-    }
+    await cartStore.removerItem(item.product_id)
 }
 
 async function limparCarrinho() {
-    try {
-        await limparCarrinhoAPI()
-        itensCarrinho.value = []
-        toast.success('Carrinho limpo com sucesso!')
-    } catch (error) {
-        console.error('Erro ao limpar carrinho:', error)
-        toast.error('Erro ao limpar carrinho')
-    }
+    await cartStore.limparCarrinho()
 }
 
 async function aplicarCupomCodigo() {
@@ -291,10 +231,10 @@ function finalizarCompra() {
 }
 
 onMounted(async () => {
-    await carregarCarrinho()
+    await cartStore.carregarCarrinho()
 })
 
-window.addEventListener('carrinho-atualizado', carregarCarrinho)
+window.addEventListener('carrinho-atualizado', () => cartStore.carregarCarrinho())
 </script>
 
 <style scoped>

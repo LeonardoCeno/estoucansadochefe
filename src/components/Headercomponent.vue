@@ -223,10 +223,11 @@
 
 <script setup>
 import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
-import api, { buscarProdutosAdmin228, getItensCarrinho, removerItemCarrinho, atualizarQuantidadeCarrinho } from '../services/api'
+import api, { buscarProdutosAdmin228 } from '../services/api'
 import { useRouter, useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { useUserStore } from '../stores/user'
+import { useCartStore } from '../stores/cart'
 import DISPONIVELREAL from './img/DISPONIVELREAL.png'
 import INDISPONIVELREAL from './img/INDISPONIVELREAL.png'
 import { getCategoriasPorUsuario228 } from '../services/api'
@@ -235,6 +236,7 @@ import TopBar from './TopBar.vue'
 const apiBase = 'http://35.196.79.227:8000'
 const toast = useToast()
 const userStore = useUserStore()
+const cartStore = useCartStore()
 // Função para checar se o usuário ta logado (usando o store)
 const isLoggedIn = computed(() => userStore.isAuthenticated)
 const showDropdown = ref(false)
@@ -244,22 +246,11 @@ const router = useRouter()
 const route = useRoute()
 const categorias = ref([])
 
-// Carrinho
-const itensCarrinho = ref([])
-const carregandoCarrinho = ref(false)
-
-const totalItensCarrinho = computed(() => {
-    return itensCarrinho.value.reduce((total, item) => total + item.quantity, 0)
-})
-
-const totalPrecoCarrinho = computed(() => {
-    return itensCarrinho.value.reduce((total, item) => total + (item.unit_price * item.quantity), 0).toFixed(2)
-})
-
-// Função para verificar se um produto está no carrinho
-const produtoEstaNoCarrinho = (produtoId) => {
-    return itensCarrinho.value.some(item => item.product_id === produtoId)
-}
+// Carrinho - usando o store
+const itensCarrinho = computed(() => cartStore.itensCarrinho)
+const carregandoCarrinho = computed(() => cartStore.carregando)
+const totalItensCarrinho = computed(() => cartStore.totalItens)
+const totalPrecoCarrinho = computed(() => cartStore.totalPrecoFormatado)
 
 // isso carrega as categorias criadas para que atualize o "categorias" do header automaticamente ao o admin criar um nova
 async function carregarCategorias() {
@@ -273,15 +264,15 @@ async function carregarCategorias() {
 onMounted(() => {
     carregarCategorias()
     if (isLoggedIn.value) {
-        carregarCarrinho()
+        cartStore.carregarCarrinho()
     }
     
     // Escutar mudanças no carrinho de outros componentes
-    window.addEventListener('carrinho-atualizado', carregarCarrinho)
+    window.addEventListener('carrinho-atualizado', () => cartStore.carregarCarrinho())
     
     // Escutar logout do usuário
     window.addEventListener('user-logout', () => {
-        itensCarrinho.value = []
+        cartStore.limparCarrinhoLocal()
         showCarrinhoDropdown.value = false
         showDropdown.value = false
     })
@@ -303,9 +294,9 @@ onMounted(() => {
 
 onUnmounted(() => {
     // Remover event listeners
-    window.removeEventListener('carrinho-atualizado', carregarCarrinho)
+    window.removeEventListener('carrinho-atualizado', () => cartStore.carregarCarrinho())
     window.removeEventListener('user-logout', () => {
-        itensCarrinho.value = []
+        cartStore.limparCarrinhoLocal()
         showCarrinhoDropdown.value = false
         showDropdown.value = false
     })
@@ -314,9 +305,9 @@ onUnmounted(() => {
 // Watcher para recarregar carrinho quando o usuário fizer login
 watch(isLoggedIn, (novoValor) => {
     if (novoValor) {
-        carregarCarrinho()
+        cartStore.carregarCarrinho()
     } else {
-        itensCarrinho.value = []
+        cartStore.limparCarrinhoLocal()
     }
 })
 
@@ -442,21 +433,6 @@ function pesquisarEnter() {
 }
 
 // Funções do Carrinho
-async function carregarCarrinho() {
-    if (!isLoggedIn.value) return
-    
-    try {
-        carregandoCarrinho.value = true
-        const dadosCarrinho = await getItensCarrinho()
-        itensCarrinho.value = dadosCarrinho.items || []
-    } catch (error) {
-        console.error('Erro ao carregar carrinho:', error)
-        itensCarrinho.value = []
-    } finally {
-        carregandoCarrinho.value = false
-    }
-}
-
 function toggleCarrinhoDropdown() {
     if (!isLoggedIn.value) {
         router.push('/login')
@@ -465,22 +441,12 @@ function toggleCarrinhoDropdown() {
     
     showCarrinhoDropdown.value = !showCarrinhoDropdown.value
     if (showCarrinhoDropdown.value && itensCarrinho.value.length === 0) {
-        carregarCarrinho()
+        cartStore.carregarCarrinho()
     }
 }
 
 async function removerItemCarrinhoLocal(produtoId) {
-    try {
-        await removerItemCarrinho(produtoId)
-        toast.success('Item removido do carrinho!')
-        await carregarCarrinho()
-        
-        // Notificar outros componentes sobre a mudança no carrinho
-        window.dispatchEvent(new Event('carrinho-atualizado'))
-    } catch (error) {
-        toast.error('Erro ao remover item do carrinho.')
-        console.error('Erro ao remover item:', error)
-    }
+    await cartStore.removerItem(produtoId)
 }
 
 
