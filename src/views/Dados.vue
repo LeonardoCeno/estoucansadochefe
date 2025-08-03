@@ -40,14 +40,39 @@
                     <button v-if="editandoNome || editandoEmail" class="confirmar-btn" @click="confirmarEdicao">Confirmar alterações</button>
                     <button v-if="editandoNome || editandoEmail" class="cancelar-btn" @click="cancelarEdicao">Cancelar</button>
                 </div>
+                
+                <!-- Botões de ação da conta -->
+                <div class="acoes-conta">
+                    <button class="logout-btn" @click="fazerLogout">
+                        <span>Fazer Logout</span>
+                    </button>
+                    <button class="excluir-conta-btn" @click="abrirModalExclusao">
+                        <span>Excluir Conta</span>
+                    </button>
+                </div>
             </div>
+    </div>
+    
+    <!-- Modal de Confirmação de Exclusão -->
+    <div v-if="mostrarModalExclusao" class="modal-overlay">
+        <div class="modal-confirmacao">
+            <h3>Confirmar Exclusão de Conta</h3>
+            <p>{{ mensagemModal }}</p>
+            <div class="modal-botoes">
+                <button @click="confirmarExclusao" class="btn-confirmar">Confirmar</button>
+                <button @click="fecharModalExclusao" class="btn-cancelar">Cancelar</button>
+            </div>
+        </div>
     </div>
 </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed, onBeforeUnmount, nextTick } from 'vue'
-import api, { getUsuario } from '../services/api'
+import { useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
+import { useUserStore } from '../stores/user'
+import api, { getUsuario, excluirConta } from '../services/api'
 
 const usuario = ref({})
 const carregando = ref(true)
@@ -73,6 +98,16 @@ const novaSenha = ref('')
 const nomeInputRef = ref(null)
 const emailInputRef = ref(null)
 const senhaInputRef = ref(null)
+
+// Variáveis para logout e exclusão de conta
+const router = useRouter()
+const toast = useToast()
+const userStore = useUserStore()
+
+// Variáveis para o modal de exclusão
+const mostrarModalExclusao = ref(false)
+const confirmandoExclusao = ref(false)
+const mensagemModal = ref('')
 
 function useClickOutside(targetRef, callback) {
     function handler(event) {
@@ -196,6 +231,62 @@ async function confirmarEdicao() {
         editandoEmail.value = false
     } catch (e) {
         erro.value = 'Erro ao atualizar dados.'
+    }
+}
+
+// Função para fazer logout
+function fazerLogout() {
+    userStore.logout()
+    toast.success('Logout realizado com sucesso!')
+    router.push('/')
+}
+
+// Função para abrir modal de exclusão
+function abrirModalExclusao() {
+    if (confirmandoExclusao.value) {
+        // Segunda confirmação
+        mensagemModal.value = 'ATENÇÃO: Esta ação excluirá permanentemente sua conta e todos os seus dados. Esta ação não pode ser desfeita. Tem certeza absoluta?'
+    } else {
+        // Primeira confirmação
+        mensagemModal.value = 'Tem certeza que deseja excluir sua conta? Esta ação é irreversível.'
+    }
+    mostrarModalExclusao.value = true
+}
+
+// Função para fechar modal
+function fecharModalExclusao() {
+    mostrarModalExclusao.value = false
+    if (!confirmandoExclusao.value) {
+        confirmandoExclusao.value = false
+    }
+}
+
+// Função para confirmar exclusão
+function confirmarExclusao() {
+    if (confirmandoExclusao.value) {
+        // Segunda confirmação - excluir conta
+        excluirContaUsuario()
+    } else {
+        // Primeira confirmação - mostrar segunda confirmação
+        confirmandoExclusao.value = true
+        fecharModalExclusao()
+        setTimeout(() => {
+            abrirModalExclusao()
+        }, 100)
+    }
+}
+
+// Função para excluir a conta do usuário
+async function excluirContaUsuario() {
+    try {
+        await excluirConta()
+        toast.success('Conta excluída com sucesso!')
+        userStore.logout()
+        router.push('/')
+    } catch (error) {
+        toast.error('Erro ao excluir conta. Tente novamente.')
+        confirmandoExclusao.value = false
+        fecharModalExclusao()
     }
 }
 
@@ -418,6 +509,139 @@ async function confirmarEdicao() {
     box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4);
 }
 
+/* ===== AÇÕES DA CONTA ===== */
+.acoes-conta {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #e9ecef;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.logout-btn {
+    padding: 12px 24px;
+    background: #6c757d;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.logout-btn:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4);
+}
+
+.excluir-conta-btn {
+    padding: 12px 24px;
+    background: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.excluir-conta-btn:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(220, 53, 69, 0.4);
+}
+
+/* ===== MODAL DE CONFIRMAÇÃO ===== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-confirmacao {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    border: 2px solid #02060af5;
+}
+
+.modal-confirmacao h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.3rem;
+}
+
+.modal-confirmacao p {
+    margin: 0 0 25px 0;
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.modal-botoes {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn-confirmar {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+.btn-confirmar:hover {
+    background-color: #b71c1c;
+}
+
+.btn-cancelar {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+.btn-cancelar:hover {
+    background-color: #545b62;
+}
+
 /* ===== RESPONSIVIDADE ===== */
 
 /* Tablets */
@@ -455,6 +679,32 @@ async function confirmarEdicao() {
     .cancelar-btn {
         padding: 10px 20px;
         font-size: 0.95rem;
+    }
+    
+    .acoes-conta {
+        margin-top: 25px;
+        padding-top: 15px;
+    }
+    
+    .logout-btn,
+    .excluir-conta-btn {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+    }
+    
+    .modal-confirmacao {
+        padding: 20px;
+        margin: 20px;
+    }
+    
+    .modal-botoes {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn-confirmar,
+    .btn-cancelar {
+        padding: 12px 20px;
     }
 }
 
@@ -516,6 +766,17 @@ async function confirmarEdicao() {
         padding: 10px 18px;
         font-size: 0.9rem;
     }
+    
+    .acoes-conta {
+        margin-top: 20px;
+        padding-top: 12px;
+    }
+    
+    .logout-btn,
+    .excluir-conta-btn {
+        padding: 10px 18px;
+        font-size: 0.9rem;
+    }
 }
 
 /* Telas muito pequenas */
@@ -545,6 +806,17 @@ async function confirmarEdicao() {
     
     .confirmar-btn,
     .cancelar-btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+    
+    .acoes-conta {
+        margin-top: 16px;
+        padding-top: 10px;
+    }
+    
+    .logout-btn,
+    .excluir-conta-btn {
         padding: 8px 16px;
         font-size: 0.85rem;
     }
@@ -582,6 +854,17 @@ async function confirmarEdicao() {
         padding: 14px 28px;
         font-size: 1.1rem;
     }
+    
+    .acoes-conta {
+        margin-top: 35px;
+        padding-top: 25px;
+    }
+    
+    .logout-btn,
+    .excluir-conta-btn {
+        padding: 14px 28px;
+        font-size: 1.1rem;
+    }
 }
 
 /* Telas muito grandes */
@@ -613,6 +896,17 @@ async function confirmarEdicao() {
     
     .confirmar-btn,
     .cancelar-btn {
+        padding: 16px 32px;
+        font-size: 1.2rem;
+    }
+    
+    .acoes-conta {
+        margin-top: 40px;
+        padding-top: 30px;
+    }
+    
+    .logout-btn,
+    .excluir-conta-btn {
         padding: 16px 32px;
         font-size: 1.2rem;
     }

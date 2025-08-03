@@ -226,6 +226,7 @@ import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
 import api, { buscarProdutosAdmin228, getItensCarrinho, removerItemCarrinho, atualizarQuantidadeCarrinho } from '../services/api'
 import { useRouter, useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
+import { useUserStore } from '../stores/user'
 import DISPONIVELREAL from './img/DISPONIVELREAL.png'
 import INDISPONIVELREAL from './img/INDISPONIVELREAL.png'
 import { getCategoriasPorUsuario228 } from '../services/api'
@@ -233,8 +234,9 @@ import TopBar from './TopBar.vue'
 
 const apiBase = 'http://35.196.79.227:8000'
 const toast = useToast()
-// Função para checar se o usuário ta logado (token em memória)
-const isLoggedIn = computed(() => !!api.defaults.headers.common['Authorization'])
+const userStore = useUserStore()
+// Função para checar se o usuário ta logado (usando o store)
+const isLoggedIn = computed(() => userStore.isAuthenticated)
 const showDropdown = ref(false)
 const showCategoriasDropdown = ref(false)
 const showCarrinhoDropdown = ref(false)
@@ -277,6 +279,13 @@ onMounted(() => {
     // Escutar mudanças no carrinho de outros componentes
     window.addEventListener('carrinho-atualizado', carregarCarrinho)
     
+    // Escutar logout do usuário
+    window.addEventListener('user-logout', () => {
+        itensCarrinho.value = []
+        showCarrinhoDropdown.value = false
+        showDropdown.value = false
+    })
+    
     // Event listener para fechar carrinho ao clicar fora
     document.addEventListener('click', (event) => {
         const carrinhoWrapper = document.querySelector('.carrinho-dropdown-wrapper')
@@ -293,8 +302,13 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-    // Remover event listener
+    // Remover event listeners
     window.removeEventListener('carrinho-atualizado', carregarCarrinho)
+    window.removeEventListener('user-logout', () => {
+        itensCarrinho.value = []
+        showCarrinhoDropdown.value = false
+        showDropdown.value = false
+    })
 })
 
 // Watcher para recarregar carrinho quando o usuário fizer login
@@ -378,10 +392,11 @@ function irParaProduto(id) {
 
 // função que faz o usuario deslogar e perde a permissao de certas areás q só pode se tiver logado
 function logout() {
-    localStorage.removeItem('token')
-    delete api.defaults.headers.common['Authorization']
+    userStore.logout()
     showDropdown.value = false
-    window.location.reload()
+    showCarrinhoDropdown.value = false
+    itensCarrinho.value = [] // Limpar carrinho
+    router.push('/')
 }
 
 //daqui pra baixo é funçoes que levam as coisas q tao escrita abaixo do header

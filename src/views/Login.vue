@@ -52,11 +52,13 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
+import { useUserStore } from '../stores/user'
 import logoImg from '../components/img/agrsimtabao-Photoroom.png'
 import { login, register } from '../services/api'
 
 const logo = logoImg
 const toast = useToast()
+const userStore = useUserStore()
 const showRegister = ref(false)
 
 const email = ref('')
@@ -76,7 +78,9 @@ async function handleLogin() {
   error.value = ''
   loading.value = true
   try {
-    await login(email.value, password.value)
+    const response = await login(email.value, password.value)
+    // Carregar dados completos do usuário incluindo o role
+    await userStore.loadUser()
     toast.success('Login realizado com sucesso!')
     router.push('/')
   } catch (err) {

@@ -242,6 +242,35 @@ export async function removerFavorito(produtoId) {
   return response.data
 }
 
+// Função para excluir conta do usuário
+export async function excluirConta() {
+  const response = await api.delete('/users/me')
+  return response.data
+}
+
+// Funções de autenticação melhoradas
+export async function verifyToken() {
+  try {
+    const response = await api.get('/verify-token')
+    return response.data
+  } catch (error) {
+    throw new Error('Token inválido')
+  }
+}
+
+export async function renewToken() {
+  try {
+    const response = await api.post('/renew-token')
+    const newToken = response.data
+    localStorage.setItem('token', newToken)
+    api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`
+    return newToken
+  } catch (error) {
+    throw new Error('Erro ao renovar token')
+  }
+}
+
+// Configuração inicial do token
 const token = localStorage.getItem('token')
 if (token) {
   api.defaults.headers.common['Authorization'] = `Bearer ${token}`

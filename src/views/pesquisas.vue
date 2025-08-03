@@ -225,6 +225,7 @@ import Footer from '../components/Footercomponent.vue'
 import pracima from '../components/pracima.vue'
 import api, { adicionarItemCarrinho, removerItemCarrinho, getItensCarrinho } from '../services/api'
 import { useToast } from 'vue-toastification'
+import { useUserStore } from '../stores/user'
 import DISPONIVELREAL from '../components/img/DISPONIVELREAL.png'
 import INDISPONIVELREAL from '../components/img/INDISPONIVELREAL.png'
 import CORACAOFAV from '../components/img/coraçaofav.png'
@@ -243,16 +244,14 @@ const produtosFiltrados = ref([])
 const carregando = ref(false)
 const erro = ref('')
 const toast = useToast()
+const userStore = useUserStore()
 
 // Paginação
 const paginaAtual = ref(1)
 const itensPorPagina = ref(20) // Padrão para modo grid (!modoum)
 
-// Verificar se o usuário está logado
-const isLoggedIn = computed(() => {
-    const token = localStorage.getItem('token')
-    return !!token && !!api.defaults.headers.common['Authorization']
-})
+// Verificar se o usuário está logado (usando o store)
+const isLoggedIn = computed(() => userStore.isAuthenticated)
 
 // Carrinho
 const itensCarrinho = ref([])

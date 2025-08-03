@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { verifyToken, renewToken } from '../services/api'
+import api from '../services/api'
 import HomeView from '../views/Market.vue'
 import LoginView from '../views/Login.vue'
 import PainelView from '../views/Painel.vue'
@@ -112,14 +114,41 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const painelRoutes = [
     'Painel', 'Dados', 'Cupons', 'Pedidos', 'Favoritos', 'Enderecos', 'Carrinho',
-    'ADMcategorias', 'ADMprodutos', 'ADMpedidos', 'ADMcupons'
+    'ADMcategorias', 'ADMprodutos', 'ADMpedidos', 'ADMcupons', 'ADMmoderadores'
   ]
-  const token = localStorage.getItem('token')
-  if (painelRoutes.includes(to.name) && !token) {
-    next({ name: 'Login' })
+  
+  if (painelRoutes.includes(to.name)) {
+    const token = localStorage.getItem('token')
+    
+    if (!token) {
+      next({ name: 'Login' })
+      return
+    }
+    
+    // Verificar se o token está configurado no Axios
+    if (!api.defaults.headers.common['Authorization']) {
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`
+    }
+    
+    try {
+      // Verificar se token é válido
+      await verifyToken()
+      next()
+    } catch (error) {
+      try {
+        // Tentar renovar token
+        await renewToken()
+        next()
+      } catch (renewError) {
+        // Token inválido e não conseguiu renovar
+        localStorage.removeItem('token')
+        delete api.defaults.headers.common['Authorization']
+        next({ name: 'Login' })
+      }
+    }
   } else {
     next()
   }

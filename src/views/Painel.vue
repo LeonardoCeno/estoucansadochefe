@@ -9,7 +9,7 @@
         <router-link to="/pedidos"> <button :class="{ active: $route.path === '/pedidos' }">Pedidos</button></router-link>
         <router-link to="/enderecos"> <button :class="{ active: $route.path === '/enderecos' }">Endereços</button></router-link>
         <router-link to="/cupons"> <button :class="{ active: $route.path === '/cupons' }">Cupons</button></router-link>
-        <div class="admin" v-if="userRole === 'ADMIN' || userRole === 'MODERATOR'">
+        <div class="admin" v-if="userRole && (userRole === 'ADMIN' || userRole === 'MODERATOR')">
         <h3>GERENCIAR</h3>
         <router-link to="/ADMmoderadores"> <button :class="{ active: $route.path === '/ADMmoderadores' }">Moderadores</button></router-link>
         <router-link to="/ADMcategorias"> <button :class="{ active: $route.path === '/ADMcategorias' }">Categorias</button></router-link>
@@ -28,23 +28,20 @@
 
 <script setup>
 import TopBar from '../components/TopBar.vue'
-import { ref, onMounted } from 'vue'
-import api from '../services/api'
+import { ref, onMounted, computed } from 'vue'
+import { useUserStore } from '../stores/user'
 
-const usuario = ref({})
-const userRole = ref(null)
+const userStore = useUserStore()
+
+const usuario = computed(() => userStore.user || {})
+const userRole = computed(() => userStore.user?.role)
 
 onMounted(async () => {
     try {
-        const token = localStorage.getItem('token')
-        if (token) {
-            api.defaults.headers.common['Authorization'] = `Bearer ${token}`
-            const { data } = await api.get('/users/me')
-            usuario.value = data
-            userRole.value = data.role
-        }
+        // Sempre carregar o usuário quando acessar o painel
+        await userStore.loadUser()
     } catch (e) {
-        userRole.value = null
+        console.error('Erro ao carregar usuário:', e)
     }
 })
 </script>

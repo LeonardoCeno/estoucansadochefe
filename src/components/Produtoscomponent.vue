@@ -97,6 +97,7 @@
 import { ref, onMounted, computed } from 'vue'
 import api, { adicionarItemCarrinho, removerItemCarrinho, getItensCarrinho } from '../services/api'
 import { useToast } from 'vue-toastification'
+import { useUserStore } from '../stores/user'
 
 import DISPONIVELREAL from './img/DISPONIVELREAL.png'
 import INDISPONIVELREAL from './img/INDISPONIVELREAL.png'
@@ -104,23 +105,20 @@ import CORACAOFAV from './img/coraçaofav.png'
 import CORACAOVAZIO from './img/coraçaovazio.png'
 
 const apiBase = 'http://35.196.79.227:8000'
+const userStore = useUserStore()
 const produtos = ref([])
 const carregando = ref(true)
 const erro = ref(null)
 const mostrarQuantidadeObras = ref(10)
 const mostrarQuantidadeOfertas = ref(10)
-const estadoBotaoObras = ref('mais') // 'mais' ou 'menos'
 const estadoBotaoOfertas = ref('mais')
 const toast = useToast()
 
 // Variável reativa para forçar atualização dos favoritos
 const favoritosAtualizados = ref(0)
 
-// Verificar se o usuário está logado
-const isLoggedIn = computed(() => {
-    const token = localStorage.getItem('token')
-    return !!token && !!api.defaults.headers.common['Authorization']
-})
+// Verificar se o usuário está logado (usando o store)
+const isLoggedIn = computed(() => userStore.isAuthenticated)
 
 // Carrinho
 const itensCarrinho = ref([])
@@ -188,6 +186,11 @@ onMounted(async () => {
         if (isLoggedIn.value) {
             await carregarCarrinho()
         }
+        
+        // Escutar logout do usuário
+        window.addEventListener('user-logout', () => {
+            itensCarrinho.value = []
+        })
     } catch (e) {
         erro.value = 'Erro ao carregar produtos'
     } finally {
