@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue'
 import { useToast } from 'vue-toastification'
+import { defineStore } from 'pinia'
 import { 
     getItensCarrinho, 
     adicionarItemCarrinho, 
