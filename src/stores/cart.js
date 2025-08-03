@@ -117,6 +117,31 @@ export const useCartStore = defineStore('cart', () => {
         return itensCarrinho.value.some(item => item.product_id === produtoId)
     }
     
+    // Função centralizada para adicionar/remover do carrinho (reativa e rápida)
+    async function toggleCarrinho(produto) {
+        if (produtoEstaNoCarrinho(produto.id)) {
+            await removerItem(produto.id)
+        } else {
+            // Validações
+            if (produto.stock < 1) {
+                toast.error('Produto indisponível no momento.')
+                return
+            }
+            try {
+                // Garantir que o carrinho existe
+                try {
+                    await api.post('/cart/')
+                } catch (cartError) {}
+                const precoUnitario = typeof produto.price === 'string' ? parseFloat(produto.price) : produto.price
+                await adicionarItemCarrinho(produto.id, 1, precoUnitario)
+                await carregarCarrinho()
+                toast.success('Item adicionado ao carrinho!')
+            } catch (error) {
+                toast.error('Erro ao adicionar produto ao carrinho.')
+            }
+        }
+    }
+    
     return {
         // Estado
         itensCarrinho,
@@ -136,6 +161,7 @@ export const useCartStore = defineStore('cart', () => {
         removerItem,
         limparCarrinho,
         limparCarrinhoLocal,
-        produtoEstaNoCarrinho
+        produtoEstaNoCarrinho,
+        toggleCarrinho
     }
 }) 

@@ -118,19 +118,11 @@
                         <div class="produto-acoes">
                             <div class="acoes-principais">
                                 <button 
-                                    v-if="!produtoEstaNoCarrinho(produto.id)" 
-                                    @click="adicionarAoCarrinho(produto)"
+                                    @click="cartStore.toggleCarrinho(produto)"
                                     class="btn-adicionar"
                                     :disabled="produto.stock < 1">
-                                    <img src="../components/img/maisumcarrinho.png" alt="" class="carrinho-icon">
-                                    <span>Adicionar ao Carrinho</span>
-                                </button>
-                                <button 
-                                    v-else 
-                                    @click="removerDoCarrinho(produto)" 
-                                    class="btn-remover">
-                                    <img src="../components/img/maisumcarrinho.png" alt="" class="carrinho-icon">
-                                    <span>Remover do Carrinho</span>
+                                    <img :src="MAISUMCARRINHO" alt="">
+                                    <p>{{ produtoEstaNoCarrinho(produto.id) ? 'Remover' : 'Adicionar' }}</p>
                                 </button>
                                 
                                 <button 
@@ -193,6 +185,7 @@ import DISPONIVELREAL from '../components/img/DISPONIVELREAL.png'
 import INDISPONIVELREAL from '../components/img/INDISPONIVELREAL.png'
 import CORACAOFAV from '../components/img/coraçaofav.png'
 import CORACAOVAZIO from '../components/img/coraçaovazio.png'
+import MAISUMCARRINHO from '../components/img/maisumcarrinho.png'
 
 // Funções
 function formatarPreco(preco) {

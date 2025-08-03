@@ -125,13 +125,9 @@
                         </router-link>
                     </div>
                     <div class="add">
-                        <button v-if="!produtoEstaNoCarrinho(produto.id)" @click="adicionarAoCarrinho(produto)">
-                            <img src="../components/img/maisumcarrinho.png" alt="">
-                            <p>Adicionar</p>
-                        </button>
-                        <button v-else @click="removerDoCarrinho(produto)" class="remover-btn">
-                            <img src="../components/img/maisumcarrinho.png" alt="">
-                            <p>Remover</p>
+                        <button @click="cartStore.toggleCarrinho(produto)">
+                            <img :src="MAISUMCARRINHO" alt="">
+                            <p>{{ produtoEstaNoCarrinho(produto.id) ? 'Remover' : 'Adicionar' }}</p>
                         </button>
                         <img :src="produtoEstaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="" @click="toggleFavorito(produto.id)" style="cursor: pointer;" :class="{ 'coracao-favorito': produtoEstaNosFavoritos(produto.id) }">
                     </div>
@@ -232,6 +228,7 @@ import DISPONIVELREAL from '../components/img/DISPONIVELREAL.png'
 import INDISPONIVELREAL from '../components/img/INDISPONIVELREAL.png'
 import CORACAOFAV from '../components/img/coraçaofav.png'
 import CORACAOVAZIO from '../components/img/coraçaovazio.png'
+import MAISUMCARRINHO from '../components/img/maisumcarrinho.png'
 import { getCategoriasPorUsuario228 } from '../services/api'
 
 // muitas const, fazer oq

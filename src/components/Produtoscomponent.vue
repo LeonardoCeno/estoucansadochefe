@@ -27,13 +27,9 @@
         </router-link>
         </div>
         <div class="add">
-        <button v-if="!produtoEstaNoCarrinho(produto.id)" @click="adicionarAoCarrinho(produto)">
-            <img src="./img/maisumcarrinho.png" alt="">
-            <p>Adicionar</p>
-        </button>
-        <button v-else @click="removerDoCarrinho(produto)" class="remover-btn">
-            <img src="./img/maisumcarrinho.png" alt="">
-            <p>Remover</p>
+        <button @click="cartStore.toggleCarrinho(produto)">
+            <img :src="MAISUMCARRINHO" alt="">
+            <p>{{ produtoEstaNoCarrinho(produto.id) ? 'Remover' : 'Adicionar' }}</p>
         </button>
         <img :src="produtoEstaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="" @click="toggleFavorito(produto.id)" style="cursor: pointer;" :class="{ 'coracao-favorito': produtoEstaNosFavoritos(produto.id) }">
         </div>
@@ -71,13 +67,9 @@
         </router-link>
         </div>
         <div class="add" >
-        <button v-if="!produtoEstaNoCarrinho(produto.id)" @click="adicionarAoCarrinho(produto)">
-            <img src="./img/maisumcarrinho.png" alt="">
-            <p>Adicionar</p>
-        </button>
-        <button v-else @click="removerDoCarrinho(produto)" class="remover-btn">
-            <img src="./img/maisumcarrinho.png" alt="">
-            <p>Remover</p>
+        <button @click="cartStore.toggleCarrinho(produto)">
+            <img :src="MAISUMCARRINHO" alt="">
+            <p>{{ produtoEstaNoCarrinho(produto.id) ? 'Remover' : 'Adicionar' }}</p>
         </button>
         <img :src="produtoEstaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="" @click="toggleFavorito(produto.id)" style="cursor: pointer;" :class="{ 'coracao-favorito': produtoEstaNosFavoritos(produto.id) }">
         </div>
@@ -105,6 +97,7 @@ import DISPONIVELREAL from './img/DISPONIVELREAL.png'
 import INDISPONIVELREAL from './img/INDISPONIVELREAL.png'
 import CORACAOFAV from './img/coraçaofav.png'
 import CORACAOVAZIO from './img/coraçaovazio.png'
+import MAISUMCARRINHO from './img/maisumcarrinho.png'
 
 const apiBase = 'http://35.196.79.227:8000'
 const userStore = useUserStore()
@@ -201,47 +194,6 @@ function alternarOfertas() {
             estadoBotaoOfertas.value = 'mais'
         }
     }
-}
-
-// Função para adicionar produto ao carrinho
-async function adicionarAoCarrinho(produto) {
-    if (!isLoggedIn.value) {
-        toast.error('Faça login para adicionar produtos ao carrinho.')
-        return
-    }
-    
-    if (produto.stock < 1) {
-        toast.error('Produto indisponível no momento.')
-        return
-    }
-    
-    // Verificar se produto já está no carrinho
-    if (produtoEstaNoCarrinho(produto.id)) {
-        toast.error('Produto já está no carrinho.')
-        return
-    }
-    
-    try {
-        // Primeiro, garantir que o carrinho existe
-        try {
-            await api.post('/cart/')
-        } catch (cartError) {
-            // Carrinho já existe
-        }
-        
-        // Converter preço para número se for string
-        const precoUnitario = typeof produto.price === 'string' ? parseFloat(produto.price) : produto.price
-        
-        await cartStore.adicionarItem(produto.id, 1, precoUnitario)
-    } catch (error) {
-        console.error('Erro ao adicionar produto:', error)
-        toast.error('Erro ao adicionar produto ao carrinho.')
-    }
-}
-
-// Função para remover produto do carrinho
-async function removerDoCarrinho(produto) {
-    await cartStore.removerItem(produto.id)
 }
 
 </script>
