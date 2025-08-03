@@ -27,15 +27,7 @@
                         <p class="info-label"><strong>Email:</strong> {{ usuario.email }}</p>
                     </template>
                 </div>
-                <div class="info-item">
-                    <img src="/src/components/img/editando.png" alt="editar" style="opacity: 0;" class="edit-icon" @click="editarSenha" />
-                    <template v-if="editandoSenha">
-                        <input v-model="novaSenha" ref="senhaInputRef" @blur="salvarSenha" @keyup.enter="salvarSenha" type="password" class="info-input" placeholder="Nova senha" autofocus />
-                    </template>
-                    <template v-else>
-                        <p class="info-label"><strong>Senha:</strong> ********</p>
-                    </template>
-                </div>
+
                 <div class="botoes-container">
                     <button v-if="editandoNome || editandoEmail" class="confirmar-btn" @click="confirmarEdicao">Confirmar alterações</button>
                     <button v-if="editandoNome || editandoEmail" class="cancelar-btn" @click="cancelarEdicao">Cancelar</button>
@@ -68,7 +60,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, onBeforeUnmount, nextTick } from 'vue'
+import { ref, onMounted, computed, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { useUserStore } from '../stores/user'
@@ -78,8 +70,6 @@ const usuario = ref({})
 const carregando = ref(true)
 const erro = ref('')
 const fileInput = ref(null)
-const Inputfile = ref(null)
-const wallpaperStyle = ref({})
 
 const BASE_IMAGE_URL = 'http://35.196.79.227:8000'
 
@@ -90,14 +80,8 @@ const userImageUrl = computed(() => {
 
 const editandoNome = ref(false)
 const editandoEmail = ref(false)
-const editandoSenha = ref(false)
 const novoNome = ref('')
 const novoEmail = ref('')
-const novaSenha = ref('')
-
-const nomeInputRef = ref(null)
-const emailInputRef = ref(null)
-const senhaInputRef = ref(null)
 
 // Variáveis para logout e exclusão de conta
 const router = useRouter()
@@ -109,21 +93,9 @@ const mostrarModalExclusao = ref(false)
 const confirmandoExclusao = ref(false)
 const mensagemModal = ref('')
 
-function useClickOutside(targetRef, callback) {
-    function handler(event) {
-        if (targetRef.value && !targetRef.value.contains(event.target)) {
-            callback()
-        }
-    }
-    onMounted(() => {
-        document.addEventListener('mousedown', handler)
-    })
-    onBeforeUnmount(() => {
-        document.removeEventListener('mousedown', handler)
-    })
-}
 
-useClickOutside(senhaInputRef, () => { if (editandoSenha.value) editandoSenha.value = false })
+
+
 
 const informacoesRef = ref(null)
 
@@ -156,15 +128,6 @@ useClickOutsideDiv(informacoesRef, cancelarEdicao)
 
 onMounted(async () => {
     await carregarUsuario()
-    const savedWallpaper = localStorage.getItem('wallpaperBg')
-    if (savedWallpaper) {
-        wallpaperStyle.value = {
-            backgroundImage: `url('${savedWallpaper}')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
-        }
-    }
 })
 
 async function carregarUsuario() {
@@ -172,7 +135,6 @@ async function carregarUsuario() {
         usuario.value = await getUsuario()
         novoNome.value = usuario.value.name
         novoEmail.value = usuario.value.email
-        novaSenha.value = ''
     } catch (e) {
         erro.value = 'Erro ao carregar dados do usuário.'
     } finally {
@@ -209,10 +171,7 @@ function editarEmail() {
     editandoEmail.value = true
 }
 
-function editarSenha() {
-    editandoSenha.value = true
-    novaSenha.value = ''
-}
+
 
 async function confirmarEdicao() {
     let alterou = false
@@ -367,13 +326,7 @@ async function excluirContaUsuario() {
     100% { transform: rotate(360deg); }
 }
 
-.carregando {
-    color: #666;
-    font-size: 1.1rem;
-    text-align: center;
-    padding: 40px 20px;
-    font-weight: 500;
-}
+
 
 .erro {
     color: #dc3545;
