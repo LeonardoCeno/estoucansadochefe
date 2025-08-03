@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { useToast } from 'vue-toastification'
 import { defineStore } from 'pinia'
+import api from '../services/api'
 import { 
     getItensCarrinho, 
     adicionarItemCarrinho, 
@@ -15,6 +16,12 @@ export const useCartStore = defineStore('cart', () => {
     // Estado
     const itensCarrinho = ref([])
     const carregando = ref(false)
+    
+    // Função utilitária para processar image_path
+    function processarImagePath(imagePath) {
+        if (!imagePath) return null
+        return imagePath.startsWith('http') ? imagePath : `http://35.196.79.227:8000${imagePath}`
+    }
     
     // Computed
     const totalItens = computed(() => {
@@ -43,26 +50,13 @@ export const useCartStore = defineStore('cart', () => {
             // Processar imagens dos itens do carrinho
             itensCarrinho.value = (dadosCarrinho.items || []).map(item => ({
                 ...item,
-                image_path: item.image_path && !item.image_path.startsWith('http')
-                    ? `http://35.196.79.227:8000${item.image_path}`
-                    : item.image_path
+                image_path: processarImagePath(item.image_path)
             }))
         } catch (error) {
             console.error('Erro ao carregar carrinho:', error)
             itensCarrinho.value = []
         } finally {
             carregando.value = false
-        }
-    }
-    
-    async function adicionarItem(produtoId, quantidade, precoUnitario) {
-        try {
-            await adicionarItemCarrinho(produtoId, quantidade, precoUnitario)
-            await carregarCarrinho()
-            toast.success('Item adicionado ao carrinho!')
-        } catch (error) {
-            console.error('Erro ao adicionar item:', error)
-            toast.error('Erro ao adicionar item ao carrinho')
         }
     }
     
@@ -87,17 +81,6 @@ export const useCartStore = defineStore('cart', () => {
         await atualizarQuantidade(item.product_id, novaQuantidade)
     }
     
-    async function removerItem(produtoId) {
-        try {
-            await removerItemCarrinho(produtoId)
-            await carregarCarrinho()
-            toast.success('Item removido do carrinho!')
-        } catch (error) {
-            console.error('Erro ao remover item:', error)
-            toast.error('Erro ao remover item do carrinho')
-        }
-    }
-    
     async function limparCarrinho() {
         try {
             await limparCarrinhoAPI()
@@ -117,28 +100,48 @@ export const useCartStore = defineStore('cart', () => {
         return itensCarrinho.value.some(item => item.product_id === produtoId)
     }
     
-    // Função centralizada para adicionar/remover do carrinho (reativa e rápida)
+    // Função centralizada para adicionar/remover do carrinho (instantânea)
     async function toggleCarrinho(produto) {
-        if (produtoEstaNoCarrinho(produto.id)) {
-            await removerItem(produto.id)
+        const estavaNoCarrinho = produtoEstaNoCarrinho(produto.id)
+        
+        // Atualizar UI instantaneamente
+        if (estavaNoCarrinho) {
+            // Remover da lista local
+            itensCarrinho.value = itensCarrinho.value.filter(item => item.product_id !== produto.id)
+            toast.success('Item removido do carrinho!')
         } else {
             // Validações
             if (produto.stock < 1) {
                 toast.error('Produto indisponível no momento.')
                 return
             }
-            try {
+            
+            // Adicionar à lista local
+            const precoUnitario = typeof produto.price === 'string' ? parseFloat(produto.price) : produto.price
+            itensCarrinho.value.push({
+                product_id: produto.id,
+                quantity: 1,
+                unit_price: precoUnitario,
+                image_path: processarImagePath(produto.image_path)
+            })
+            toast.success('Item adicionado ao carrinho!')
+        }
+        
+        // Fazer operação em background (sem bloquear UI)
+        try {
+            if (estavaNoCarrinho) {
+                await removerItemCarrinho(produto.id)
+            } else {
                 // Garantir que o carrinho existe
                 try {
                     await api.post('/cart/')
                 } catch (cartError) {}
                 const precoUnitario = typeof produto.price === 'string' ? parseFloat(produto.price) : produto.price
                 await adicionarItemCarrinho(produto.id, 1, precoUnitario)
-                await carregarCarrinho()
-                toast.success('Item adicionado ao carrinho!')
-            } catch (error) {
-                toast.error('Erro ao adicionar produto ao carrinho.')
             }
+        } catch (error) {
+            // Se falhar, sincronizar com o estado real
+            await carregarCarrinho()
         }
     }
     
@@ -154,11 +157,9 @@ export const useCartStore = defineStore('cart', () => {
         
         // Funções
         carregarCarrinho,
-        adicionarItem,
         atualizarQuantidade,
         aumentarQuantidade,
         diminuirQuantidade,
-        removerItem,
         limparCarrinho,
         limparCarrinhoLocal,
         produtoEstaNoCarrinho,
