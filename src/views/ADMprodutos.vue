@@ -1,6 +1,7 @@
 <template>
   <div class="tudo">
-    <div v-if="mostraFormulario" class="criacao-form-wrapper">
+    <!-- Formulário de Produto -->
+    <div v-if="mostraFormulario && !modoDesconto" class="criacao-form-wrapper">
       <div class="criacao-form">
         <h2>{{ editando ? 'Editar Produto' : 'Criar Produto' }}</h2>
         <form @submit.prevent="editando ? atualizarProduto() : criarProduto()">
@@ -39,6 +40,41 @@
         <p v-if="editando ? mensagemEdicao : mensagem">{{ editando ? mensagemEdicao : mensagem }}</p>
       </div>
     </div>
+
+    <!-- Formulário de Desconto -->
+    <div v-if="mostraFormularioDesconto" class="criacao-form-wrapper">
+      <div class="criacao-form">
+        <h2>{{ editandoDesconto ? 'Editar Desconto' : 'Criar Desconto' }}</h2>
+        <form @submit.prevent="editandoDesconto ? atualizarDescontoLocal() : criarDescontoLocal()">
+          <div>
+            <label>Descrição:</label>
+            <input v-model="descricaoDescontoForm" required />
+          </div>
+          <div>
+            <label>Percentual de Desconto (%):</label>
+            <input type="number" v-model.number="percentualDescontoForm" min="0" max="100" required />
+          </div>
+          <div class="linha-dupla">
+            <div class="campo-metade">
+              <label>Data de Início:</label>
+              <input type="datetime-local" v-model="dataInicioForm" required />
+            </div>
+            <div class="campo-metade">
+              <label>Data de Fim:</label>
+              <input type="datetime-local" v-model="dataFimForm" required />
+            </div>
+          </div>
+          <div v-if="produtoSelecionado">
+            <label>Produto Selecionado:</label>
+            <p class="produto-selecionado">{{ produtoSelecionado.name }}</p>
+          </div>
+          <button type="submit">{{ editandoDesconto ? 'Salvar' : 'Criar Desconto' }}</button>
+          <button type="button" @click="editandoDesconto ? cancelarEdicaoDesconto() : fecharFormularioDesconto()">Cancelar</button>
+        </form>
+        <p v-if="editandoDesconto ? mensagemEdicaoDesconto : mensagemDesconto">{{ editandoDesconto ? mensagemEdicaoDesconto : mensagemDesconto }}</p>
+      </div>
+    </div>
+
     <div class="produtos" >
       <div class="titulo-container">
       <h3 class="titulo-principal">{{ modoDesconto ? 'Descontos' : 'Produtos' }}</h3>
@@ -74,11 +110,21 @@
                 <option v-for="cat in categorias" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
               </select>
             </div>
+            <div v-if="modoDesconto" class="filtro-desconto">
+              <label for="filtroDesconto" style="margin-right: 6px; font-size: 1rem;">Status:</label>
+              <select id="filtroDesconto" v-model="filtroDescontoSelecionado">
+                <option value="">Todos</option>
+                <option value="ativos">Ativos</option>
+                <option value="futuros">Futuros</option>
+                <option value="expirados">Expirados</option>
+                <option value="sem-desconto">Sem desconto</option>
+              </select>
+            </div>
           </div>
           <div class="botoes-container">
             <button v-if="!modoDesconto" class="novo-produto-btn" @click="abrirCriacao">Novo produto</button>
-            <button v-if="modoDesconto" class="novo-produto-btn" @click="null">
-              Novo desconto
+            <button v-if="modoDesconto" class="novo-produto-btn" @click="selecionandoProduto ? cancelarSelecao() : abrirCriacaoDesconto()">
+              {{ selecionandoProduto ? 'Cancelar' : 'Novo desconto' }}
             </button>
             <button class="alternar-modo-btn" @click="alternarModo">
               {{ modoDesconto ? 'Produtos' : 'Descontos' }}
@@ -96,15 +142,31 @@
           <div v-else>Nenhum produto cadastrado ainda.</div>
         </div>
       <ul v-else class="lista">
-        <li v-for="produto in produtosFiltrados" :key="produto.id" class="produto" @click="null">
+        <li v-for="produto in produtosFiltrados" :key="produto.id" 
+            class="produto" 
+            :class="{
+              'produto-sem-desconto': modoDesconto && selecionandoProduto && !produtoTemDesconto(produto.id),
+              'produto-com-desconto': modoDesconto && produtoTemDesconto(produto.id) && descontoAtivo(produto.id),
+              'produto-desconto-futuro': modoDesconto && produtoTemDesconto(produto.id) && descontoFuturo(produto.id),
+              'produto-desconto-expirado': modoDesconto && produtoTemDesconto(produto.id) && descontoExpirado(produto.id)
+            }"
+            @click="modoDesconto && selecionandoProduto ? selecionarProdutoParaDesconto(produto) : null">
           <div class="nome-preco-imagem">
             <img v-if="produto.image_path" :src="produto.image_path" alt="Imagem do produto" class="produto-imagem" />
             <h4>{{ produto.name }}</h4>
             <p>R$ {{ produto.price }}</p>
+            <p v-if="modoDesconto && produtoTemDesconto(produto.id)" class="desconto-info">
+              Desconto: {{ getDescontoProduto(produto.id)?.discount_percentage }}%
+            </p>
+            <p v-if="modoDesconto && produtoTemDesconto(produto.id) && descontoExpirado(produto.id)" class="desconto-expirado">
+              Desconto Expirado
+            </p>
           </div>
           <div class="BTli" @click.stop>
-            <button @click="editarProduto(produto)">Editar</button>
-            <button class="excluir-btn" @click="abrirModalExclusao(produto.id)">Excluir</button>
+            <button v-if="!modoDesconto" @click="editarProduto(produto)">Editar</button>
+            <button v-if="modoDesconto" @click="editarDescontoProduto(produto)">Editar</button>
+            <button v-if="!modoDesconto" class="excluir-btn" @click="abrirModalExclusao(produto.id)">Excluir</button>
+            <button v-if="modoDesconto" class="excluir-btn" @click="abrirModalExclusaoDesconto(getDescontoProduto(produto.id)?.id)">Excluir</button>
           </div>
           <span style="font-size:12px;color:#555;">Estoque: {{ produto.stock }}</span>
         </li>
@@ -113,7 +175,7 @@
     </div>
   </div>
   
-  <!-- Modal de Confirmação -->
+  <!-- Modal de Confirmação para Produto -->
   <div v-if="mostrarModalConfirmacao" class="modal-overlay">
       <div class="modal-confirmacao">
           <h3>Confirmar Exclusão</h3>
@@ -124,12 +186,24 @@
           </div>
     </div>
   </div>
+
+  <!-- Modal de Confirmação para Desconto -->
+  <div v-if="mostrarModalConfirmacaoDesconto" class="modal-overlay">
+      <div class="modal-confirmacao">
+          <h3>Confirmar Exclusão</h3>
+          <p>Tem certeza que deseja excluir este desconto?</p>
+          <div class="modal-botoes">
+              <button @click="confirmarExclusaoDesconto" class="btn-confirmar">Confirmar</button>
+              <button @click="fecharModalConfirmacaoDesconto" class="btn-cancelar">Cancelar</button>
+          </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
 import { useToast } from 'vue-toastification'
-import api from '../services/api'
+import api, { getDescontos, criarDesconto, atualizarDesconto, excluirDesconto } from '../services/api'
 
 const imagem = ref(null)
 const categorias = ref([])
@@ -157,6 +231,25 @@ const imagemForm = ref(null)
 
 const categoriaSelecionada = ref('')
 const estoqueSelecionado = ref('')
+const filtroDescontoSelecionado = ref('')
+
+// Variáveis para descontos
+const descontos = ref([])
+const mostraFormularioDesconto = ref(false)
+const editandoDesconto = ref(false)
+const idDesconto = ref(null)
+const mensagemDesconto = ref('')
+const mensagemEdicaoDesconto = ref('')
+const mostrarModalConfirmacaoDesconto = ref(false)
+const descontoParaExcluir = ref(null)
+const selecionandoProduto = ref(false)
+const produtoSelecionado = ref(null)
+
+// Formulário de desconto
+const descricaoDescontoForm = ref('')
+const percentualDescontoForm = ref(0)
+const dataInicioForm = ref('')
+const dataFimForm = ref('')
 
 const produtosFiltrados = computed(() => {
   let produtosFiltrados = produtos.value
@@ -190,12 +283,205 @@ const produtosFiltrados = computed(() => {
       }
     })
   }
+  
+  // Filtro de desconto (apenas no modo desconto)
+  if (modoDesconto.value && filtroDescontoSelecionado.value) {
+    produtosFiltrados = produtosFiltrados.filter(produto => {
+      switch (filtroDescontoSelecionado.value) {
+        case 'ativos':
+          return descontoAtivo(produto.id)
+        case 'futuros':
+          return descontoFuturo(produto.id)
+        case 'expirados':
+          return descontoExpirado(produto.id)
+        case 'sem-desconto':
+          return !produtoTemDesconto(produto.id)
+        default:
+          return true
+      }
+    })
+  }
+  
   return produtosFiltrados
 })
 
 const produtos = ref([])
 const carregandoProdutos = ref(true)
 const erroProdutos = ref('')
+
+// Funções para descontos
+function produtoTemDesconto(produtoId) {
+  return descontos.value.some(desconto => desconto.product_id === produtoId)
+}
+
+function getDescontoProduto(produtoId) {
+  return descontos.value.find(desconto => desconto.product_id === produtoId)
+}
+
+function descontoExpirado(produtoId) {
+  const desconto = getDescontoProduto(produtoId)
+  if (!desconto) return false
+  const dataFim = new Date(desconto.end_date)
+  return dataFim < new Date()
+}
+
+function descontoAtivo(produtoId) {
+  const desconto = getDescontoProduto(produtoId)
+  if (!desconto) return false
+  const dataInicio = new Date(desconto.start_date)
+  const dataFim = new Date(desconto.end_date)
+  const agora = new Date()
+  return dataInicio <= agora && dataFim >= agora
+}
+
+function descontoFuturo(produtoId) {
+  const desconto = getDescontoProduto(produtoId)
+  if (!desconto) return false
+  const dataInicio = new Date(desconto.start_date)
+  const agora = new Date()
+  return dataInicio > agora
+}
+
+async function carregarDescontos() {
+  try {
+    const data = await getDescontos()
+    descontos.value = data
+  } catch (error) {
+    console.error('Erro ao carregar descontos:', error)
+  }
+}
+
+function abrirCriacaoDesconto() {
+  selecionandoProduto.value = true
+  toast.info('Selecione o produto')
+}
+
+function selecionarProdutoParaDesconto(produto) {
+  if (produtoTemDesconto(produto.id)) {
+    toast.warning('Este produto já possui desconto')
+    return
+  }
+  
+  produtoSelecionado.value = produto
+  selecionandoProduto.value = false
+  editandoDesconto.value = false
+  mostraFormularioDesconto.value = true
+  
+  // Limpar formulário
+  descricaoDescontoForm.value = ''
+  percentualDescontoForm.value = 0
+  dataInicioForm.value = ''
+  dataFimForm.value = ''
+  mensagemDesconto.value = ''
+}
+
+function fecharFormularioDesconto() {
+  mostraFormularioDesconto.value = false
+  editandoDesconto.value = false
+  idDesconto.value = null
+  produtoSelecionado.value = null
+  selecionandoProduto.value = false
+  
+  // Limpar formulário
+  descricaoDescontoForm.value = ''
+  percentualDescontoForm.value = 0
+  dataInicioForm.value = ''
+  dataFimForm.value = ''
+  mensagemDesconto.value = ''
+  mensagemEdicaoDesconto.value = ''
+}
+
+async function criarDescontoLocal() {
+  mensagemDesconto.value = ''
+  try {
+    const dados = {
+      description: descricaoDescontoForm.value,
+      discount_percentage: percentualDescontoForm.value,
+      start_date: dataInicioForm.value,
+      end_date: dataFimForm.value,
+      product_id: produtoSelecionado.value.id
+    }
+    
+    await criarDesconto(dados)
+    toast.success('Desconto criado com sucesso!')
+    await carregarDescontos()
+    fecharFormularioDesconto()
+  } catch (error) {
+    toast.error('Erro ao criar desconto.')
+  }
+}
+
+function editarDescontoProduto(produto) {
+  const desconto = getDescontoProduto(produto.id)
+  if (!desconto) {
+    toast.warning('Este produto não possui desconto')
+    return
+  }
+  
+  editandoDesconto.value = true
+  idDesconto.value = desconto.id
+  produtoSelecionado.value = produto
+  mostraFormularioDesconto.value = true
+  
+  // Preencher formulário
+  descricaoDescontoForm.value = desconto.description
+  percentualDescontoForm.value = desconto.discount_percentage
+  dataInicioForm.value = desconto.start_date.slice(0, 16) // Formato para datetime-local
+  dataFimForm.value = desconto.end_date.slice(0, 16)
+  mensagemEdicaoDesconto.value = ''
+}
+
+async function atualizarDescontoLocal() {
+  mensagemEdicaoDesconto.value = ''
+  try {
+    const dados = {
+      description: descricaoDescontoForm.value,
+      discount_percentage: percentualDescontoForm.value,
+      start_date: dataInicioForm.value,
+      end_date: dataFimForm.value,
+      product_id: produtoSelecionado.value.id
+    }
+    
+    await atualizarDesconto(idDesconto.value, dados)
+    toast.success('Desconto atualizado com sucesso!')
+    await carregarDescontos()
+    fecharFormularioDesconto()
+  } catch (error) {
+    toast.error('Erro ao atualizar desconto.')
+  }
+}
+
+function cancelarEdicaoDesconto() {
+  editandoDesconto.value = false
+  idDesconto.value = null
+  mensagemEdicaoDesconto.value = ''
+  fecharFormularioDesconto()
+}
+
+function abrirModalExclusaoDesconto(descontoId) {
+  if (!descontoId) {
+    toast.warning('Este produto não possui desconto')
+    return
+  }
+  descontoParaExcluir.value = descontoId
+  mostrarModalConfirmacaoDesconto.value = true
+}
+
+function fecharModalConfirmacaoDesconto() {
+  mostrarModalConfirmacaoDesconto.value = false
+  descontoParaExcluir.value = null
+}
+
+async function confirmarExclusaoDesconto() {
+  try {
+    await excluirDesconto(descontoParaExcluir.value)
+    toast.success('Desconto excluído com sucesso!')
+    await carregarDescontos()
+    fecharModalConfirmacaoDesconto()
+  } catch (error) {
+    toast.error('Erro ao excluir desconto.')
+  }
+}
 
 // Busca
 function onInputBusca() {
@@ -209,6 +495,16 @@ function alternarModo() {
   termoBusca.value = ''
   categoriaSelecionada.value = ''
   estoqueSelecionado.value = ''
+  filtroDescontoSelecionado.value = ''
+  
+  // Sair do modo de seleção se estiver ativo
+  if (selecionandoProduto.value) {
+    cancelarSelecao()
+  }
+  
+  if (modoDesconto.value) {
+    carregarDescontos()
+  }
 }
 
 onMounted(async () => {
@@ -286,6 +582,7 @@ function editarProduto(produto) {
   imagemForm.value = null
   mostraFormulario.value = true
 }
+
 function cancelarEdicao() {
   editando.value = false
   idProduto.value = null
@@ -302,33 +599,49 @@ function cancelarEdicao() {
 async function atualizarProduto() {
   mensagemEdicao.value = ''
   try {
-    await api.put(`/products/${idProduto.value}`, {
-      name: nomeForm.value,
-      description: descricaoForm.value,
-      price: precoForm.value,
-      category_id: categoriaIdForm.value
+    const formData = new FormData()
+    formData.append('name', nomeForm.value)
+    formData.append('description', descricaoForm.value)
+    formData.append('price', precoForm.value)
+    formData.append('stock', estoqueForm.value)
+    formData.append('category_id', categoriaIdForm.value)
+    if (imagemForm.value) formData.append('image', imagemForm.value)
+    await api.put(`/products/${idProduto.value}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
     })
-    await api.put(`/products/${idProduto.value}/stock`, {
-      stock: Number(estoqueForm.value)
-    })
-    if (imagemForm.value) {
-      const formData = new FormData()
-      formData.append('image', imagemForm.value)
-      await api.put(`/products/${idProduto.value}/image`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      })
-    }
     toast.success('Produto atualizado com sucesso!')
     await carregarProdutos()
-    cancelarEdicao()
+    fecharFormulario()
   } catch (e) {
     toast.error('Erro ao atualizar produto.')
   }
 }
 
-function abrirModalExclusao(id) {
-  produtoParaExcluir.value = id
+async function carregarProdutos() {
+  try {
+    carregandoProdutos.value = true
+    const { data } = await api.get('/products/user/228')
+    produtos.value = data.map(produto => ({
+      ...produto,
+      image_path: produto.image_path 
+        ? `http://35.196.79.227:8000${produto.image_path}` 
+        : '/placeholder-image.jpg'
+    }))
+  } catch (e) {
+    erroProdutos.value = 'Erro ao carregar produtos.'
+  } finally {
+    carregandoProdutos.value = false
+  }
+}
+
+function abrirModalExclusao(produtoId) {
+  produtoParaExcluir.value = produtoId
   mostrarModalConfirmacao.value = true
+}
+
+function fecharModalConfirmacao() {
+  mostrarModalConfirmacao.value = false
+  produtoParaExcluir.value = null
 }
 
 async function confirmarExclusao() {
@@ -339,33 +652,14 @@ async function confirmarExclusao() {
     fecharModalConfirmacao()
   } catch (e) {
     toast.error('Erro ao excluir produto.')
-    fecharModalConfirmacao()
   }
 }
 
-function fecharModalConfirmacao() {
-  mostrarModalConfirmacao.value = false
-  produtoParaExcluir.value = null
-}
-
-async function carregarProdutos() {
-  carregandoProdutos.value = true
-  erroProdutos.value = ''
-  try {
-    const { data } = await api.get('/products/user/228')
-    const produtosCompletos = data.map(produto => ({
-      ...produto,
-      image_path: produto.image_path 
-        ? `http://35.196.79.227:8000${produto.image_path}` 
-        : '/placeholder-image.jpg'
-    }))
-    produtos.value = produtosCompletos
-  } catch (e) {
-    erroProdutos.value = 'Erro ao carregar produtos.'
-    produtos.value = []
-  } finally {
-    carregandoProdutos.value = false
-  }
+function cancelarSelecao() {
+  selecionandoProduto.value = false
+  produtoSelecionado.value = null
+  fecharFormularioDesconto()
+  toast.info('Seleção de produto cancelada.')
 }
 
 </script>
@@ -654,14 +948,16 @@ li {
 }
 
 .filtro-estoque,
-.filtro-categoria {
+.filtro-categoria,
+.filtro-desconto {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .filtro-estoque select,
-.filtro-categoria select {
+.filtro-categoria select,
+.filtro-desconto select {
   padding: 8px 12px;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -671,7 +967,8 @@ li {
 }
 
 .filtro-estoque select:focus,
-.filtro-categoria select:focus {
+.filtro-categoria select:focus,
+.filtro-desconto select:focus {
   outline: none;
   border-color: #2196F3;
   box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
@@ -718,7 +1015,6 @@ li {
   height: auto;
   margin-top: 3vh;
   padding: 10px;
-  transition: all 0.3s ease;
   box-sizing: border-box;
 }
 
@@ -987,7 +1283,8 @@ li {
   }
   
   .filtro-estoque label,
-  .filtro-categoria label {
+  .filtro-categoria label,
+  .filtro-desconto label {
     font-size: 0.9rem !important;
   }
 }
@@ -1044,24 +1341,17 @@ li {
   }
   
   .filtro-estoque select,
-  .filtro-categoria select {
+  .filtro-categoria select,
+  .filtro-desconto select {
     padding: 5px 6px;
     font-size: 0.7rem;
     min-width: 80px;
   }
   
   .filtro-estoque label,
-  .filtro-categoria label {
+  .filtro-categoria label,
+  .filtro-desconto label {
     font-size: 0.8rem !important;
-  }
-  
-  .produto h4 {
-    font-size: 13px;
-    height: 35px;
-  }
-  
-  .nome-preco-imagem p {
-    font-size: 18px;
   }
 }
 
@@ -1080,6 +1370,7 @@ li {
   .produto {
     max-width: 180px;
     padding: 6px;
+    margin-top: 1vh;
   }
   
   .nome-preco-imagem img {
@@ -1093,7 +1384,7 @@ li {
   
   .input-busca {
     max-width: 250px;
-    height: 30px;
+    height: 28px;
   }
   
   .input-busca input {
@@ -1101,12 +1392,12 @@ li {
   }
   
   .produtos-header {
-    gap: 10px;
+    gap: 8px;
     padding: 0 5px;
   }
   
   .filtro-categorias {
-    gap: 10px;
+    gap: 8px;
   }
   
   .novo-produto-btn,
@@ -1116,14 +1407,16 @@ li {
   }
   
   .filtro-estoque select,
-  .filtro-categoria select {
+  .filtro-categoria select,
+  .filtro-desconto select {
     padding: 4px 5px;
     font-size: 0.6rem;
     min-width: 70px;
   }
   
   .filtro-estoque label,
-  .filtro-categoria label {
+  .filtro-categoria label,
+  .filtro-desconto label {
     font-size: 0.7rem !important;
   }
   
@@ -1137,108 +1430,92 @@ li {
   }
 }
 
-/* Mobile Muito Pequeno (360px - 320px) */
-@media (max-width: 360px) {
-  .lista {
-    grid-template-columns: repeat(1, 1fr);
-    gap: 5px;
-    padding: 4px;
+/* Estilos para descontos */
+.produto-sem-desconto {
+  border: 1px solid #3b82f6 !important;
+  box-shadow: 0 0 5px rgba(59, 130, 246, 0.2);
+  cursor: pointer;
+}
+
+.produto-com-desconto {
+  border: 1px solid #10b981 !important;
+  box-shadow: 0 0 5px rgba(16, 185, 129, 0.2);
+}
+
+.produto-desconto-expirado {
+  border: 1px solid #ef4444 !important;
+  box-shadow: 0 0 5px rgba(239, 68, 68, 0.2);
+}
+
+.produto-desconto-futuro {
+  border: 1px solid #f59e0b !important; /* Borda laranja para descontos futuros */
+  box-shadow: 0 0 5px rgba(245, 158, 11, 0.2);
+}
+
+.desconto-info {
+  color: #10b981 !important;
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+.desconto-expirado {
+  color: #ef4444 !important;
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+.produto-selecionado {
+  background-color: #f3f4f6;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-weight: 500;
+  color: #374151;
+  margin: 0;
+}
+
+/* Estilos responsivos para descontos */
+@media (max-width: 768px) {
+  .produto-sem-desconto,
+  .produto-com-desconto,
+  .produto-desconto-expirado,
+  .produto-desconto-futuro {
+    border-width: 1px !important;
   }
   
-  .produto {
-    max-width: 160px;
-    padding: 5px;
-  }
-  
-  .nome-preco-imagem img {
-    width: 80px;
-    height: 120px;
-  }
-  
-  .titulo-principal {
-    font-size: 1.1rem;
-  }
-  
-  .input-busca {
-    max-width: 200px;
-    height: 28px;
-  }
-  
-  .input-busca input {
-    font-size: 11px;
-  }
-  
-  .novo-produto-btn,
-  .alternar-modo-btn {
-    padding: 3px 6px;
-    font-size: 0.6rem;
-  }
-  
-  .filtro-estoque select,
-  .filtro-categoria select {
-    padding: 3px 4px;
-    font-size: 0.5rem;
-    min-width: 60px;
-  }
-  
-  .filtro-estoque label,
-  .filtro-categoria label {
-    font-size: 0.6rem !important;
-  }
-  
-  .produto h4 {
-    font-size: 11px;
-    height: 25px;
-  }
-  
-  .nome-preco-imagem p {
-    font-size: 14px;
+  .desconto-info,
+  .desconto-expirado {
+    font-size: 0.8rem;
   }
 }
 
-/* Modal responsivo */
-@media (max-width: 768px) {
-  .modal-confirmacao {
-    padding: 20px;
-    max-width: 90%;
+@media (max-width: 600px) {
+  .produto-sem-desconto,
+  .produto-com-desconto,
+  .produto-desconto-expirado,
+  .produto-desconto-futuro {
+    border-width: 1px !important;
   }
   
-  .modal-confirmacao h3 {
-    font-size: 1.1rem;
-  }
-  
-  .modal-confirmacao p {
-    font-size: 0.9rem;
-  }
-  
-  .modal-botoes {
-    gap: 10px;
-  }
-  
-  .btn-confirmar,
-  .btn-cancelar {
-    padding: 8px 16px;
-    font-size: 0.9rem;
+  .desconto-info,
+  .desconto-expirado {
+    font-size: 0.75rem;
   }
 }
 
 @media (max-width: 480px) {
-  .modal-confirmacao {
-    padding: 15px;
+  .produto-sem-desconto,
+  .produto-com-desconto,
+  .produto-desconto-expirado,
+  .produto-desconto-futuro {
+    border-width: 1px !important;
   }
   
-  .modal-confirmacao h3 {
-    font-size: 1rem;
-  }
-  
-  .modal-confirmacao p {
-    font-size: 0.8rem;
-  }
-  
-  .btn-confirmar,
-  .btn-cancelar {
-    padding: 6px 12px;
-    font-size: 0.8rem;
+  .desconto-info,
+  .desconto-expirado {
+    font-size: 0.7rem;
   }
 }
 
