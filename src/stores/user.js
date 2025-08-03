@@ -11,7 +11,6 @@ export const useUserStore = defineStore('user', () => {
   async function loadUser() {
     try {
       isLoading.value = true
-      await verifyToken() // Verificar token primeiro
       const userData = await getUsuario()
       user.value = userData
       isAuthenticated.value = true
@@ -31,8 +30,10 @@ export const useUserStore = defineStore('user', () => {
         // Configurar o token no Axios
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`
         
-        // Carregar dados do usuário
-        await loadUser()
+        // Só carregar dados se não estiver autenticado
+        if (!isAuthenticated.value) {
+          await loadUser()
+        }
       } catch (error) {
         // Se houver erro, limpar o token inválido
         logout()

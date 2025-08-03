@@ -79,8 +79,8 @@ async function handleLogin() {
   loading.value = true
   try {
     const response = await login(email.value, password.value)
-    // Carregar dados completos do usuário incluindo o role
-    await userStore.loadUser()
+    // Usar os dados do login diretamente para evitar requisição extra
+    userStore.setUser(response.user)
     toast.success('Login realizado com sucesso!')
     router.push('/')
   } catch (err) {

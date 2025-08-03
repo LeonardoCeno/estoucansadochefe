@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { verifyToken, renewToken } from '../services/api'
 import api from '../services/api'
+import { useUserStore } from '../stores/user'
 import HomeView from '../views/Market.vue'
 import LoginView from '../views/Login.vue'
 import PainelView from '../views/Painel.vue'
@@ -128,26 +129,24 @@ router.beforeEach(async (to, from, next) => {
       return
     }
     
-    // Verificar se o token está configurado no Axios
+    // Configurar token no Axios se não estiver
     if (!api.defaults.headers.common['Authorization']) {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`
     }
     
-    try {
-      // Verificar se token é válido
-      await verifyToken()
-      next()
-    } catch (error) {
+    // Só verificar token se não estiver autenticado no store
+    const userStore = useUserStore()
+    if (!userStore.isAuthenticated) {
       try {
-        // Tentar renovar token
-        await renewToken()
+        await userStore.loadUser()
         next()
-      } catch (renewError) {
-        // Token inválido e não conseguiu renovar
+      } catch (error) {
         localStorage.removeItem('token')
         delete api.defaults.headers.common['Authorization']
         next({ name: 'Login' })
       }
+    } else {
+      next()
     }
   } else {
     next()

@@ -37,11 +37,13 @@ const usuario = computed(() => userStore.user || {})
 const userRole = computed(() => userStore.user?.role)
 
 onMounted(async () => {
-    try {
-        // Sempre carregar o usuário quando acessar o painel
-        await userStore.loadUser()
-    } catch (e) {
-        console.error('Erro ao carregar usuário:', e)
+    // Só carregar se não estiver autenticado
+    if (!userStore.isAuthenticated) {
+        try {
+            await userStore.loadUser()
+        } catch (e) {
+            console.error('Erro ao carregar usuário:', e)
+        }
     }
 })
 </script>

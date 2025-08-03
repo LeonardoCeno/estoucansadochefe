@@ -38,7 +38,7 @@ async function initializeUserState() {
   }
 }
 
-// Inicializar antes de montar o app
+// Inicializar e montar o app
 initializeUserState().then(() => {
   app.mount('#app')
 })

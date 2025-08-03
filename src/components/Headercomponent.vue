@@ -154,9 +154,7 @@
                                     <span class="carrinho-item-nome">{{ item.name }}</span>
                                     <span class="carrinho-item-preco">R$ {{ item.unit_price }}</span>
                                     <div class="carrinho-item-quantidade">
-                                        <button @click="diminuirQuantidade(item.product_id)" class="quantidade-btn">-</button>
                                         <span>{{ item.quantity }}</span>
-                                        <button @click="aumentarQuantidade(item.product_id)" class="quantidade-btn">+</button>
                                     </div>
                                 </div>
                                 <button @click="removerItemCarrinhoLocal(item.product_id)" class="carrinho-remover">
@@ -263,12 +261,6 @@ async function carregarCategorias() {
 
 onMounted(() => {
     carregarCategorias()
-    if (isLoggedIn.value) {
-        cartStore.carregarCarrinho()
-    }
-    
-    // Escutar mudanças no carrinho de outros componentes
-    window.addEventListener('carrinho-atualizado', () => cartStore.carregarCarrinho())
     
     // Escutar logout do usuário
     window.addEventListener('user-logout', () => {
@@ -302,11 +294,9 @@ onUnmounted(() => {
     })
 })
 
-// Watcher para recarregar carrinho quando o usuário fizer login
+// Watcher para limpar carrinho quando o usuário fizer logout
 watch(isLoggedIn, (novoValor) => {
-    if (novoValor) {
-        cartStore.carregarCarrinho()
-    } else {
+    if (!novoValor) {
         cartStore.limparCarrinhoLocal()
     }
 })

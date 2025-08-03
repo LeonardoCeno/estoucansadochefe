@@ -33,6 +33,9 @@ export const useCartStore = defineStore('cart', () => {
     
     // Funções
     async function carregarCarrinho() {
+        // Evitar carregar se já está carregando
+        if (carregando.value) return
+        
         try {
             carregando.value = true
             const dadosCarrinho = await getItensCarrinho()
@@ -44,9 +47,6 @@ export const useCartStore = defineStore('cart', () => {
                     ? `http://35.196.79.227:8000${item.image_path}`
                     : item.image_path
             }))
-            
-            // Notificar outros componentes sobre a mudança no carrinho
-            window.dispatchEvent(new Event('carrinho-atualizado'))
         } catch (error) {
             console.error('Erro ao carregar carrinho:', error)
             itensCarrinho.value = []
