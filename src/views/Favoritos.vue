@@ -4,7 +4,7 @@
             <h3>MEUS FAVORITOS</h3>
         </div>
         <div class="soumdetalhe"></div>
-        <div v-if="favoritos.length > 0" class="botao-remover-todos">
+        <div v-if="favoritesStore.favoritos.length > 0" class="botao-remover-todos">
             <button @click="mostrarConfirmacao" class="btn-remover-todos">
                 <span style="font-size: 16px; font-weight: bold; color: white;">✕</span>
                 <span>Remover Todos</span>
@@ -26,17 +26,17 @@
             </div>
         </div>
         <div class="produtos">
-            <div v-if="carregando" class="loading-container">
+            <div v-if="favoritesStore.carregando" class="loading-container">
                 <div class="loading-spinner"></div>
                 <p>Carregando favoritos...</p>
             </div>
-            <div v-else-if="erro" class="erro">{{ erro }}</div>
-            <div v-else-if="favoritos.length === 0" class="nenhum-favorito">
+            <div v-else-if="favoritesStore.erro" class="erro">{{ favoritesStore.erro }}</div>
+            <div v-else-if="favoritesStore.favoritos.length === 0" class="nenhum-favorito">
                 <h2>Nenhum favorito encontrado</h2>
                 <p>Adicione produtos aos seus favoritos para vê-los aqui!</p>
             </div>
             <div class="lista" v-else>
-                <div class="produto" v-for="produto in favoritos" :key="produto.id">
+                <div class="produto" v-for="produto in favoritesStore.favoritos" :key="produto.id">
                     <div class="nome-preco-imagem" style="position:relative;">
                         <router-link :to="`/produto/${produto.id}`" class="produto-link">
                             <img :src="produto.image_path" alt="Imagem do produto" class="produto-imagem" />
@@ -66,17 +66,16 @@
 import { ref, onMounted, computed } from 'vue'
 import api from '../services/api'
 import { useCartStore } from '../stores/cart'
+import { useFavoritesStore } from '../stores/favorites'
 import { useToast } from 'vue-toastification'
 import DISPONIVELREAL from '../components/img/DISPONIVELREAL.png'
 import INDISPONIVELREAL from '../components/img/INDISPONIVELREAL.png'
 
 const toast = useToast()
 const cartStore = useCartStore()
+const favoritesStore = useFavoritesStore()
 
 // Estados reativos
-const favoritos = ref([])
-const carregando = ref(true)
-const erro = ref('')
 const mostrarModal = ref(false)
 
 // Verificar se o usuário está logado
@@ -90,46 +89,13 @@ const itensCarrinho = computed(() => cartStore.itensCarrinho)
 
 // Carregar dados
 onMounted(async () => {
-    await carregarFavoritos()
+    await favoritesStore.carregarFavoritos()
     if (isLoggedIn.value) {
         await cartStore.carregarCarrinho()
     }
 })
 
 // Funções
-async function carregarFavoritos() {
-    carregando.value = true
-    erro.value = ''
-    
-    try {
-        // Simular favoritos usando localStorage
-        const favoritosStorage = localStorage.getItem('favoritos')
-        if (favoritosStorage) {
-            const favoritosIds = JSON.parse(favoritosStorage)
-            
-            // Buscar produtos da API
-            const response = await api.get('/products/user/228')
-            const todosProdutos = response.data.map(produto => ({
-                ...produto,
-                image_path: produto.image_path && !produto.image_path.startsWith('http')
-                    ? 'http://35.196.79.227:8000' + produto.image_path
-                    : produto.image_path
-            }))
-            
-            // Filtrar apenas os produtos que estão nos favoritos
-            favoritos.value = todosProdutos.filter(produto => 
-                favoritosIds.includes(produto.id)
-            )
-        } else {
-            favoritos.value = []
-        }
-    } catch (error) {
-        erro.value = 'Erro ao carregar favoritos: ' + error.message
-        toast.error('Erro ao carregar favoritos')
-    } finally {
-        carregando.value = false
-    }
-}
 
 
 
@@ -180,27 +146,8 @@ async function removerDoCarrinho(produto) {
 }
 
 // Função para remover dos favoritos
-function removerDosFavoritos(produtoId) {
-    try {
-        const favoritosStorage = localStorage.getItem('favoritos')
-        let favoritosIds = []
-        
-        if (favoritosStorage) {
-            favoritosIds = JSON.parse(favoritosStorage)
-        }
-        
-        // Remover o produto dos favoritos
-        favoritosIds = favoritosIds.filter(id => id !== produtoId)
-        localStorage.setItem('favoritos', JSON.stringify(favoritosIds))
-        
-        // Atualizar a lista de favoritos
-        favoritos.value = favoritos.value.filter(produto => produto.id !== produtoId)
-        
-        toast.success('Produto removido dos favoritos!', { timeout: 3500 })
-    } catch (error) {
-        console.error('Erro ao remover dos favoritos:', error)
-        toast.error('Erro ao remover dos favoritos.')
-    }
+async function removerDosFavoritos(produtoId) {
+    await favoritesStore.remover(produtoId)
 }
 
 // Função para mostrar modal de confirmação
@@ -214,13 +161,12 @@ function fecharModal() {
 }
 
 // Função para confirmar remoção de todos os favoritos
-function confirmarRemocao() {
+async function confirmarRemocao() {
     try {
-        // Limpar todos os favoritos do localStorage
-        localStorage.removeItem('favoritos')
-        
-        // Limpar a lista de favoritos
-        favoritos.value = []
+        // Remover todos os favoritos via API
+        for (const favorito of favoritesStore.favoritos) {
+            await favoritesStore.remover(favorito.id)
+        }
         
         // Fechar modal
         mostrarModal.value = false
