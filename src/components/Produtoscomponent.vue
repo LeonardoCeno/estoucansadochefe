@@ -99,6 +99,7 @@ import api from '../services/api'
 import { useToast } from 'vue-toastification'
 import { useUserStore } from '../stores/user'
 import { useCartStore } from '../stores/cart'
+import { useFavoritesStore } from '../stores/favorites'
 
 import DISPONIVELREAL from './img/DISPONIVELREAL.png'
 import INDISPONIVELREAL from './img/INDISPONIVELREAL.png'
@@ -108,6 +109,7 @@ import CORACAOVAZIO from './img/coraçaovazio.png'
 const apiBase = 'http://35.196.79.227:8000'
 const userStore = useUserStore()
 const cartStore = useCartStore()
+const favoritesStore = useFavoritesStore()
 const produtos = ref([])
 const carregando = ref(true)
 const erro = ref(null)
@@ -115,9 +117,6 @@ const mostrarQuantidadeObras = ref(10)
 const mostrarQuantidadeOfertas = ref(10)
 const estadoBotaoOfertas = ref('mais')
 const toast = useToast()
-
-// Variável reativa para forçar atualização dos favoritos
-const favoritosAtualizados = ref(0)
 
 // Verificar se o usuário está logado (usando o store)
 const isLoggedIn = computed(() => userStore.isAuthenticated)
@@ -138,40 +137,12 @@ const getQuantidadeNoCarrinho = (produtoId) => {
 
 // Função para verificar se um produto está nos favoritos
 const produtoEstaNosFavoritos = (produtoId) => {
-    // Usar a variável reativa para forçar recálculo
-    favoritosAtualizados.value
-    
-    const favoritosStorage = localStorage.getItem('favoritos')
-    if (favoritosStorage) {
-        const favoritosIds = JSON.parse(favoritosStorage)
-        return favoritosIds.includes(produtoId)
-    }
-    return false
+    return favoritesStore.estaNosFavoritos(produtoId)
 }
 
 // Função para adicionar/remover dos favoritos
 function toggleFavorito(produtoId) {
-    const favoritosStorage = localStorage.getItem('favoritos')
-    let favoritosIds = []
-    
-    if (favoritosStorage) {
-        favoritosIds = JSON.parse(favoritosStorage)
-    }
-    
-    if (produtoEstaNosFavoritos(produtoId)) {
-        // Remover dos favoritos
-        favoritosIds = favoritosIds.filter(id => id !== produtoId)
-        toast.success('Produto removido dos favoritos!', { timeout: 3500 })
-    } else {
-        // Adicionar aos favoritos
-        favoritosIds.push(produtoId)
-        toast.success('Produto adicionado aos favoritos!', { timeout: 3500 })
-    }
-    
-    localStorage.setItem('favoritos', JSON.stringify(favoritosIds))
-    
-    // Forçar atualização da interface
-    favoritosAtualizados.value++
+    favoritesStore.toggleFavorito(produtoId)
 }
 
 onMounted(async () => {

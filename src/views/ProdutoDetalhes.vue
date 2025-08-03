@@ -166,6 +166,7 @@ import Header from '../components/Headercomponent.vue'
 import Footer from '../components/Footercomponent.vue'
 import api, { getProduto } from '../services/api'
 import { useCartStore } from '../stores/cart'
+import { useFavoritesStore } from '../stores/favorites'
 
 const route = useRoute()
 const router = useRouter()
@@ -182,7 +183,7 @@ const quantidade = ref(1)
 const isLoggedIn = computed(() => !!api.defaults.headers.common['Authorization'])
 
 // Variável reativa para forçar atualização dos favoritos
-const favoritosAtualizados = ref(0)
+
 
 // Estado da galeria de imagens
 const imagemAtiva = ref(0)
@@ -200,6 +201,7 @@ function formatarPreco(preco) {
 
 // Carrinho - usando o store
 const cartStore = useCartStore()
+const favoritesStore = useFavoritesStore()
 const itensCarrinho = computed(() => cartStore.itensCarrinho)
 
 // Função para verificar se um produto está no carrinho
@@ -209,15 +211,7 @@ const produtoEstaNoCarrinho = (produtoId) => {
 
 // Função para verificar se um produto está nos favoritos
 const produtoEstaNosFavoritos = (produtoId) => {
-    // Usar a variável reativa para forçar recálculo
-    favoritosAtualizados.value
-    
-    const favoritosStorage = localStorage.getItem('favoritos')
-    if (favoritosStorage) {
-        const favoritosIds = JSON.parse(favoritosStorage)
-        return favoritosIds.includes(produtoId)
-    }
-    return false
+    return favoritesStore.estaNosFavoritos(produtoId)
 }
 
 function diminuirQuantidade() {
@@ -297,27 +291,7 @@ async function removerDoCarrinho(produto) {
 
 // Função para adicionar/remover dos favoritos
 function toggleFavorito(produtoId) {
-    const favoritosStorage = localStorage.getItem('favoritos')
-    let favoritosIds = []
-    
-    if (favoritosStorage) {
-        favoritosIds = JSON.parse(favoritosStorage)
-    }
-    
-    if (produtoEstaNosFavoritos(produtoId)) {
-        // Remover dos favoritos
-        favoritosIds = favoritosIds.filter(id => id !== produtoId)
-        toast.success('Produto removido dos favoritos!', { timeout: 3500 })
-    } else {
-        // Adicionar aos favoritos
-        favoritosIds.push(produtoId)
-        toast.success('Produto adicionado aos favoritos!', { timeout: 3500 })
-    }
-    
-    localStorage.setItem('favoritos', JSON.stringify(favoritosIds))
-    
-    // Forçar atualização da interface
-    favoritosAtualizados.value++
+    favoritesStore.toggleFavorito(produtoId)
 }
 
 // Função para selecionar imagem na galeria

@@ -4,7 +4,7 @@
             <h3>MEUS FAVORITOS</h3>
         </div>
         <div class="soumdetalhe"></div>
-        <div v-if="favoritesStore.favoritos.length > 0" class="botao-remover-todos">
+        <div v-if="favoritosCompletos.length > 0" class="botao-remover-todos">
             <button @click="mostrarConfirmacao" class="btn-remover-todos">
                 <span style="font-size: 16px; font-weight: bold; color: white;">✕</span>
                 <span>Remover Todos</span>
@@ -26,17 +26,12 @@
             </div>
         </div>
         <div class="produtos">
-            <div v-if="favoritesStore.carregando" class="loading-container">
-                <div class="loading-spinner"></div>
-                <p>Carregando favoritos...</p>
-            </div>
-            <div v-else-if="favoritesStore.erro" class="erro">{{ favoritesStore.erro }}</div>
-            <div v-else-if="favoritesStore.favoritos.length === 0" class="nenhum-favorito">
+            <div v-if="favoritosCompletos.length === 0" class="nenhum-favorito">
                 <h2>Nenhum favorito encontrado</h2>
                 <p>Adicione produtos aos seus favoritos para vê-los aqui!</p>
             </div>
             <div class="lista" v-else>
-                <div class="produto" v-for="produto in favoritesStore.favoritos" :key="produto.id">
+                <div class="produto" v-for="produto in favoritosCompletos" :key="produto.id">
                     <div class="nome-preco-imagem" style="position:relative;">
                         <router-link :to="`/produto/${produto.id}`" class="produto-link">
                             <img :src="produto.image_path" alt="Imagem do produto" class="produto-imagem" />
@@ -77,6 +72,7 @@ const favoritesStore = useFavoritesStore()
 
 // Estados reativos
 const mostrarModal = ref(false)
+const todosProdutos = ref([])
 
 // Verificar se o usuário está logado
 const isLoggedIn = computed(() => {
@@ -87,11 +83,30 @@ const isLoggedIn = computed(() => {
 // Carrinho - usando o store
 const itensCarrinho = computed(() => cartStore.itensCarrinho)
 
+// Computed para obter produtos completos dos favoritos
+const favoritosCompletos = computed(() => {
+    return todosProdutos.value.filter(produto => 
+        favoritesStore.estaNosFavoritos(produto.id)
+    )
+})
+
 // Carregar dados
 onMounted(async () => {
-    await favoritesStore.carregarFavoritos()
-    if (isLoggedIn.value) {
-        await cartStore.carregarCarrinho()
+    try {
+        // Carregar todos os produtos
+        const response = await api.get('/products/user/228')
+        todosProdutos.value = response.data.map(produto => ({
+            ...produto,
+            image_path: produto.image_path && !produto.image_path.startsWith('http')
+                ? 'http://35.196.79.227:8000' + produto.image_path
+                : produto.image_path
+        }))
+        
+        if (isLoggedIn.value) {
+            await cartStore.carregarCarrinho()
+        }
+    } catch (error) {
+        toast.error('Erro ao carregar produtos')
     }
 })
 
@@ -146,8 +161,8 @@ async function removerDoCarrinho(produto) {
 }
 
 // Função para remover dos favoritos
-async function removerDosFavoritos(produtoId) {
-    await favoritesStore.remover(produtoId)
+function removerDosFavoritos(produtoId) {
+    favoritesStore.remover(produtoId)
 }
 
 // Função para mostrar modal de confirmação
@@ -161,21 +176,16 @@ function fecharModal() {
 }
 
 // Função para confirmar remoção de todos os favoritos
-async function confirmarRemocao() {
-    try {
-        // Remover todos os favoritos via API
-        for (const favorito of favoritesStore.favoritos) {
-            await favoritesStore.remover(favorito.id)
-        }
-        
-        // Fechar modal
-        mostrarModal.value = false
-        
-        toast.success('Todos os favoritos foram removidos!', { timeout: 3500 })
-    } catch (error) {
-        console.error('Erro ao remover todos os favoritos:', error)
-        toast.error('Erro ao remover todos os favoritos.')
+function confirmarRemocao() {
+    // Remover todos os favoritos
+    for (const favorito of favoritosCompletos.value) {
+        favoritesStore.remover(favorito.id)
     }
+    
+    // Fechar modal
+    mostrarModal.value = false
+    
+    toast.success('Todos os favoritos foram removidos!', { timeout: 3500 })
 }
 </script>
 

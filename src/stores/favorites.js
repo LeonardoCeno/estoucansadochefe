@@ -1,103 +1,60 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { getFavoritos, adicionarFavorito, removerFavorito } from '../services/api'
-import api from '../services/api'
+import { useToast } from 'vue-toastification'
 
 export const useFavoritesStore = defineStore('favorites', () => {
+  const toast = useToast()
   const favoritos = ref([])
-  const carregando = ref(false)
-  const erro = ref('')
 
-  async function carregarFavoritos() {
-    carregando.value = true
-    erro.value = ''
-    try {
-      // Tentar carregar da API primeiro
-      const data = await getFavoritos()
-      favoritos.value = data
-    } catch (e) {
-      // Se falhar, usar localStorage como fallback
-      try {
-        const favoritosStorage = localStorage.getItem('favoritos')
-        if (favoritosStorage) {
-          const favoritosIds = JSON.parse(favoritosStorage)
-          
-          // Buscar produtos da API
-          const response = await api.get('/products/user/228')
-          const todosProdutos = response.data.map(produto => ({
-            ...produto,
-            image_path: produto.image_path && !produto.image_path.startsWith('http')
-              ? 'http://35.196.79.227:8000' + produto.image_path
-              : produto.image_path
-          }))
-          
-          // Filtrar apenas os produtos que estão nos favoritos
-          favoritos.value = todosProdutos.filter(produto => 
-            favoritosIds.includes(produto.id)
-          )
-        } else {
-          favoritos.value = []
-        }
-      } catch (localError) {
-        erro.value = 'Erro ao carregar favoritos'
-        favoritos.value = []
-      }
-    } finally {
-      carregando.value = false
+  // Carregar favoritos do localStorage
+  function carregarFavoritos() {
+    const favoritosStorage = localStorage.getItem('favoritos')
+    if (favoritosStorage) {
+      favoritos.value = JSON.parse(favoritosStorage)
+    } else {
+      favoritos.value = []
     }
   }
 
-  async function adicionar(produtoId) {
-    try {
-      await adicionarFavorito(produtoId)
-      await carregarFavoritos()
-    } catch (e) {
-      // Fallback para localStorage
-      const favoritosStorage = localStorage.getItem('favoritos')
-      let favoritosIds = []
-      
-      if (favoritosStorage) {
-        favoritosIds = JSON.parse(favoritosStorage)
-      }
-      
-      if (!favoritosIds.includes(produtoId)) {
-        favoritosIds.push(produtoId)
-        localStorage.setItem('favoritos', JSON.stringify(favoritosIds))
-        await carregarFavoritos()
-      }
+  // Adicionar favorito
+  function adicionar(produtoId) {
+    if (!favoritos.value.includes(produtoId)) {
+      favoritos.value.push(produtoId)
+      localStorage.setItem('favoritos', JSON.stringify(favoritos.value))
+      toast.success('Produto adicionado aos favoritos!')
     }
   }
 
-  async function remover(produtoId) {
-    try {
-      await removerFavorito(produtoId)
-      await carregarFavoritos()
-    } catch (e) {
-      // Fallback para localStorage
-      const favoritosStorage = localStorage.getItem('favoritos')
-      let favoritosIds = []
-      
-      if (favoritosStorage) {
-        favoritosIds = JSON.parse(favoritosStorage)
-      }
-      
-      favoritosIds = favoritosIds.filter(id => id !== produtoId)
-      localStorage.setItem('favoritos', JSON.stringify(favoritosIds))
-      await carregarFavoritos()
+  // Remover favorito
+  function remover(produtoId) {
+    favoritos.value = favoritos.value.filter(id => id !== produtoId)
+    localStorage.setItem('favoritos', JSON.stringify(favoritos.value))
+    toast.success('Produto removido dos favoritos!')
+  }
+
+  // Toggle favorito (adicionar/remover)
+  function toggleFavorito(produtoId) {
+    if (estaNosFavoritos(produtoId)) {
+      remover(produtoId)
+    } else {
+      adicionar(produtoId)
     }
   }
 
+  // Verificar se está nos favoritos
   function estaNosFavoritos(produtoId) {
-    return favoritos.value.some(fav => fav.id === produtoId)
+    return favoritos.value.includes(produtoId)
   }
+
+  // Inicializar
+  carregarFavoritos()
 
   return {
     favoritos,
-    carregando,
-    erro,
     carregarFavoritos,
     adicionar,
     remover,
+    toggleFavorito,
     estaNosFavoritos
   }
 })

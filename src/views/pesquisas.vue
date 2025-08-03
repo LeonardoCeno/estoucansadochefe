@@ -225,6 +225,7 @@ import Footer from '../components/Footercomponent.vue'
 import pracima from '../components/pracima.vue'
 import api from '../services/api'
 import { useCartStore } from '../stores/cart'
+import { useFavoritesStore } from '../stores/favorites'
 import { useToast } from 'vue-toastification'
 import { useUserStore } from '../stores/user'
 import DISPONIVELREAL from '../components/img/DISPONIVELREAL.png'
@@ -256,6 +257,7 @@ const isLoggedIn = computed(() => userStore.isAuthenticated)
 
 // Carrinho - usando o store
 const cartStore = useCartStore()
+const favoritesStore = useFavoritesStore()
 const itensCarrinho = computed(() => cartStore.itensCarrinho)
 
 // Função para verificar se um produto está no carrinho
@@ -265,43 +267,12 @@ const produtoEstaNoCarrinho = (produtoId) => {
 
 // Função para verificar se um produto está nos favoritos
 const produtoEstaNosFavoritos = (produtoId) => {
-    // Usar a variável reativa para forçar recálculo
-    favoritosAtualizados.value
-    
-    const favoritosStorage = localStorage.getItem('favoritos')
-    if (favoritosStorage) {
-        const favoritosIds = JSON.parse(favoritosStorage)
-        return favoritosIds.includes(produtoId)
-    }
-    return false
+    return favoritesStore.estaNosFavoritos(produtoId)
 }
-
-// Variável reativa para forçar atualização
-const favoritosAtualizados = ref(0)
 
 // Função para adicionar/remover dos favoritos
 function toggleFavorito(produtoId) {
-    const favoritosStorage = localStorage.getItem('favoritos')
-    let favoritosIds = []
-    
-    if (favoritosStorage) {
-        favoritosIds = JSON.parse(favoritosStorage)
-    }
-    
-    if (produtoEstaNosFavoritos(produtoId)) {
-        // Remover dos favoritos
-        favoritosIds = favoritosIds.filter(id => id !== produtoId)
-        toast.success('Produto removido dos favoritos!', { timeout: 3500 })
-    } else {
-        // Adicionar aos favoritos
-        favoritosIds.push(produtoId)
-        toast.success('Produto adicionado aos favoritos!', { timeout: 3500 })
-    }
-    
-    localStorage.setItem('favoritos', JSON.stringify(favoritosIds))
-    
-    // Forçar atualização da interface
-    favoritosAtualizados.value++
+    favoritesStore.toggleFavorito(produtoId)
 }
 
 // Sistema de paginação completamente novo
