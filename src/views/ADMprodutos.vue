@@ -1,90 +1,90 @@
 <template>
   <div class="tudo">
     <!-- Formulário de Produto -->
-    <div v-if="mostraFormulario && !modoDesconto" class="criacao-form-wrapper">
+    <div v-if="productsStore.mostraFormulario && !productsStore.modoDesconto" class="criacao-form-wrapper">
       <div class="criacao-form">
-        <h2>{{ editando ? 'Editar Produto' : 'Criar Produto' }}</h2>
-        <form @submit.prevent="editando ? atualizarProduto() : criarProduto()">
+        <h2>{{ productsStore.editando ? 'Editar Produto' : 'Criar Produto' }}</h2>
+        <form @submit.prevent="productsStore.editando ? productsStore.atualizarProduto() : productsStore.criarProduto()">
           <div>
             <label>Nome:</label>
-            <input v-model="nomeForm" required />
+            <input v-model="productsStore.nomeForm" required />
           </div>
           <div>
             <label>Descrição:</label>
-            <textarea v-model="descricaoForm" required></textarea>
+            <textarea v-model="productsStore.descricaoForm" required></textarea>
           </div>
           <div class="linha-dupla">
             <div class="campo-metade">
               <label>Preço:</label>
-              <input type="number" v-model.number="precoForm" min="0" step="0.01" required />
+              <input type="number" v-model.number="productsStore.precoForm" min="0" step="0.01" required />
             </div>
             <div class="campo-metade">
               <label>Estoque:</label>
-              <input type="number" v-model.number="estoqueForm" min="0" required />
+              <input type="number" v-model.number="productsStore.estoqueForm" min="0" required />
             </div>
           </div>
           <div>
             <label>Categoria:</label>
-            <select v-model="categoriaIdForm" required>
+            <select v-model="productsStore.categoriaIdForm" required>
               <option value="" disabled>Selecione</option>
-              <option v-for="cat in categorias" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
+              <option v-for="cat in productsStore.categorias" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
             </select>
           </div>
           <div>
             <label>Imagem:</label>
             <input type="file" @change="onFileChange" accept="image/*" />
           </div>
-          <button type="submit">{{ editando ? 'Salvar' : 'Criar Produto' }}</button>
-          <button type="button" @click="editando ? cancelarEdicao() : fecharFormulario()">Cancelar</button>
+          <button type="submit">{{ productsStore.editando ? 'Salvar' : 'Criar Produto' }}</button>
+          <button type="button" @click="productsStore.editando ? productsStore.cancelarEdicao() : productsStore.fecharFormulario()">Cancelar</button>
         </form>
-        <p v-if="editando ? mensagemEdicao : mensagem">{{ editando ? mensagemEdicao : mensagem }}</p>
+        <p v-if="productsStore.editando ? productsStore.mensagemEdicao : productsStore.mensagem">{{ productsStore.editando ? productsStore.mensagemEdicao : productsStore.mensagem }}</p>
       </div>
     </div>
 
     <!-- Formulário de Desconto -->
-    <div v-if="mostraFormularioDesconto" class="criacao-form-wrapper">
+    <div v-if="productsStore.mostraFormularioDesconto" class="criacao-form-wrapper">
       <div class="criacao-form">
-        <h2>{{ editandoDesconto ? 'Editar Desconto' : 'Criar Desconto' }}</h2>
-        <form @submit.prevent="editandoDesconto ? atualizarDescontoLocal() : criarDescontoLocal()">
+        <h2>{{ productsStore.editandoDesconto ? 'Editar Desconto' : 'Criar Desconto' }}</h2>
+        <form @submit.prevent="productsStore.editandoDesconto ? productsStore.atualizarDescontoLocal() : productsStore.criarDescontoLocal()">
           <div>
             <label>Descrição:</label>
-            <input v-model="descricaoDescontoForm" required />
+            <input v-model="productsStore.descricaoDescontoForm" required />
           </div>
           <div>
             <label>Percentual de Desconto (%):</label>
-            <input type="number" v-model.number="percentualDescontoForm" min="0" max="100" required />
+            <input type="number" v-model.number="productsStore.percentualDescontoForm" min="0" max="100" required />
           </div>
           <div class="linha-dupla">
             <div class="campo-metade">
               <label>Data de Início:</label>
-              <input type="datetime-local" v-model="dataInicioForm" required />
+              <input type="datetime-local" v-model="productsStore.dataInicioForm" required />
             </div>
             <div class="campo-metade">
               <label>Data de Fim:</label>
-              <input type="datetime-local" v-model="dataFimForm" required />
+              <input type="datetime-local" v-model="productsStore.dataFimForm" required />
             </div>
           </div>
-          <div v-if="produtoSelecionado">
+          <div v-if="productsStore.produtoSelecionado">
             <label>Produto Selecionado:</label>
-            <p class="produto-selecionado">{{ produtoSelecionado.name }}</p>
+            <p class="produto-selecionado">{{ productsStore.produtoSelecionado.name }}</p>
           </div>
-          <button type="submit">{{ editandoDesconto ? 'Salvar' : 'Criar Desconto' }}</button>
-          <button type="button" @click="editandoDesconto ? cancelarEdicaoDesconto() : fecharFormularioDesconto()">Cancelar</button>
+          <button type="submit">{{ productsStore.editandoDesconto ? 'Salvar' : 'Criar Desconto' }}</button>
+          <button type="button" @click="productsStore.editandoDesconto ? productsStore.cancelarEdicaoDesconto() : productsStore.fecharFormularioDesconto()">Cancelar</button>
         </form>
-        <p v-if="editandoDesconto ? mensagemEdicaoDesconto : mensagemDesconto">{{ editandoDesconto ? mensagemEdicaoDesconto : mensagemDesconto }}</p>
+        <p v-if="productsStore.editandoDesconto ? productsStore.mensagemEdicaoDesconto : productsStore.mensagemDesconto">{{ productsStore.editandoDesconto ? productsStore.mensagemEdicaoDesconto : productsStore.mensagemDesconto }}</p>
       </div>
     </div>
 
     <div class="produtos" >
       <div class="titulo-container">
-      <h3 class="titulo-principal">{{ modoDesconto ? 'Descontos' : 'Produtos' }}</h3>
+      <h3 class="titulo-principal">{{ productsStore.modoDesconto ? 'Descontos' : 'Produtos' }}</h3>
       </div>
       <div class="busca-container">
         <div class="input-busca">
           <input 
             type="text" 
             placeholder="Buscar produtos..." 
-            v-model="termoBusca" 
+            v-model="productsStore.termoBusca" 
             @input="onInputBusca" 
           />
           <img src="../components/img/LupaFinal.png" alt="Buscar" />
@@ -94,7 +94,7 @@
           <div class="filtro-categorias">
             <div class="filtro-estoque">
               <label for="filtroEstoque" style="margin-right: 6px; font-size: 1rem;">Estoque:</label>
-              <select id="filtroEstoque" v-model="estoqueSelecionado">
+              <select id="filtroEstoque" v-model="productsStore.estoqueSelecionado">
                 <option value="">Indefinido</option>
                 <option value="0">0</option>
                 <option value="10-30">10-30</option>
@@ -105,14 +105,14 @@
             </div>
             <div class="filtro-categoria">
               <label for="filtroCategoria" style="margin-right: 6px; font-size: 1rem;">Categoria:</label>
-              <select id="filtroCategoria" v-model="categoriaSelecionada">
+              <select id="filtroCategoria" v-model="productsStore.categoriaSelecionada">
                 <option value="">Todas</option>
-                <option v-for="cat in categorias" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
+                <option v-for="cat in productsStore.categorias" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
               </select>
             </div>
-            <div v-if="modoDesconto" class="filtro-desconto">
+            <div v-if="productsStore.modoDesconto" class="filtro-desconto">
               <label for="filtroDesconto" style="margin-right: 6px; font-size: 1rem;">Status:</label>
-              <select id="filtroDesconto" v-model="filtroDescontoSelecionado">
+              <select id="filtroDesconto" v-model="productsStore.filtroDescontoSelecionado">
                 <option value="">Todos</option>
                 <option value="ativos">Ativos</option>
                 <option value="futuros">Futuros</option>
@@ -122,51 +122,51 @@
             </div>
           </div>
           <div class="botoes-container">
-            <button v-if="!modoDesconto" class="novo-produto-btn" @click="abrirCriacao">Novo produto</button>
-            <button v-if="modoDesconto" class="novo-produto-btn" @click="selecionandoProduto ? cancelarSelecao() : abrirCriacaoDesconto()">
-              {{ selecionandoProduto ? 'Cancelar' : 'Novo desconto' }}
+            <button v-if="!productsStore.modoDesconto" class="novo-produto-btn" @click="productsStore.abrirCriacao">Novo produto</button>
+            <button v-if="productsStore.modoDesconto" class="novo-produto-btn" @click="productsStore.selecionandoProduto ? productsStore.cancelarSelecao() : productsStore.abrirCriacaoDesconto()">
+              {{ productsStore.selecionandoProduto ? 'Cancelar' : 'Novo desconto' }}
             </button>
-            <button class="alternar-modo-btn" @click="alternarModo">
-              {{ modoDesconto ? 'Produtos' : 'Descontos' }}
+            <button class="alternar-modo-btn" @click="productsStore.alternarModo">
+              {{ productsStore.modoDesconto ? 'Produtos' : 'Descontos' }}
             </button>
           </div>
         </div>
-    <div v-if="carregandoProdutos" class="loading-container">
+    <div v-if="productsStore.carregandoProdutos" class="loading-container">
         <div class="loading-spinner"></div>
         <p>Carregando produtos...</p>
     </div>
-    <div v-else-if="erroProdutos">{{ erroProdutos }}</div>
+    <div v-else-if="productsStore.erroProdutos">{{ productsStore.erroProdutos }}</div>
     <div v-else>
-        <div v-if="produtosFiltrados.length === 0">
-          <div v-if="termoBusca">Nenhum produto encontrado para "{{ termoBusca }}".</div>
+        <div v-if="productsStore.produtosFiltrados.length === 0">
+          <div v-if="productsStore.termoBusca">Nenhum produto encontrado para "{{ productsStore.termoBusca }}".</div>
           <div v-else>Nenhum produto cadastrado ainda.</div>
         </div>
       <ul v-else class="lista">
-        <li v-for="produto in produtosFiltrados" :key="produto.id" 
+        <li v-for="produto in productsStore.produtosFiltrados" :key="produto.id" 
             class="produto" 
             :class="{
-              'produto-sem-desconto': modoDesconto && selecionandoProduto && !produtoTemDesconto(produto.id),
-              'produto-com-desconto': modoDesconto && produtoTemDesconto(produto.id) && descontoAtivo(produto.id),
-              'produto-desconto-futuro': modoDesconto && produtoTemDesconto(produto.id) && descontoFuturo(produto.id),
-              'produto-desconto-expirado': modoDesconto && produtoTemDesconto(produto.id) && descontoExpirado(produto.id)
+              'produto-sem-desconto': productsStore.modoDesconto && productsStore.selecionandoProduto && !productsStore.produtoTemDesconto(produto.id),
+              'produto-com-desconto': productsStore.modoDesconto && productsStore.produtoTemDesconto(produto.id) && productsStore.descontoAtivo(produto.id),
+              'produto-desconto-futuro': productsStore.modoDesconto && productsStore.produtoTemDesconto(produto.id) && productsStore.descontoFuturo(produto.id),
+              'produto-desconto-expirado': productsStore.modoDesconto && productsStore.produtoTemDesconto(produto.id) && productsStore.descontoExpirado(produto.id)
             }"
-            @click="modoDesconto && selecionandoProduto ? selecionarProdutoParaDesconto(produto) : null">
+            @click="productsStore.modoDesconto && productsStore.selecionandoProduto ? productsStore.selecionarProdutoParaDesconto(produto) : null">
           <div class="nome-preco-imagem">
             <img v-if="produto.image_path" :src="produto.image_path" alt="Imagem do produto" class="produto-imagem" />
             <h4>{{ produto.name }}</h4>
             <p>R$ {{ produto.price }}</p>
-            <p v-if="modoDesconto && produtoTemDesconto(produto.id)" class="desconto-info">
-              Desconto: {{ getDescontoProduto(produto.id)?.discount_percentage }}%
+            <p v-if="productsStore.modoDesconto && productsStore.produtoTemDesconto(produto.id)" class="desconto-info">
+              Desconto: {{ productsStore.getDescontoProduto(produto.id)?.discount_percentage }}%
             </p>
-            <p v-if="modoDesconto && produtoTemDesconto(produto.id) && descontoExpirado(produto.id)" class="desconto-expirado">
+            <p v-if="productsStore.modoDesconto && productsStore.produtoTemDesconto(produto.id) && productsStore.descontoExpirado(produto.id)" class="desconto-expirado">
               Desconto Expirado
             </p>
           </div>
           <div class="BTli" @click.stop>
-            <button v-if="!modoDesconto" @click="editarProduto(produto)">Editar</button>
-            <button v-if="modoDesconto" @click="editarDescontoProduto(produto)">Editar</button>
-            <button v-if="!modoDesconto" class="excluir-btn" @click="abrirModalExclusao(produto.id)">Excluir</button>
-            <button v-if="modoDesconto" class="excluir-btn" @click="abrirModalExclusaoDesconto(getDescontoProduto(produto.id)?.id)">Excluir</button>
+            <button v-if="!productsStore.modoDesconto" @click="productsStore.editarProduto(produto)">Editar</button>
+            <button v-if="productsStore.modoDesconto" @click="productsStore.editarDescontoProduto(produto)">Editar</button>
+            <button v-if="!productsStore.modoDesconto" class="excluir-btn" @click="productsStore.abrirModalExclusao(produto.id)">Excluir</button>
+            <button v-if="productsStore.modoDesconto" class="excluir-btn" @click="productsStore.abrirModalExclusaoDesconto(productsStore.getDescontoProduto(produto.id)?.id)">Excluir</button>
           </div>
           <span style="font-size:12px;color:#555;">Estoque: {{ produto.stock }}</span>
         </li>
@@ -176,312 +176,37 @@
   </div>
   
   <!-- Modal de Confirmação para Produto -->
-  <div v-if="mostrarModalConfirmacao" class="modal-overlay">
+  <div v-if="productsStore.mostrarModalConfirmacao" class="modal-overlay">
       <div class="modal-confirmacao">
           <h3>Confirmar Exclusão</h3>
           <p>Tem certeza que deseja excluir este produto?</p>
           <div class="modal-botoes">
-              <button @click="confirmarExclusao" class="btn-confirmar">Confirmar</button>
-              <button @click="fecharModalConfirmacao" class="btn-cancelar">Cancelar</button>
+              <button @click="productsStore.confirmarExclusao" class="btn-confirmar">Confirmar</button>
+              <button @click="productsStore.fecharModalConfirmacao" class="btn-cancelar">Cancelar</button>
           </div>
     </div>
   </div>
 
   <!-- Modal de Confirmação para Desconto -->
-  <div v-if="mostrarModalConfirmacaoDesconto" class="modal-overlay">
+  <div v-if="productsStore.mostrarModalConfirmacaoDesconto" class="modal-overlay">
       <div class="modal-confirmacao">
           <h3>Confirmar Exclusão</h3>
           <p>Tem certeza que deseja excluir este desconto?</p>
           <div class="modal-botoes">
-              <button @click="confirmarExclusaoDesconto" class="btn-confirmar">Confirmar</button>
-              <button @click="fecharModalConfirmacaoDesconto" class="btn-cancelar">Cancelar</button>
+              <button @click="productsStore.confirmarExclusaoDesconto" class="btn-confirmar">Confirmar</button>
+              <button @click="productsStore.fecharModalConfirmacaoDesconto" class="btn-cancelar">Cancelar</button>
           </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue'
-import { useToast } from 'vue-toastification'
-import api, { getDescontos, criarDesconto, atualizarDesconto, excluirDesconto } from '../services/api'
+import { onMounted } from 'vue'
+import { useProductsStore } from '../stores/products'
 
-const imagem = ref(null)
-const categorias = ref([])
-const mensagem = ref('')
-const toast = useToast()
-const mostraFormulario = ref(false)
-const mostrarModalConfirmacao = ref(false)
-const produtoParaExcluir = ref(null)
+const productsStore = useProductsStore()
 
-const termoBusca = ref('')
 let timeoutBusca = null
-
-const modoDesconto = ref(false)
-
-const editando = ref(false)
-const idProduto = ref(null)
-const mensagemEdicao = ref('')
-
-const nomeForm = ref('')
-const descricaoForm = ref('')
-const precoForm = ref(0)
-const estoqueForm = ref(0)
-const categoriaIdForm = ref('')
-const imagemForm = ref(null)
-
-const categoriaSelecionada = ref('')
-const estoqueSelecionado = ref('')
-const filtroDescontoSelecionado = ref('')
-
-// Variáveis para descontos
-const descontos = ref([])
-const mostraFormularioDesconto = ref(false)
-const editandoDesconto = ref(false)
-const idDesconto = ref(null)
-const mensagemDesconto = ref('')
-const mensagemEdicaoDesconto = ref('')
-const mostrarModalConfirmacaoDesconto = ref(false)
-const descontoParaExcluir = ref(null)
-const selecionandoProduto = ref(false)
-const produtoSelecionado = ref(null)
-
-// Formulário de desconto
-const descricaoDescontoForm = ref('')
-const percentualDescontoForm = ref(0)
-const dataInicioForm = ref('')
-const dataFimForm = ref('')
-
-const produtosFiltrados = computed(() => {
-  let produtosFiltrados = produtos.value
-  if (termoBusca.value.trim()) {
-    const termo = termoBusca.value.toLowerCase().trim()
-    produtosFiltrados = produtosFiltrados.filter(produto => 
-      produto.name && produto.name.toLowerCase().includes(termo)
-    )
-  }
-  if (categoriaSelecionada.value) {
-    produtosFiltrados = produtosFiltrados.filter(produto => 
-      String(produto.category_id) === String(categoriaSelecionada.value)
-    )
-  }
-  if (estoqueSelecionado.value) {
-    produtosFiltrados = produtosFiltrados.filter(produto => {
-      const estoque = produto.stock
-      switch (estoqueSelecionado.value) {
-        case '0':
-          return estoque === 0
-        case '10-30':
-          return estoque >= 10 && estoque <= 30
-        case '30-50':
-          return estoque >= 30 && estoque <= 50
-        case '50-100':
-          return estoque >= 50 && estoque <= 100
-        case '100+':
-          return estoque >= 100
-        default:
-          return true
-      }
-    })
-  }
-  
-  // Filtro de desconto (apenas no modo desconto)
-  if (modoDesconto.value && filtroDescontoSelecionado.value) {
-    produtosFiltrados = produtosFiltrados.filter(produto => {
-      switch (filtroDescontoSelecionado.value) {
-        case 'ativos':
-          return descontoAtivo(produto.id)
-        case 'futuros':
-          return descontoFuturo(produto.id)
-        case 'expirados':
-          return descontoExpirado(produto.id)
-        case 'sem-desconto':
-          return !produtoTemDesconto(produto.id)
-        default:
-          return true
-      }
-    })
-  }
-  
-  return produtosFiltrados
-})
-
-const produtos = ref([])
-const carregandoProdutos = ref(true)
-const erroProdutos = ref('')
-
-// Funções para descontos
-function produtoTemDesconto(produtoId) {
-  return descontos.value.some(desconto => desconto.product_id === produtoId)
-}
-
-function getDescontoProduto(produtoId) {
-  return descontos.value.find(desconto => desconto.product_id === produtoId)
-}
-
-function descontoExpirado(produtoId) {
-  const desconto = getDescontoProduto(produtoId)
-  if (!desconto) return false
-  const dataFim = new Date(desconto.end_date)
-  return dataFim < new Date()
-}
-
-function descontoAtivo(produtoId) {
-  const desconto = getDescontoProduto(produtoId)
-  if (!desconto) return false
-  const dataInicio = new Date(desconto.start_date)
-  const dataFim = new Date(desconto.end_date)
-  const agora = new Date()
-  return dataInicio <= agora && dataFim >= agora
-}
-
-function descontoFuturo(produtoId) {
-  const desconto = getDescontoProduto(produtoId)
-  if (!desconto) return false
-  const dataInicio = new Date(desconto.start_date)
-  const agora = new Date()
-  return dataInicio > agora
-}
-
-async function carregarDescontos() {
-  try {
-    const data = await getDescontos()
-    descontos.value = data
-  } catch (error) {
-    console.error('Erro ao carregar descontos:', error)
-  }
-}
-
-function abrirCriacaoDesconto() {
-  selecionandoProduto.value = true
-  toast.info('Selecione o produto')
-}
-
-function selecionarProdutoParaDesconto(produto) {
-  if (produtoTemDesconto(produto.id)) {
-    toast.warning('Este produto já possui desconto')
-    return
-  }
-  
-  produtoSelecionado.value = produto
-  selecionandoProduto.value = false
-  editandoDesconto.value = false
-  mostraFormularioDesconto.value = true
-  
-  // Limpar formulário
-  descricaoDescontoForm.value = ''
-  percentualDescontoForm.value = 0
-  dataInicioForm.value = ''
-  dataFimForm.value = ''
-  mensagemDesconto.value = ''
-}
-
-function fecharFormularioDesconto() {
-  mostraFormularioDesconto.value = false
-  editandoDesconto.value = false
-  idDesconto.value = null
-  produtoSelecionado.value = null
-  selecionandoProduto.value = false
-  
-  // Limpar formulário
-  descricaoDescontoForm.value = ''
-  percentualDescontoForm.value = 0
-  dataInicioForm.value = ''
-  dataFimForm.value = ''
-  mensagemDesconto.value = ''
-  mensagemEdicaoDesconto.value = ''
-}
-
-async function criarDescontoLocal() {
-  mensagemDesconto.value = ''
-  try {
-    const dados = {
-      description: descricaoDescontoForm.value,
-      discount_percentage: percentualDescontoForm.value,
-      start_date: dataInicioForm.value,
-      end_date: dataFimForm.value,
-      product_id: produtoSelecionado.value.id
-    }
-    
-    await criarDesconto(dados)
-    toast.success('Desconto criado com sucesso!')
-    await carregarDescontos()
-    fecharFormularioDesconto()
-  } catch (error) {
-    toast.error('Erro ao criar desconto.')
-  }
-}
-
-function editarDescontoProduto(produto) {
-  const desconto = getDescontoProduto(produto.id)
-  if (!desconto) {
-    toast.warning('Este produto não possui desconto')
-    return
-  }
-  
-  editandoDesconto.value = true
-  idDesconto.value = desconto.id
-  produtoSelecionado.value = produto
-  mostraFormularioDesconto.value = true
-  
-  // Preencher formulário
-  descricaoDescontoForm.value = desconto.description
-  percentualDescontoForm.value = desconto.discount_percentage
-  dataInicioForm.value = desconto.start_date.slice(0, 16) // Formato para datetime-local
-  dataFimForm.value = desconto.end_date.slice(0, 16)
-  mensagemEdicaoDesconto.value = ''
-}
-
-async function atualizarDescontoLocal() {
-  mensagemEdicaoDesconto.value = ''
-  try {
-    const dados = {
-      description: descricaoDescontoForm.value,
-      discount_percentage: percentualDescontoForm.value,
-      start_date: dataInicioForm.value,
-      end_date: dataFimForm.value,
-      product_id: produtoSelecionado.value.id
-    }
-    
-    await atualizarDesconto(idDesconto.value, dados)
-    toast.success('Desconto atualizado com sucesso!')
-    await carregarDescontos()
-    fecharFormularioDesconto()
-  } catch (error) {
-    toast.error('Erro ao atualizar desconto.')
-  }
-}
-
-function cancelarEdicaoDesconto() {
-  editandoDesconto.value = false
-  idDesconto.value = null
-  mensagemEdicaoDesconto.value = ''
-  fecharFormularioDesconto()
-}
-
-function abrirModalExclusaoDesconto(descontoId) {
-  if (!descontoId) {
-    toast.warning('Este produto não possui desconto')
-    return
-  }
-  descontoParaExcluir.value = descontoId
-  mostrarModalConfirmacaoDesconto.value = true
-}
-
-function fecharModalConfirmacaoDesconto() {
-  mostrarModalConfirmacaoDesconto.value = false
-  descontoParaExcluir.value = null
-}
-
-async function confirmarExclusaoDesconto() {
-  try {
-    await excluirDesconto(descontoParaExcluir.value)
-    toast.success('Desconto excluído com sucesso!')
-    await carregarDescontos()
-    fecharModalConfirmacaoDesconto()
-  } catch (error) {
-    toast.error('Erro ao excluir desconto.')
-  }
-}
 
 // Busca
 function onInputBusca() {
@@ -490,178 +215,13 @@ function onInputBusca() {
   }, 100)
 }
 
-function alternarModo() {
-  modoDesconto.value = !modoDesconto.value
-  termoBusca.value = ''
-  categoriaSelecionada.value = ''
-  estoqueSelecionado.value = ''
-  filtroDescontoSelecionado.value = ''
-  
-  // Sair do modo de seleção se estiver ativo
-  if (selecionandoProduto.value) {
-    cancelarSelecao()
-  }
-  
-  if (modoDesconto.value) {
-    carregarDescontos()
-  }
+function onFileChange(e) {
+  productsStore.imagemForm = e.target.files[0]
 }
 
 onMounted(async () => {
-  try {
-    const { data } = await api.get('/categories/user/228')
-    categorias.value = data
-  } catch (e) {
-    mensagem.value = 'Erro ao carregar categorias.'
-  }
-  await carregarProdutos()
+  await productsStore.inicializar()
 })
-
-function onFileChange(e) {
-  imagem.value = e.target.files[0]
-  imagemForm.value = e.target.files[0]
-}
-
-function abrirCriacao() {
-  editando.value = false
-  mostraFormulario.value = true
-  nomeForm.value = ''
-  descricaoForm.value = ''
-  precoForm.value = 0
-  estoqueForm.value = 0
-  categoriaIdForm.value = ''
-  imagemForm.value = null
-  mensagem.value = ''
-}
-
-function fecharFormulario() {
-  mostraFormulario.value = false
-  editando.value = false
-  idProduto.value = null
-  nomeForm.value = ''
-  descricaoForm.value = ''
-  precoForm.value = 0
-  estoqueForm.value = 0
-  categoriaIdForm.value = ''
-  imagemForm.value = null
-  mensagem.value = ''
-  mensagemEdicao.value = ''
-}
-
-async function criarProduto() {
-  mensagem.value = ''
-  try {
-    const formData = new FormData()
-    formData.append('name', nomeForm.value)
-    formData.append('description', descricaoForm.value)
-    formData.append('price', precoForm.value)
-    formData.append('stock', estoqueForm.value)
-    formData.append('category_id', categoriaIdForm.value)
-    if (imagemForm.value) formData.append('image', imagemForm.value)
-    await api.post('/products/', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    })
-    toast.success('Produto criado com sucesso!')
-    await carregarProdutos()
-    fecharFormulario()
-  } catch (e) {
-    toast.error('Erro ao criar produto.')
-  }
-}
-
-function editarProduto(produto) {
-  editando.value = true
-  mostraFormulario.value = false
-  idProduto.value = produto.id
-  mensagemEdicao.value = ''
-  nomeForm.value = produto.name
-  descricaoForm.value = produto.description
-  precoForm.value = produto.price
-  estoqueForm.value = produto.stock
-  categoriaIdForm.value = produto.category_id
-  imagemForm.value = null
-  mostraFormulario.value = true
-}
-
-function cancelarEdicao() {
-  editando.value = false
-  idProduto.value = null
-  mensagemEdicao.value = ''
-  mostraFormulario.value = false
-  nomeForm.value = ''
-  descricaoForm.value = ''
-  precoForm.value = 0
-  estoqueForm.value = 0
-  categoriaIdForm.value = ''
-  imagemForm.value = null
-}
-
-async function atualizarProduto() {
-  mensagemEdicao.value = ''
-  try {
-    const formData = new FormData()
-    formData.append('name', nomeForm.value)
-    formData.append('description', descricaoForm.value)
-    formData.append('price', precoForm.value)
-    formData.append('stock', estoqueForm.value)
-    formData.append('category_id', categoriaIdForm.value)
-    if (imagemForm.value) formData.append('image', imagemForm.value)
-    await api.put(`/products/${idProduto.value}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    })
-    toast.success('Produto atualizado com sucesso!')
-    await carregarProdutos()
-    fecharFormulario()
-  } catch (e) {
-    toast.error('Erro ao atualizar produto.')
-  }
-}
-
-async function carregarProdutos() {
-  try {
-    carregandoProdutos.value = true
-    const { data } = await api.get('/products/user/228')
-    produtos.value = data.map(produto => ({
-      ...produto,
-      image_path: produto.image_path 
-        ? `http://35.196.79.227:8000${produto.image_path}` 
-        : '/placeholder-image.jpg'
-    }))
-  } catch (e) {
-    erroProdutos.value = 'Erro ao carregar produtos.'
-  } finally {
-    carregandoProdutos.value = false
-  }
-}
-
-function abrirModalExclusao(produtoId) {
-  produtoParaExcluir.value = produtoId
-  mostrarModalConfirmacao.value = true
-}
-
-function fecharModalConfirmacao() {
-  mostrarModalConfirmacao.value = false
-  produtoParaExcluir.value = null
-}
-
-async function confirmarExclusao() {
-  try {
-    await api.delete(`/products/${produtoParaExcluir.value}`)
-    toast.success('Produto excluído com sucesso!')
-    await carregarProdutos()
-    fecharModalConfirmacao()
-  } catch (e) {
-    toast.error('Erro ao excluir produto.')
-  }
-}
-
-function cancelarSelecao() {
-  selecionandoProduto.value = false
-  produtoSelecionado.value = null
-  fecharFormularioDesconto()
-  toast.info('Seleção de produto cancelada.')
-}
-
 </script>
 
 <style scoped>
