@@ -3,11 +3,7 @@ import { useToast } from 'vue-toastification'
 import { defineStore } from 'pinia'
 import api, { 
   getProdutos, 
-  getCategorias, 
-  getDescontos, 
-  criarDesconto, 
-  atualizarDesconto, 
-  excluirDesconto 
+  getCategorias
 } from '../services/api'
 
 export const useProductsStore = defineStore('products', () => {
@@ -21,17 +17,10 @@ export const useProductsStore = defineStore('products', () => {
   // Estado das categorias
   const categorias = ref([])
   
-  // Estado dos descontos
-  const descontos = ref([])
-  
   // Estado dos filtros
   const termoBusca = ref('')
   const categoriaSelecionada = ref('')
   const estoqueSelecionado = ref('')
-  const filtroDescontoSelecionado = ref('')
-  
-  // Estado do modo
-  const modoDesconto = ref(false)
   
   // Estado do formulário de produto
   const mostraFormulario = ref(false)
@@ -39,15 +28,6 @@ export const useProductsStore = defineStore('products', () => {
   const idProduto = ref(null)
   const mensagem = ref('')
   const mensagemEdicao = ref('')
-  
-  // Estado do formulário de desconto
-  const mostraFormularioDesconto = ref(false)
-  const editandoDesconto = ref(false)
-  const idDesconto = ref(null)
-  const mensagemDesconto = ref('')
-  const mensagemEdicaoDesconto = ref('')
-  const selecionandoProduto = ref(false)
-  const produtoSelecionado = ref(null)
   
   // Dados do formulário de produto
   const nomeForm = ref('')
@@ -57,17 +37,9 @@ export const useProductsStore = defineStore('products', () => {
   const categoriaIdForm = ref('')
   const imagemForm = ref(null)
   
-  // Dados do formulário de desconto
-  const descricaoDescontoForm = ref('')
-  const percentualDescontoForm = ref(0)
-  const dataInicioForm = ref('')
-  const dataFimForm = ref('')
-  
   // Estado dos modais
   const mostrarModalConfirmacao = ref(false)
   const produtoParaExcluir = ref(null)
-  const mostrarModalConfirmacaoDesconto = ref(false)
-  const descontoParaExcluir = ref(null)
   
   // Computed properties
   const produtosFiltrados = computed(() => {
@@ -103,24 +75,6 @@ export const useProductsStore = defineStore('products', () => {
             return estoque >= 50 && estoque <= 100
           case '100+':
             return estoque >= 100
-          default:
-            return true
-        }
-      })
-    }
-    
-    // Filtro de desconto (apenas no modo desconto)
-    if (modoDesconto.value && filtroDescontoSelecionado.value) {
-      produtosFiltrados = produtosFiltrados.filter(produto => {
-        switch (filtroDescontoSelecionado.value) {
-          case 'ativos':
-            return descontoAtivo(produto.id)
-          case 'futuros':
-            return descontoFuturo(produto.id)
-          case 'expirados':
-            return descontoExpirado(produto.id)
-          case 'sem-desconto':
-            return !produtoTemDesconto(produto.id)
           default:
             return true
         }
@@ -230,102 +184,6 @@ export const useProductsStore = defineStore('products', () => {
     }
   }
   
-  // Funções para descontos
-  async function carregarDescontos() {
-    try {
-      const data = await getDescontos()
-      descontos.value = data
-    } catch (error) {
-      console.error('Erro ao carregar descontos:', error)
-    }
-  }
-  
-  function produtoTemDesconto(produtoId) {
-    return descontos.value.some(desconto => desconto.product_id === produtoId)
-  }
-  
-  function getDescontoProduto(produtoId) {
-    return descontos.value.find(desconto => desconto.product_id === produtoId)
-  }
-  
-  function descontoExpirado(produtoId) {
-    const desconto = getDescontoProduto(produtoId)
-    if (!desconto) return false
-    const dataFim = new Date(desconto.end_date)
-    return dataFim < new Date()
-  }
-  
-  function descontoAtivo(produtoId) {
-    const desconto = getDescontoProduto(produtoId)
-    if (!desconto) return false
-    const dataInicio = new Date(desconto.start_date)
-    const dataFim = new Date(desconto.end_date)
-    const agora = new Date()
-    return dataInicio <= agora && dataFim >= agora
-  }
-  
-  function descontoFuturo(produtoId) {
-    const desconto = getDescontoProduto(produtoId)
-    if (!desconto) return false
-    const dataInicio = new Date(desconto.start_date)
-    const agora = new Date()
-    return dataInicio > agora
-  }
-  
-  async function criarDescontoLocal() {
-    mensagemDesconto.value = ''
-    try {
-      const dados = {
-        description: descricaoDescontoForm.value,
-        discount_percentage: percentualDescontoForm.value,
-        start_date: dataInicioForm.value,
-        end_date: dataFimForm.value,
-        product_id: produtoSelecionado.value.id
-      }
-      
-      await criarDesconto(dados)
-      toast.success('Desconto criado com sucesso!')
-      await carregarDescontos()
-      fecharFormularioDesconto()
-    } catch (error) {
-      toast.error('Erro ao criar desconto.')
-      console.error('Erro ao criar desconto:', error)
-    }
-  }
-  
-  async function atualizarDescontoLocal() {
-    mensagemEdicaoDesconto.value = ''
-    try {
-      const dados = {
-        description: descricaoDescontoForm.value,
-        discount_percentage: percentualDescontoForm.value,
-        start_date: dataInicioForm.value,
-        end_date: dataFimForm.value,
-        product_id: produtoSelecionado.value.id
-      }
-      
-      await atualizarDesconto(idDesconto.value, dados)
-      toast.success('Desconto atualizado com sucesso!')
-      await carregarDescontos()
-      fecharFormularioDesconto()
-    } catch (error) {
-      toast.error('Erro ao atualizar desconto.')
-      console.error('Erro ao atualizar desconto:', error)
-    }
-  }
-  
-  async function excluirDescontoLocal(descontoId) {
-    try {
-      await excluirDesconto(descontoId)
-      toast.success('Desconto excluído com sucesso!')
-      await carregarDescontos()
-      fecharModalConfirmacaoDesconto()
-    } catch (error) {
-      toast.error('Erro ao excluir desconto.')
-      console.error('Erro ao excluir desconto:', error)
-    }
-  }
-  
   // Funções de controle de formulários
   function abrirCriacao() {
     editando.value = false
@@ -374,77 +232,6 @@ export const useProductsStore = defineStore('products', () => {
     limparFormularioProduto()
   }
   
-  // Funções de controle de formulários de desconto
-  function abrirCriacaoDesconto() {
-    selecionandoProduto.value = true
-    toast.info('Selecione o produto')
-  }
-  
-  function fecharFormularioDesconto() {
-    mostraFormularioDesconto.value = false
-    editandoDesconto.value = false
-    idDesconto.value = null
-    produtoSelecionado.value = null
-    selecionandoProduto.value = false
-    limparFormularioDesconto()
-  }
-  
-  function limparFormularioDesconto() {
-    descricaoDescontoForm.value = ''
-    percentualDescontoForm.value = 0
-    dataInicioForm.value = ''
-    dataFimForm.value = ''
-    mensagemDesconto.value = ''
-    mensagemEdicaoDesconto.value = ''
-  }
-  
-  function selecionarProdutoParaDesconto(produto) {
-    if (produtoTemDesconto(produto.id)) {
-      toast.warning('Este produto já possui desconto')
-      return
-    }
-    
-    produtoSelecionado.value = produto
-    selecionandoProduto.value = false
-    editandoDesconto.value = false
-    mostraFormularioDesconto.value = true
-    limparFormularioDesconto()
-  }
-  
-  function editarDescontoProduto(produto) {
-    const desconto = getDescontoProduto(produto.id)
-    if (!desconto) {
-      toast.warning('Este produto não possui desconto')
-      return
-    }
-    
-    editandoDesconto.value = true
-    idDesconto.value = desconto.id
-    produtoSelecionado.value = produto
-    mostraFormularioDesconto.value = true
-    
-    // Preencher formulário
-    descricaoDescontoForm.value = desconto.description
-    percentualDescontoForm.value = desconto.discount_percentage
-    dataInicioForm.value = desconto.start_date.slice(0, 16) // Formato para datetime-local
-    dataFimForm.value = desconto.end_date.slice(0, 16)
-    mensagemEdicaoDesconto.value = ''
-  }
-  
-  function cancelarEdicaoDesconto() {
-    editandoDesconto.value = false
-    idDesconto.value = null
-    mensagemEdicaoDesconto.value = ''
-    fecharFormularioDesconto()
-  }
-  
-  function cancelarSelecao() {
-    selecionandoProduto.value = false
-    produtoSelecionado.value = null
-    fecharFormularioDesconto()
-    toast.info('Seleção de produto cancelada.')
-  }
-  
   // Funções de controle de modais
   function abrirModalExclusao(produtoId) {
     produtoParaExcluir.value = produtoId
@@ -462,46 +249,30 @@ export const useProductsStore = defineStore('products', () => {
     }
   }
   
-  function abrirModalExclusaoDesconto(descontoId) {
-    if (!descontoId) {
-      toast.warning('Este produto não possui desconto')
-      return
-    }
-    descontoParaExcluir.value = descontoId
-    mostrarModalConfirmacaoDesconto.value = true
-  }
-  
-  function fecharModalConfirmacaoDesconto() {
-    mostrarModalConfirmacaoDesconto.value = false
-    descontoParaExcluir.value = null
-  }
-  
-  function confirmarExclusaoDesconto() {
-    if (descontoParaExcluir.value) {
-      excluirDescontoLocal(descontoParaExcluir.value)
-    }
-  }
-  
-  // Funções de controle de modo
-  function alternarModo() {
-    modoDesconto.value = !modoDesconto.value
-    limparFiltros()
-    
-    // Sair do modo de seleção se estiver ativo
-    if (selecionandoProduto.value) {
-      cancelarSelecao()
-    }
-    
-    if (modoDesconto.value) {
-      carregarDescontos()
-    }
-  }
-  
   function limparFiltros() {
     termoBusca.value = ''
     categoriaSelecionada.value = ''
     estoqueSelecionado.value = ''
-    filtroDescontoSelecionado.value = ''
+  }
+  
+  // Função para aplicar filtros de desconto externamente
+  function aplicarFiltroDesconto(produtos, filtroDesconto, funcoesDesconto) {
+    if (!filtroDesconto) return produtos
+    
+    return produtos.filter(produto => {
+      switch (filtroDesconto) {
+        case 'ativos':
+          return funcoesDesconto.descontoAtivo(produto.id)
+        case 'futuros':
+          return funcoesDesconto.descontoFuturo(produto.id)
+        case 'expirados':
+          return funcoesDesconto.descontoExpirado(produto.id)
+        case 'sem-desconto':
+          return !funcoesDesconto.produtoTemDesconto(produto.id)
+        default:
+          return true
+      }
+    })
   }
   
   // Função de inicialização
@@ -518,38 +289,22 @@ export const useProductsStore = defineStore('products', () => {
     carregandoProdutos,
     erroProdutos,
     categorias,
-    descontos,
     termoBusca,
     categoriaSelecionada,
     estoqueSelecionado,
-    filtroDescontoSelecionado,
-    modoDesconto,
     mostraFormulario,
     editando,
     idProduto,
     mensagem,
     mensagemEdicao,
-    mostraFormularioDesconto,
-    editandoDesconto,
-    idDesconto,
-    mensagemDesconto,
-    mensagemEdicaoDesconto,
-    selecionandoProduto,
-    produtoSelecionado,
     nomeForm,
     descricaoForm,
     precoForm,
     estoqueForm,
     categoriaIdForm,
     imagemForm,
-    descricaoDescontoForm,
-    percentualDescontoForm,
-    dataInicioForm,
-    dataFimForm,
     mostrarModalConfirmacao,
     produtoParaExcluir,
-    mostrarModalConfirmacaoDesconto,
-    descontoParaExcluir,
     
     // Computed
     produtosFiltrados,
@@ -561,44 +316,21 @@ export const useProductsStore = defineStore('products', () => {
     atualizarProduto,
     excluirProduto,
     
-    // Funções de descontos
-    carregarDescontos,
-    produtoTemDesconto,
-    getDescontoProduto,
-    descontoExpirado,
-    descontoAtivo,
-    descontoFuturo,
-    criarDescontoLocal,
-    atualizarDescontoLocal,
-    excluirDescontoLocal,
-    
     // Funções de controle de formulários
     abrirCriacao,
     fecharFormulario,
     limparFormularioProduto,
     editarProduto,
     cancelarEdicao,
-    abrirCriacaoDesconto,
-    fecharFormularioDesconto,
-    limparFormularioDesconto,
-    selecionarProdutoParaDesconto,
-    editarDescontoProduto,
-    cancelarEdicaoDesconto,
-    cancelarSelecao,
     
     // Funções de controle de modais
     abrirModalExclusao,
     fecharModalConfirmacao,
     confirmarExclusao,
-    abrirModalExclusaoDesconto,
-    fecharModalConfirmacaoDesconto,
-    confirmarExclusaoDesconto,
     
-    // Funções de controle de modo
-    alternarModo,
+    // Funções de controle
     limparFiltros,
-    
-    // Função de inicialização
+    aplicarFiltroDesconto,
     inicializar
   }
 }) 

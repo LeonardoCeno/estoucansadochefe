@@ -1,7 +1,7 @@
 <template>
   <div class="tudo">
     <!-- Formulário de Produto -->
-    <div v-if="productsStore.mostraFormulario && !productsStore.modoDesconto" class="criacao-form-wrapper">
+    <div v-if="productsStore.mostraFormulario && !discountsStore.modoDesconto" class="criacao-form-wrapper">
       <div class="criacao-form">
         <h2>{{ productsStore.editando ? 'Editar Produto' : 'Criar Produto' }}</h2>
         <form @submit.prevent="productsStore.editando ? productsStore.atualizarProduto() : productsStore.criarProduto()">
@@ -42,42 +42,42 @@
     </div>
 
     <!-- Formulário de Desconto -->
-    <div v-if="productsStore.mostraFormularioDesconto" class="criacao-form-wrapper">
+    <div v-if="discountsStore.mostraFormularioDesconto" class="criacao-form-wrapper">
       <div class="criacao-form">
-        <h2>{{ productsStore.editandoDesconto ? 'Editar Desconto' : 'Criar Desconto' }}</h2>
-        <form @submit.prevent="productsStore.editandoDesconto ? productsStore.atualizarDescontoLocal() : productsStore.criarDescontoLocal()">
+        <h2>{{ discountsStore.editandoDesconto ? 'Editar Desconto' : 'Criar Desconto' }}</h2>
+        <form @submit.prevent="discountsStore.editandoDesconto ? discountsStore.atualizarDescontoLocal() : discountsStore.criarDescontoLocal()">
           <div>
             <label>Descrição:</label>
-            <input v-model="productsStore.descricaoDescontoForm" required />
+            <input v-model="discountsStore.descricaoDescontoForm" required />
           </div>
           <div>
             <label>Percentual de Desconto (%):</label>
-            <input type="number" v-model.number="productsStore.percentualDescontoForm" min="0" max="100" required />
+            <input type="number" v-model.number="discountsStore.percentualDescontoForm" min="0" max="100" required />
           </div>
           <div class="linha-dupla">
             <div class="campo-metade">
               <label>Data de Início:</label>
-              <input type="datetime-local" v-model="productsStore.dataInicioForm" required />
+              <input type="datetime-local" v-model="discountsStore.dataInicioForm" required />
             </div>
             <div class="campo-metade">
               <label>Data de Fim:</label>
-              <input type="datetime-local" v-model="productsStore.dataFimForm" required />
+              <input type="datetime-local" v-model="discountsStore.dataFimForm" required />
             </div>
           </div>
-          <div v-if="productsStore.produtoSelecionado">
+          <div v-if="discountsStore.produtoSelecionado">
             <label>Produto Selecionado:</label>
-            <p class="produto-selecionado">{{ productsStore.produtoSelecionado.name }}</p>
+            <p class="produto-selecionado">{{ discountsStore.produtoSelecionado.name }}</p>
           </div>
-          <button type="submit">{{ productsStore.editandoDesconto ? 'Salvar' : 'Criar Desconto' }}</button>
-          <button type="button" @click="productsStore.editandoDesconto ? productsStore.cancelarEdicaoDesconto() : productsStore.fecharFormularioDesconto()">Cancelar</button>
+          <button type="submit">{{ discountsStore.editandoDesconto ? 'Salvar' : 'Criar Desconto' }}</button>
+          <button type="button" @click="discountsStore.editandoDesconto ? discountsStore.cancelarEdicaoDesconto() : discountsStore.fecharFormularioDesconto()">Cancelar</button>
         </form>
-        <p v-if="productsStore.editandoDesconto ? productsStore.mensagemEdicaoDesconto : productsStore.mensagemDesconto">{{ productsStore.editandoDesconto ? productsStore.mensagemEdicaoDesconto : productsStore.mensagemDesconto }}</p>
+        <p v-if="discountsStore.editandoDesconto ? discountsStore.mensagemEdicaoDesconto : discountsStore.mensagemDesconto">{{ discountsStore.editandoDesconto ? discountsStore.mensagemEdicaoDesconto : discountsStore.mensagemDesconto }}</p>
       </div>
     </div>
 
     <div class="produtos" >
       <div class="titulo-container">
-      <h3 class="titulo-principal">{{ productsStore.modoDesconto ? 'Descontos' : 'Produtos' }}</h3>
+      <h3 class="titulo-principal">{{ discountsStore.modoDesconto ? 'Descontos' : 'Produtos' }}</h3>
       </div>
       <div class="busca-container">
         <div class="input-busca">
@@ -110,9 +110,9 @@
                 <option v-for="cat in productsStore.categorias" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
               </select>
             </div>
-            <div v-if="productsStore.modoDesconto" class="filtro-desconto">
+            <div v-if="discountsStore.modoDesconto" class="filtro-desconto">
               <label for="filtroDesconto" style="margin-right: 6px; font-size: 1rem;">Status:</label>
-              <select id="filtroDesconto" v-model="productsStore.filtroDescontoSelecionado">
+              <select id="filtroDesconto" v-model="discountsStore.filtroDescontoSelecionado">
                 <option value="">Todos</option>
                 <option value="ativos">Ativos</option>
                 <option value="futuros">Futuros</option>
@@ -122,12 +122,12 @@
             </div>
           </div>
           <div class="botoes-container">
-            <button v-if="!productsStore.modoDesconto" class="novo-produto-btn" @click="productsStore.abrirCriacao">Novo produto</button>
-            <button v-if="productsStore.modoDesconto" class="novo-produto-btn" @click="productsStore.selecionandoProduto ? productsStore.cancelarSelecao() : productsStore.abrirCriacaoDesconto()">
-              {{ productsStore.selecionandoProduto ? 'Cancelar' : 'Novo desconto' }}
+            <button v-if="!discountsStore.modoDesconto" class="novo-produto-btn" @click="productsStore.abrirCriacao">Novo produto</button>
+            <button v-if="discountsStore.modoDesconto" class="novo-produto-btn" @click="discountsStore.selecionandoProduto ? discountsStore.cancelarSelecao() : discountsStore.abrirCriacaoDesconto()">
+              {{ discountsStore.selecionandoProduto ? 'Cancelar' : 'Novo desconto' }}
             </button>
-            <button class="alternar-modo-btn" @click="productsStore.alternarModo">
-              {{ productsStore.modoDesconto ? 'Produtos' : 'Descontos' }}
+            <button class="alternar-modo-btn" @click="discountsStore.alternarModo">
+              {{ discountsStore.modoDesconto ? 'Produtos' : 'Descontos' }}
             </button>
           </div>
         </div>
@@ -142,31 +142,31 @@
           <div v-else>Nenhum produto cadastrado ainda.</div>
         </div>
       <ul v-else class="lista">
-        <li v-for="produto in productsStore.produtosFiltrados" :key="produto.id" 
+        <li v-for="produto in produtosComFiltroDesconto" :key="produto.id" 
             class="produto" 
             :class="{
-              'produto-sem-desconto': productsStore.modoDesconto && productsStore.selecionandoProduto && !productsStore.produtoTemDesconto(produto.id),
-              'produto-com-desconto': productsStore.modoDesconto && productsStore.produtoTemDesconto(produto.id) && productsStore.descontoAtivo(produto.id),
-              'produto-desconto-futuro': productsStore.modoDesconto && productsStore.produtoTemDesconto(produto.id) && productsStore.descontoFuturo(produto.id),
-              'produto-desconto-expirado': productsStore.modoDesconto && productsStore.produtoTemDesconto(produto.id) && productsStore.descontoExpirado(produto.id)
+              'produto-sem-desconto': discountsStore.modoDesconto && discountsStore.selecionandoProduto && !discountsStore.produtoTemDesconto(produto.id),
+              'produto-com-desconto': discountsStore.modoDesconto && discountsStore.produtoTemDesconto(produto.id) && discountsStore.descontoAtivo(produto.id),
+              'produto-desconto-futuro': discountsStore.modoDesconto && discountsStore.produtoTemDesconto(produto.id) && discountsStore.descontoFuturo(produto.id),
+              'produto-desconto-expirado': discountsStore.modoDesconto && discountsStore.produtoTemDesconto(produto.id) && discountsStore.descontoExpirado(produto.id)
             }"
-            @click="productsStore.modoDesconto && productsStore.selecionandoProduto ? productsStore.selecionarProdutoParaDesconto(produto) : null">
+            @click="discountsStore.modoDesconto && discountsStore.selecionandoProduto ? discountsStore.selecionarProdutoParaDesconto(produto) : null">
           <div class="nome-preco-imagem">
             <img v-if="produto.image_path" :src="produto.image_path" alt="Imagem do produto" class="produto-imagem" />
             <h4>{{ produto.name }}</h4>
             <p>R$ {{ produto.price }}</p>
-            <p v-if="productsStore.modoDesconto && productsStore.produtoTemDesconto(produto.id)" class="desconto-info">
-              Desconto: {{ productsStore.getDescontoProduto(produto.id)?.discount_percentage }}%
+            <p v-if="discountsStore.modoDesconto && discountsStore.produtoTemDesconto(produto.id)" class="desconto-info">
+              Desconto: {{ discountsStore.getDescontoProduto(produto.id)?.discount_percentage }}%
             </p>
-            <p v-if="productsStore.modoDesconto && productsStore.produtoTemDesconto(produto.id) && productsStore.descontoExpirado(produto.id)" class="desconto-expirado">
+            <p v-if="discountsStore.modoDesconto && discountsStore.produtoTemDesconto(produto.id) && discountsStore.descontoExpirado(produto.id)" class="desconto-expirado">
               Desconto Expirado
             </p>
           </div>
           <div class="BTli" @click.stop>
-            <button v-if="!productsStore.modoDesconto" @click="productsStore.editarProduto(produto)">Editar</button>
-            <button v-if="productsStore.modoDesconto" @click="productsStore.editarDescontoProduto(produto)">Editar</button>
-            <button v-if="!productsStore.modoDesconto" class="excluir-btn" @click="productsStore.abrirModalExclusao(produto.id)">Excluir</button>
-            <button v-if="productsStore.modoDesconto" class="excluir-btn" @click="productsStore.abrirModalExclusaoDesconto(productsStore.getDescontoProduto(produto.id)?.id)">Excluir</button>
+            <button v-if="!discountsStore.modoDesconto" @click="productsStore.editarProduto(produto)">Editar</button>
+            <button v-if="discountsStore.modoDesconto" @click="discountsStore.editarDescontoProduto(produto)">Editar</button>
+            <button v-if="!discountsStore.modoDesconto" class="excluir-btn" @click="productsStore.abrirModalExclusao(produto.id)">Excluir</button>
+            <button v-if="discountsStore.modoDesconto" class="excluir-btn" @click="discountsStore.abrirModalExclusaoDesconto(discountsStore.getDescontoProduto(produto.id)?.id)">Excluir</button>
           </div>
           <span style="font-size:12px;color:#555;">Estoque: {{ produto.stock }}</span>
         </li>
@@ -188,25 +188,39 @@
   </div>
 
   <!-- Modal de Confirmação para Desconto -->
-  <div v-if="productsStore.mostrarModalConfirmacaoDesconto" class="modal-overlay">
+  <div v-if="discountsStore.mostrarModalConfirmacaoDesconto" class="modal-overlay">
       <div class="modal-confirmacao">
           <h3>Confirmar Exclusão</h3>
           <p>Tem certeza que deseja excluir este desconto?</p>
           <div class="modal-botoes">
-              <button @click="productsStore.confirmarExclusaoDesconto" class="btn-confirmar">Confirmar</button>
-              <button @click="productsStore.fecharModalConfirmacaoDesconto" class="btn-cancelar">Cancelar</button>
+              <button @click="discountsStore.confirmarExclusaoDesconto" class="btn-confirmar">Confirmar</button>
+              <button @click="discountsStore.fecharModalConfirmacaoDesconto" class="btn-cancelar">Cancelar</button>
           </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
 import { useProductsStore } from '../stores/products'
+import { useDiscountsStore } from '../stores/discounts'
 
 const productsStore = useProductsStore()
+const discountsStore = useDiscountsStore()
 
 let timeoutBusca = null
+
+// Computed para aplicar filtro de desconto
+const produtosComFiltroDesconto = computed(() => {
+  const produtosFiltrados = productsStore.produtosFiltrados
+  const filtroDesconto = discountsStore.filtroDescontoSelecionado
+  
+  if (!discountsStore.modoDesconto || !filtroDesconto) {
+    return produtosFiltrados
+  }
+  
+  return productsStore.aplicarFiltroDesconto(produtosFiltrados, filtroDesconto, discountsStore)
+})
 
 // Busca
 function onInputBusca() {
