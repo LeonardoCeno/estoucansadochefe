@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { verifyToken, renewToken } from '../services/api'
 import api from '../services/api'
 import { useUserStore } from '../stores/user'
 import HomeView from '../views/Market.vue'

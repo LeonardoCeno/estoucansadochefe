@@ -233,8 +233,6 @@ function finalizarCompra() {
 onMounted(async () => {
     await cartStore.carregarCarrinho()
 })
-
-window.addEventListener('carrinho-atualizado', () => cartStore.carregarCarrinho())
 </script>
 
 <style scoped>

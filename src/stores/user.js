@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { getUsuario, verifyToken, renewToken } from '../services/api'
+import { getUsuario } from '../services/api'
 import api from '../services/api'
 
 export const useUserStore = defineStore('user', () => {
@@ -42,16 +42,6 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  async function tryRenewToken() {
-    try {
-      const newToken = await renewToken()
-      return newToken
-    } catch (error) {
-      logout()
-      throw error
-    }
-  }
-
   function logout() {
     user.value = null
     isAuthenticated.value = false
@@ -73,7 +63,6 @@ export const useUserStore = defineStore('user', () => {
     isLoading, 
     loadUser, 
     logout, 
-    tryRenewToken,
     setUser,
     initializeAuth
   }

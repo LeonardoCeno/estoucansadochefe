@@ -286,7 +286,6 @@ onMounted(() => {
 
 onUnmounted(() => {
     // Remover event listeners
-    window.removeEventListener('carrinho-atualizado', () => cartStore.carregarCarrinho())
     window.removeEventListener('user-logout', () => {
         cartStore.limparCarrinhoLocal()
         showCarrinhoDropdown.value = false
@@ -376,7 +375,6 @@ function logout() {
     userStore.logout()
     showDropdown.value = false
     showCarrinhoDropdown.value = false
-    itensCarrinho.value = [] // Limpar carrinho
     router.push('/')
 }
 

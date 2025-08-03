@@ -103,7 +103,6 @@ export const useCartStore = defineStore('cart', () => {
             await limparCarrinhoAPI()
             itensCarrinho.value = []
             toast.success('Carrinho limpo com sucesso!')
-            window.dispatchEvent(new Event('carrinho-atualizado'))
         } catch (error) {
             console.error('Erro ao limpar carrinho:', error)
             toast.error('Erro ao limpar carrinho')
@@ -112,7 +111,6 @@ export const useCartStore = defineStore('cart', () => {
     
     function limparCarrinhoLocal() {
         itensCarrinho.value = []
-        window.dispatchEvent(new Event('carrinho-atualizado'))
     }
     
     function produtoEstaNoCarrinho(produtoId) {
