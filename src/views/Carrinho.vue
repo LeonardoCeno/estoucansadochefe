@@ -54,7 +54,7 @@
                                     <p class="subtotal-valor">R$ {{ formatarPreco(item.unit_price * item.quantity) }}</p>
                                 </div>
                                 <div class="item-acoes">
-                                    <button @click="removerItem(item)" class="btn-remover">
+                                    <button @click="removerDoCarrinho(item)" class="btn-remover">
                                         ✕
                                     </button>
                                 </div>
@@ -179,8 +179,8 @@ async function diminuirQuantidade(item) {
     await cartStore.diminuirQuantidade(item)
 }
 
-async function removerItem(item) {
-    await cartStore.removerItem(item.product_id)
+async function removerDoCarrinho(item) {
+    await cartStore.removerItemDoCarrinho(item)
 }
 
 async function limparCarrinho() {

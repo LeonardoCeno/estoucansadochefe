@@ -70,15 +70,59 @@ export const useCartStore = defineStore('cart', () => {
         }
     }
     
-    async function aumentarQuantidade(item) {
-        const novaQuantidade = item.quantity + 1
-        await atualizarQuantidade(item.product_id, novaQuantidade)
+    // Função específica para remover item do carrinho (instantânea)
+    async function removerItemDoCarrinho(item) {
+        // Atualizar UI instantaneamente
+        itensCarrinho.value = itensCarrinho.value.filter(cartItem => cartItem.product_id !== item.product_id)
+        toast.success('Item removido do carrinho!')
+        
+        // Fazer operação em background
+        try {
+            await removerItemCarrinho(item.product_id)
+        } catch (error) {
+            // Se falhar, sincronizar com o estado real
+            await carregarCarrinho()
+        }
     }
     
+    // Função otimizada para aumentar quantidade (instantânea)
+    async function aumentarQuantidade(item) {
+        const novaQuantidade = item.quantity + 1
+        
+        // Atualizar UI instantaneamente
+        const itemIndex = itensCarrinho.value.findIndex(cartItem => cartItem.product_id === item.product_id)
+        if (itemIndex !== -1) {
+            itensCarrinho.value[itemIndex].quantity = novaQuantidade
+        }
+        
+        // Fazer operação em background
+        try {
+            await atualizarQuantidadeCarrinho(item.product_id, novaQuantidade)
+        } catch (error) {
+            // Se falhar, sincronizar com o estado real
+            await carregarCarrinho()
+        }
+    }
+    
+    // Função otimizada para diminuir quantidade (instantânea)
     async function diminuirQuantidade(item) {
         if (item.quantity <= 1) return
+        
         const novaQuantidade = item.quantity - 1
-        await atualizarQuantidade(item.product_id, novaQuantidade)
+        
+        // Atualizar UI instantaneamente
+        const itemIndex = itensCarrinho.value.findIndex(cartItem => cartItem.product_id === item.product_id)
+        if (itemIndex !== -1) {
+            itensCarrinho.value[itemIndex].quantity = novaQuantidade
+        }
+        
+        // Fazer operação em background
+        try {
+            await atualizarQuantidadeCarrinho(item.product_id, novaQuantidade)
+        } catch (error) {
+            // Se falhar, sincronizar com o estado real
+            await carregarCarrinho()
+        }
     }
     
     async function limparCarrinho() {
@@ -163,6 +207,7 @@ export const useCartStore = defineStore('cart', () => {
         limparCarrinho,
         limparCarrinhoLocal,
         produtoEstaNoCarrinho,
-        toggleCarrinho
+        toggleCarrinho,
+        removerItemDoCarrinho
     }
 }) 
