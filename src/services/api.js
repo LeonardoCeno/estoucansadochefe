@@ -19,12 +19,15 @@ export async function getProdutos() {
 
 export async function login(email, password) {
   const response = await api.post('/login', { email, password })
-  const token = response.data.token
+  const { token, user } = response.data
+  
+  // Salvar token automaticamente
   if (token) {
     localStorage.setItem('token', token)
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`
   }
-  return response.data
+  
+  return { token, user }
 }
 
 export async function register(name, email, password) {
@@ -248,13 +251,13 @@ export async function excluirConta() {
   return response.data
 }
 
-// Funções de autenticação melhoradas
+// Funções de autenticação simplificadas
 export async function verifyToken() {
   try {
     const response = await api.get('/verify-token')
-    return response.data
+    return { valid: true, expiresAt: response.data }
   } catch (error) {
-    throw new Error('Token inválido')
+    return { valid: false, error: error.message }
   }
 }
 
@@ -262,8 +265,11 @@ export async function renewToken() {
   try {
     const response = await api.post('/renew-token')
     const newToken = response.data
+    
+    // Atualizar token automaticamente
     localStorage.setItem('token', newToken)
     api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`
+    
     return newToken
   } catch (error) {
     throw new Error('Erro ao renovar token')

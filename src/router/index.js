@@ -121,27 +121,21 @@ router.beforeEach(async (to, from, next) => {
   ]
   
   if (painelRoutes.includes(to.name)) {
-    const token = localStorage.getItem('token')
-    
-    if (!token) {
-      next({ name: 'Login' })
-      return
-    }
-    
-    // Configurar token no Axios se não estiver
-    if (!api.defaults.headers.common['Authorization']) {
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`
-    }
-    
-    // Só verificar token se não estiver autenticado no store
     const userStore = useUserStore()
+    
+    // Se não estiver autenticado, verificar token
     if (!userStore.isAuthenticated) {
-      try {
-        await userStore.loadUser()
-        next()
-      } catch (error) {
-        localStorage.removeItem('token')
-        delete api.defaults.headers.common['Authorization']
+      const isValid = await userStore.checkAndRenewToken()
+      
+      if (isValid) {
+        try {
+          await userStore.loadUser()
+          next()
+        } catch (error) {
+          userStore.logout()
+          next({ name: 'Login' })
+        }
+      } else {
         next({ name: 'Login' })
       }
     } else {
