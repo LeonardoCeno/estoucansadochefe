@@ -64,170 +64,86 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import api from '../services/api'
 import { useCartStore } from '../stores/cart'
+import { useFavoritesStore } from '../stores/favorites'
 import { useToast } from 'vue-toastification'
 import DISPONIVELREAL from '../components/img/DISPONIVELREAL.png'
 import INDISPONIVELREAL from '../components/img/INDISPONIVELREAL.png'
 
 const toast = useToast()
 const cartStore = useCartStore()
+const favoritesStore = useFavoritesStore()
 
-// Estados reativos
-const favoritos = ref([])
-const carregando = ref(true)
-const erro = ref('')
 const mostrarModal = ref(false)
 
-// Verificar se o usuário está logado
 const isLoggedIn = computed(() => {
     const token = localStorage.getItem('token')
-    return !!token && !!api.defaults.headers.common['Authorization']
+    return !!token
 })
 
-// Carrinho - usando o store
+const favoritos = computed(() => favoritesStore.favoritos)
+const carregando = computed(() => favoritesStore.carregando)
+const erro = computed(() => favoritesStore.erro)
 const itensCarrinho = computed(() => cartStore.itensCarrinho)
 
-// Carregar dados
 onMounted(async () => {
-    await carregarFavoritos()
+    await favoritesStore.carregarFavoritos()
     if (isLoggedIn.value) {
         await cartStore.carregarCarrinho()
     }
 })
 
-// Funções
-async function carregarFavoritos() {
-    carregando.value = true
-    erro.value = ''
-    
-    try {
-        // Simular favoritos usando localStorage
-        const favoritosStorage = localStorage.getItem('favoritos')
-        if (favoritosStorage) {
-            const favoritosIds = JSON.parse(favoritosStorage)
-            
-            // Buscar produtos da API
-            const response = await api.get('/products/user/228')
-            const todosProdutos = response.data.map(produto => ({
-                ...produto,
-                image_path: produto.image_path && !produto.image_path.startsWith('http')
-                    ? 'http://35.196.79.227:8000' + produto.image_path
-                    : produto.image_path
-            }))
-            
-            // Filtrar apenas os produtos que estão nos favoritos
-            favoritos.value = todosProdutos.filter(produto => 
-                favoritosIds.includes(produto.id)
-            )
-        } else {
-            favoritos.value = []
-        }
-    } catch (error) {
-        erro.value = 'Erro ao carregar favoritos: ' + error.message
-        toast.error('Erro ao carregar favoritos')
-    } finally {
-        carregando.value = false
-    }
-}
+const produtoEstaNoCarrinho = (produtoId) => cartStore.produtoEstaNoCarrinho(produtoId)
+const produtoEstaNosFavoritos = (produtoId) => favoritesStore.produtoEstaNosFavoritos(produtoId)
 
-
-
-// Função para verificar se um produto está no carrinho
-const produtoEstaNoCarrinho = (produtoId) => {
-    return cartStore.produtoEstaNoCarrinho(produtoId)
-}
-
-// Função para adicionar produto ao carrinho
 async function adicionarAoCarrinho(produto) {
     if (!isLoggedIn.value) {
         toast.error('Faça login para adicionar produtos ao carrinho.')
         return
     }
-    
     if (produto.stock < 1) {
         toast.error('Produto indisponível no momento.')
         return
     }
-    
-    // Verificar se produto já está no carrinho
     if (produtoEstaNoCarrinho(produto.id)) {
         toast.error('Produto já está no carrinho.')
         return
     }
-    
     try {
-        // Primeiro, garantir que o carrinho existe
-        try {
-            await api.post('/cart/')
-        } catch (cartError) {
-            // Carrinho já existe
-        }
-        
-        // Converter preço para número se for string
-        const precoUnitario = typeof produto.price === 'string' ? parseFloat(produto.price) : produto.price
-        
-        await cartStore.adicionarItem(produto.id, 1, precoUnitario)
+        try { await cartStore.adicionarItem(produto.id, 1, Number(produto.price)) } catch {}
     } catch (error) {
-        console.error('Erro ao adicionar produto:', error)
         toast.error('Erro ao adicionar produto ao carrinho.')
     }
 }
 
-// Função para remover produto do carrinho
 async function removerDoCarrinho(produto) {
     await cartStore.removerItem(produto.id)
 }
 
-// Função para remover dos favoritos
-function removerDosFavoritos(produtoId) {
-    try {
-        const favoritosStorage = localStorage.getItem('favoritos')
-        let favoritosIds = []
-        
-        if (favoritosStorage) {
-            favoritosIds = JSON.parse(favoritosStorage)
-        }
-        
-        // Remover o produto dos favoritos
-        favoritosIds = favoritosIds.filter(id => id !== produtoId)
-        localStorage.setItem('favoritos', JSON.stringify(favoritosIds))
-        
-        // Atualizar a lista de favoritos
-        favoritos.value = favoritos.value.filter(produto => produto.id !== produtoId)
-        
-        toast.success('Produto removido dos favoritos!', { timeout: 3500 })
-    } catch (error) {
-        console.error('Erro ao remover dos favoritos:', error)
-        toast.error('Erro ao remover dos favoritos.')
-    }
+async function removerDosFavoritos(produtoId) {
+    await favoritesStore.remover(produtoId)
 }
 
-// Função para mostrar modal de confirmação
+async function adicionarAosFavoritos(produtoId) {
+    await favoritesStore.adicionar(produtoId)
+}
+
 function mostrarConfirmacao() {
     mostrarModal.value = true
 }
-
-// Função para fechar modal
 function fecharModal() {
     mostrarModal.value = false
 }
-
-// Função para confirmar remoção de todos os favoritos
-function confirmarRemocao() {
+async function confirmarRemocao() {
     try {
-        // Limpar todos os favoritos do localStorage
-        localStorage.removeItem('favoritos')
-        
-        // Limpar a lista de favoritos
-        favoritos.value = []
-        
-        // Fechar modal
+        // Remover todos os favoritos do backend (um a um)
+        for (const produto of favoritos.value) {
+            await favoritesStore.remover(produto.id)
+        }
+        favoritesStore.limparFavoritosLocal()
         mostrarModal.value = false
-        
         toast.success('Todos os favoritos foram removidos!', { timeout: 3500 })
     } catch (error) {
-        console.error('Erro ao remover todos os favoritos:', error)
         toast.error('Erro ao remover todos os favoritos.')
     }
 }
