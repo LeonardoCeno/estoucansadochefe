@@ -125,11 +125,11 @@
                         </router-link>
                     </div>
                     <div class="add">
-                                                  <button @click="cartStore.toggleCarrinho(produto)">
-                              <img :src="MAISUMCARRINHO" alt="">
-                              <p>{{ cartStore.produtoEstaNoCarrinho(produto.id) ? 'Remover' : 'Adicionar' }}</p>
-                          </button>
-                          <img :src="favoritesStore.estaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="" @click="favoritesStore.toggleFavorito(produto.id)" style="cursor: pointer;" :class="{ 'coracao-favorito': favoritesStore.estaNosFavoritos(produto.id) }">
+                        <button @click="cartStore.toggleCarrinho(produto)">
+                            <img :src="MAISUMCARRINHO" alt="">
+                            <p>{{ cartStore.produtoEstaNoCarrinho(produto.id) ? 'Remover' : 'Adicionar' }}</p>
+                        </button>
+                        <img :src="favoritesStore.estaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="" @click="favoritesStore.toggleFavorito(produto.id)" style="cursor: pointer;" :class="{ 'coracao-favorito': favoritesStore.estaNosFavoritos(produto.id) }">
                     </div>
                 </div>
             </div>
@@ -1170,10 +1170,6 @@ watch(totalPaginas, (novoTotal) => {
     border-color: #adb5bd;
 }
 
-
-
-
-
 .paginacao-direita {
     display: flex;
     align-items: center;
@@ -1202,36 +1198,6 @@ watch(totalPaginas, (novoTotal) => {
         outline: none;
         border-color: #02060af5;
     }
-
-/* Estilos para links dos produtos */
-.produto-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-    transition: transform 0.2s ease;
-}
-
-.produto-link:hover {
-    transform: translateY(-2px);
-}
-
-.produto-link h4 {
-    color: #333;
-    transition: color 0.2s ease;
-}
-
-.produto-link:hover h4 {
-    color: #4f79a3;
-}
-
-.produto-link p {
-    color: #666;
-    transition: color 0.2s ease;
-}
-
-.produto-link:hover p {
-    color: #4f79a3;
-}
 
 @media (max-width: 768px) {
     .paginacao-container {

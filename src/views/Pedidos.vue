@@ -91,6 +91,11 @@
                             </div>
                         </div>
 
+                        <div class="pedido-total">
+                            <p class="total-label">Total do Pedido:</p>
+                            <p class="total-valor">R$ {{ formatarPreco(calcularTotalPedido(pedido)) }}</p>
+                        </div>
+
                         <div class="pedido-acoes">
                             <button 
                                 v-if="pedido.status === 'PENDING'"
@@ -167,7 +172,7 @@ const contadorEntregues = computed(() => {
 })
 
 const contadorCancelados = computed(() => {
-    return pedidos.value.filter(pedido => pedido.status === 'CANCELED').length
+    return pedidos.value.filter(pedido => pedido.status === 'CANCELED' || pedido.status === 'CANCELLED').length
 })
 
 // Funções
@@ -192,6 +197,15 @@ function getImageUrl(imagePath) {
     if (!imagePath) return '/placeholder-image.jpg'
     if (imagePath.startsWith('http')) return imagePath
     return `http://35.196.79.227:8000${imagePath}`
+}
+
+function calcularTotalPedido(pedido) {
+    if (!pedido.products || pedido.products.length === 0) return 0
+    
+    return pedido.products.reduce((total, produto) => {
+        const preco = parseFloat(produto.price) || 0
+        return total + preco
+    }, 0)
 }
 
 
@@ -234,6 +248,8 @@ async function confirmarCancelamento() {
         const pedido = pedidos.value.find(p => p.id === modalCancelamento.value.pedidoId)
         if (pedido) {
             pedido.status = 'CANCELLED'
+            // Forçar reatividade criando uma nova referência do array
+            pedidos.value = [...pedidos.value]
         }
         
         toast.success('Pedido cancelado com sucesso!')
@@ -529,6 +545,31 @@ onMounted(async () => {
     margin: 0;
 }
 
+.pedido-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.total-label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.total-valor {
+    font-size: 18px;
+    font-weight: bold;
+    color: #4f79a3;
+    margin: 0;
+}
+
 .pedido-acoes {
     display: flex;
     gap: 12px;
@@ -691,6 +732,12 @@ onMounted(async () => {
         gap: 10px;
     }
     
+    .pedido-total {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
     .pedido-acoes {
         flex-direction: column;
         gap: 8px;
@@ -730,6 +777,18 @@ onMounted(async () => {
     
     .produto-preco {
         font-size: 12px;
+    }
+    
+    .pedido-total {
+        padding: 10px;
+    }
+    
+    .total-label {
+        font-size: 14px;
+    }
+    
+    .total-valor {
+        font-size: 16px;
     }
     
 

@@ -305,13 +305,13 @@ const formasPagamento = ref([
         id: 'cartao',
         nome: 'Cartão de Crédito',
         descricao: 'Visa, Mastercard, Elo',
-        icone: '/src/components/img/cartao.png'
+        icone: '/src/components/img/creditoomaga.png'
     },
     {
         id: 'boleto',
         nome: 'Boleto Bancário',
         descricao: 'Vencimento em 3 dias úteis',
-        icone: '/src/components/img/cartao.png'
+        icone: '/src/components/img/boletomedonho.png'
     }
 ])
 
@@ -352,8 +352,6 @@ async function carregarEnderecos() {
         carregandoEnderecos.value = false
     }
 }
-
-
 
 // Função para carregar cupom do localStorage
 function carregarCupom() {

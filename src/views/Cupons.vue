@@ -107,7 +107,7 @@ onMounted(async () => {
 
 .lista {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     justify-items: center;
     padding: 4px;
     gap: 20px;
@@ -134,7 +134,7 @@ ul {
     font-size: 1.1rem;
     border: 1px solid #a9b5b6;
     width: 100%;
-    max-width: 400px;
+    max-width: 280px;
     min-height: 140px;
     transition: all 0.3s ease;
 }
@@ -247,6 +247,26 @@ ul {
     padding: 40px;
     color: #666;
     font-size: 1.1rem;
+}
+
+@media (max-width: 1200px) {
+    .lista {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .cupom {
+        max-width: 320px;
+    }
+}
+
+@media (max-width: 900px) {
+    .lista {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .cupom {
+        max-width: 350px;
+    }
 }
 
 @media (max-width: 768px) {
