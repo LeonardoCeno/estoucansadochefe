@@ -49,7 +49,7 @@
             type="text" 
             placeholder="Buscar produtos..." 
             v-model="termoBusca" 
-            @input="onInputBusca" 
+ 
           />
           <img src="../components/img/LupaFinal.png" alt="Buscar" />
         </div>
@@ -127,11 +127,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useToast } from 'vue-toastification'
 import api from '../services/api'
 
-const imagem = ref(null)
 const categorias = ref([])
 const mensagem = ref('')
 const toast = useToast()
@@ -140,7 +139,6 @@ const mostrarModalConfirmacao = ref(false)
 const produtoParaExcluir = ref(null)
 
 const termoBusca = ref('')
-let timeoutBusca = null
 
 const modoDesconto = ref(false)
 
@@ -197,12 +195,7 @@ const produtos = ref([])
 const carregandoProdutos = ref(true)
 const erroProdutos = ref('')
 
-// Busca
-function onInputBusca() {
-  clearTimeout(timeoutBusca)
-  timeoutBusca = setTimeout(() => {
-  }, 100)
-}
+
 
 function alternarModo() {
   modoDesconto.value = !modoDesconto.value
@@ -222,7 +215,6 @@ onMounted(async () => {
 })
 
 function onFileChange(e) {
-  imagem.value = e.target.files[0]
   imagemForm.value = e.target.files[0]
 }
 

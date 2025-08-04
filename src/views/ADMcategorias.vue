@@ -66,13 +66,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useToast } from 'vue-toastification'
 import api from '../services/api'
 
 const apiBase = 'http://35.196.79.227:8000'
 const toast = useToast()
-const imagem = ref(null)
 const mensagem = ref('')
 
 const categorias = ref([])
@@ -81,9 +80,6 @@ const erroCategorias = ref('')
 
 const editando = ref(false)
 const editId = ref(null)
-const editNome = ref('')
-const editDescricao = ref('')
-const editImagem = ref(null)
 const mensagemEdicao = ref('')
 
 const mostraFormulario = ref(false)
@@ -94,24 +90,11 @@ const nomeForm = ref('')
 const descricaoForm = ref('')
 const imagemForm = ref(null)
 
-watch(editando, (novo) => {
-    if (novo) {
-        nomeForm.value = editNome.value
-        descricaoForm.value = editDescricao.value
-        imagemForm.value = null
-    } else {
-        nomeForm.value = ''
-        descricaoForm.value = ''
-        imagemForm.value = null
-    }
-})
-
 onMounted(async () => {
     await carregarCategorias()
 })
 
 function onFileChange(e) {
-    imagem.value = e.target.files[0]
     imagemForm.value = e.target.files[0]
 }
 
@@ -176,26 +159,20 @@ function editarCategoria(cat) {
     editando.value = true
     mostraFormulario.value = false
     editId.value = cat.id
-    editNome.value = cat.name
-    editDescricao.value = cat.description
-    editImagem.value = null
-    mensagemEdicao.value = ''
     nomeForm.value = cat.name
     descricaoForm.value = cat.description
     imagemForm.value = null
+    mensagemEdicao.value = ''
     mostraFormulario.value = true
 }
 function cancelarEdicao() {
     editando.value = false
     editId.value = null
-    editNome.value = ''
-    editDescricao.value = ''
-    editImagem.value = null
-    mensagemEdicao.value = ''
-    mostraFormulario.value = false
     nomeForm.value = ''
     descricaoForm.value = ''
     imagemForm.value = null
+    mensagemEdicao.value = ''
+    mostraFormulario.value = false
 }
 
 async function atualizarCategoria() {

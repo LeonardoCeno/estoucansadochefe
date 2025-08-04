@@ -255,7 +255,6 @@ const isLoggedIn = computed(() => userStore.isAuthenticated)
 // Carrinho - usando o store
 const cartStore = useCartStore()
 const favoritesStore = useFavoritesStore()
-const itensCarrinho = computed(() => cartStore.itensCarrinho)
 
 
 
@@ -307,11 +306,7 @@ const paginasVisiveis = computed(() => {
     return paginas
 })
 
-// Função para obter quantidade de um produto no carrinho
-const getQuantidadeNoCarrinho = (produtoId) => {
-    const item = itensCarrinho.value.find(item => item.product_id === produtoId)
-    return item ? item.quantity : 0
-}
+
 const route = useRoute()
 const termoBusca = ref('')
 const isLancamentos = ref(false)
@@ -525,20 +520,7 @@ async function adicionarAoCarrinho(produto) {
         return
     }
     
-    // Verificar se produto já está no carrinho
-    if (cartStore.produtoEstaNoCarrinho(produto.id)) {
-        toast.error('Produto já está no carrinho.')
-        return
-    }
-    
     try {
-        // Primeiro, garantir que o carrinho existe
-        try {
-            await api.post('/cart/')
-        } catch (cartError) {
-            // Carrinho já existe
-        }
-        
         // Converter preço para número se for string
         const precoUnitario = typeof produto.price === 'string' ? parseFloat(produto.price) : produto.price
         

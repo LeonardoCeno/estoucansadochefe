@@ -28,24 +28,13 @@
 
 <script setup>
 import TopBar from '../components/TopBar.vue'
-import { ref, onMounted, computed } from 'vue'
+import { computed } from 'vue'
 import { useUserStore } from '../stores/user'
 
 const userStore = useUserStore()
 
 const usuario = computed(() => userStore.user || {})
 const userRole = computed(() => userStore.user?.role)
-
-onMounted(async () => {
-    // Só carregar se não estiver autenticado
-    if (!userStore.isAuthenticated) {
-        try {
-            await userStore.loadUser()
-        } catch (e) {
-            console.error('Erro ao carregar usuário:', e)
-        }
-    }
-})
 </script>
 
 <style scoped>

@@ -325,8 +325,6 @@ const busca = ref('')
 const sugestoes = ref([])
 const mostrarSugestoes = ref(false)
 let todosProdutosAdmin = []
-let timeoutBusca = null
-
 
 // simples, carrega os itens do ADM (eu)
 async function carregarProdutosAdmin() {
@@ -337,9 +335,8 @@ async function carregarProdutosAdmin() {
 
 // função async que faz o input funcionar, buscando os produtos que mais batem com o que você pesquisou
 async function onInputBusca() {
-    clearTimeout(timeoutBusca)
     await carregarProdutosAdmin()
-    timeoutBusca = setTimeout(() => {
+    setTimeout(() => {
         const termo = busca.value.toLowerCase()
         sugestoes.value = todosProdutosAdmin
             .filter(p => p.name && p.name.toLowerCase().includes(termo))
@@ -372,7 +369,6 @@ function onBlurBusca() {
         busca.value = ''
     }, 120)
 }
-
 
 //to fazendo ainda, mas aqui vai te legar pra pagina do produto q se clico
 function irParaProduto(id) {
@@ -411,9 +407,6 @@ function irParaLivros() {
 function irParaArtbooks() {
     router.push({ path: '/pesquisas', query: { categoriaId: 320 } })
 }
-function irParaOfertas() {
-    //vou por ainda
-}
 function irParaMangás() {
     router.push({ path: '/pesquisas', query: { categoriaId: 318 } })
 }
@@ -443,10 +436,6 @@ function toggleCarrinhoDropdown() {
         cartStore.carregarCarrinho()
     }
 }
-
-
-
-
 
 function verCarrinhoCompleto() {
     showCarrinhoDropdown.value = false

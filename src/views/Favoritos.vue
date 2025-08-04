@@ -71,14 +71,7 @@ const favoritesStore = useFavoritesStore()
 const mostrarModal = ref(false)
 const todosProdutos = ref([])
 
-// Verificar se o usuário está logado
-const isLoggedIn = computed(() => {
-    const token = localStorage.getItem('token')
-    return !!token && !!api.defaults.headers.common['Authorization']
-})
 
-// Carrinho - usando o store
-const itensCarrinho = computed(() => cartStore.itensCarrinho)
 
 // Computed para obter produtos completos dos favoritos
 const favoritosCompletos = computed(() => {
@@ -99,9 +92,7 @@ onMounted(async () => {
                 : produto.image_path
         }))
         
-        if (isLoggedIn.value) {
-            await cartStore.carregarCarrinho()
-        }
+        await cartStore.carregarCarrinho()
     } catch (error) {
         toast.error('Erro ao carregar produtos')
     }

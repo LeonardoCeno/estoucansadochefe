@@ -41,7 +41,6 @@
               type="text" 
               placeholder="Buscar cupons..." 
               v-model="termoBusca" 
-              @input="onInputBusca"
             />
             <img src="../components/img/LupaFinal.png" alt="Buscar" />
           </div>
@@ -117,7 +116,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useToast } from 'vue-toastification'
 import { getCupons, criarCupom, atualizarCupom, deletarCupom } from '../services/api'
 
@@ -144,8 +143,6 @@ const cupomParaExcluir = ref(null)
 
 const termoBusca = ref('')
 const statusSelecionado = ref('')
-
-let timeoutBusca = null
 
 function formatarData(data) {
   return new Date(data).toLocaleDateString('pt-BR', { 
@@ -216,11 +213,6 @@ const cuponsFiltrados = computed(() => {
   })
   return filtrados
 })
-
-function onInputBusca() {
-  clearTimeout(timeoutBusca)
-  timeoutBusca = setTimeout(() => {}, 100)
-}
 
 async function carregarCupons() {
   carregandoCupons.value = true

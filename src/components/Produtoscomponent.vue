@@ -88,7 +88,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import api from '../services/api'
-import { useToast } from 'vue-toastification'
 import { useUserStore } from '../stores/user'
 import { useCartStore } from '../stores/cart'
 import { useFavoritesStore } from '../stores/favorites'
@@ -108,24 +107,11 @@ const carregando = ref(true)
 const erro = ref(null)
 const mostrarQuantidadeObras = ref(10)
 const mostrarQuantidadeOfertas = ref(10)
+const estadoBotaoObras = ref('mais')
 const estadoBotaoOfertas = ref('mais')
-const toast = useToast()
 
 // Verificar se o usuário está logado (usando o store)
 const isLoggedIn = computed(() => userStore.isAuthenticated)
-
-// Carrinho - usando o store
-const itensCarrinho = computed(() => cartStore.itensCarrinho)
-
-
-
-// Função para obter quantidade de um produto no carrinho
-const getQuantidadeNoCarrinho = (produtoId) => {
-    const item = itensCarrinho.value.find(item => item.product_id === produtoId)
-    return item ? item.quantity : 0
-}
-
-
 
 onMounted(async () => {
     try {
@@ -141,11 +127,6 @@ onMounted(async () => {
         if (isLoggedIn.value) {
             await cartStore.carregarCarrinho()
         }
-        
-        // Escutar logout do usuário
-        window.addEventListener('user-logout', () => {
-            itensCarrinho.value = []
-        })
     } catch (e) {
         erro.value = 'Erro ao carregar produtos'
     } finally {

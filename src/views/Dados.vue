@@ -93,10 +93,9 @@ const mostrarModalExclusao = ref(false)
 const confirmandoExclusao = ref(false)
 const mensagemModal = ref('')
 
-
-
-
-
+// Refs para os inputs
+const nomeInputRef = ref(null)
+const emailInputRef = ref(null)
 const informacoesRef = ref(null)
 
 function cancelarEdicao() {
@@ -170,8 +169,6 @@ function editarNome() {
 function editarEmail() {
     editandoEmail.value = true
 }
-
-
 
 async function confirmarEdicao() {
     let alterou = false
