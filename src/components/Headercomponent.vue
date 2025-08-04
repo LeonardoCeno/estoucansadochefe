@@ -300,6 +300,17 @@ watch(isLoggedIn, (novoValor) => {
     }
 })
 
+// Watcher para recarregar carrinho quando necessário
+watch(itensCarrinho, async (novosItens, itensAnteriores) => {
+    // Se o carrinho estava vazio e agora tem itens, mas os itens não têm imagem
+    if (itensAnteriores && itensAnteriores.length === 0 && novosItens.length > 0) {
+        const itensSemImagem = novosItens.filter(item => !item.image_path || item.image_path === null)
+        if (itensSemImagem.length > 0) {
+            await cartStore.carregarCarrinho()
+        }
+    }
+})
+
 // isso aqui é pra que se o usuario estiver no painel a parte das categorias abaixo do header não aparecer (sim, é uma soluçao pra nao ter que separar ele do header pq fiz os 2 junto num outro componente 👍)
 const painelChildrenRoutes = [
     'Dados', 'Cupons', 'Pedidos', 'Favoritos', 'Enderecos', 'Carrinho',

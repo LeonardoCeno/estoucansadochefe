@@ -179,8 +179,7 @@ const isLoggedIn = computed(() => {
     return !!token && !!api.defaults.headers.common['Authorization']
 })
 
-// Variável reativa para forçar atualização dos favoritos
-const favoritosAtualizados = ref(0)
+// Removida variável desnecessária
 
 // Estado da galeria de imagens
 const imagemAtiva = ref(0)
@@ -197,9 +196,6 @@ const itensCarrinho = computed(() => cartStore.itensCarrinho)
 
 // Função para verificar se um produto está nos favoritos
 const produtoEstaNosFavoritos = (produtoId) => {
-    // Usar a variável reativa para forçar recálculo
-    favoritosAtualizados.value
-    
     const favoritosStorage = localStorage.getItem('favoritos')
     if (favoritosStorage) {
         const favoritosIds = JSON.parse(favoritosStorage)
@@ -258,23 +254,12 @@ async function adicionarAoCarrinho(produto) {
         return
     }
     
-    // Verificar se produto já está no carrinho
-    if (cartStore.produtoEstaNoCarrinho(produto.id)) {
-        toast.error('Produto já está no carrinho.')
-        return
-    }
-    
     try {
-        // Garantir que o carrinho foi carregado
-        if (!cartStore.itensCarrinho.length && !cartStore.carregando) {
-            await cartStore.carregarCarrinho()
-        }
-        
         // Converter preço para número se for string
         const precoUnitario = typeof produto.price === 'string' ? parseFloat(produto.price) : produto.price
         
         // Adicionar com a quantidade selecionada
-        await cartStore.adicionarItem(produto.id, quantidade.value, precoUnitario)
+        await cartStore.adicionarItem(produto.id, quantidade.value, precoUnitario, produto.image_path)
     } catch (error) {
         console.error('Erro ao adicionar produto:', error)
         toast.error('Erro ao adicionar produto ao carrinho.')
@@ -303,9 +288,6 @@ function toggleFavorito(produtoId) {
     }
     
     localStorage.setItem('favoritos', JSON.stringify(favoritosIds))
-    
-    // Forçar atualização da interface
-    favoritosAtualizados.value++
 }
 
 // Função para selecionar imagem na galeria

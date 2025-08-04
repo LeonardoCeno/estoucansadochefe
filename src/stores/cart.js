@@ -190,7 +190,7 @@ export const useCartStore = defineStore('cart', () => {
     }
     
     // Função para adicionar item com quantidade específica
-    async function adicionarItem(produtoId, quantidade, precoUnitario) {
+    async function adicionarItem(produtoId, quantidade, precoUnitario, imagePath = null) {
         // Validações
         if (quantidade < 1) {
             toast.error('Quantidade inválida.')
@@ -208,7 +208,7 @@ export const useCartStore = defineStore('cart', () => {
             product_id: produtoId,
             quantity: quantidade,
             unit_price: precoUnitario,
-            image_path: null // Será processado pelo carregarCarrinho
+            image_path: processarImagePath(imagePath)
         })
         toast.success('Item adicionado ao carrinho!')
         
