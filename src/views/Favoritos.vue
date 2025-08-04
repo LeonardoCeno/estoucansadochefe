@@ -43,7 +43,7 @@
                     <div class="add">
                         <button @click="cartStore.toggleCarrinho(produto)">
                             <img :src="MAISUMCARRINHO" alt="">
-                            <p>{{ produtoEstaNoCarrinho(produto.id) ? 'Remover' : 'Adicionar' }}</p>
+                            <p>{{ cartStore.produtoEstaNoCarrinho(produto.id) ? 'Remover' : 'Adicionar' }}</p>
                         </button>
                         <img src="../components/img/coraçaofav.png" alt="" @click="removerDosFavoritos(produto.id)" style="cursor: pointer;">
                     </div>
@@ -111,10 +111,7 @@ onMounted(async () => {
 
 
 
-// Função para verificar se um produto está no carrinho
-const produtoEstaNoCarrinho = (produtoId) => {
-    return cartStore.produtoEstaNoCarrinho(produtoId)
-}
+
 
 // Função para remover dos favoritos
 function removerDosFavoritos(produtoId) {

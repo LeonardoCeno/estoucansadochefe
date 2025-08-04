@@ -29,9 +29,9 @@
         <div class="add">
         <button @click="cartStore.toggleCarrinho(produto)">
             <img :src="MAISUMCARRINHO" alt="">
-            <p>{{ produtoEstaNoCarrinho(produto.id) ? 'Remover' : 'Adicionar' }}</p>
+            <p>{{ cartStore.produtoEstaNoCarrinho(produto.id) ? 'Remover' : 'Adicionar' }}</p>
         </button>
-        <img :src="produtoEstaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="" @click="toggleFavorito(produto.id)" style="cursor: pointer;" :class="{ 'coracao-favorito': produtoEstaNosFavoritos(produto.id) }">
+        <img :src="favoritesStore.estaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="" @click="favoritesStore.toggleFavorito(produto.id)" style="cursor: pointer;" :class="{ 'coracao-favorito': favoritesStore.estaNosFavoritos(produto.id) }">
         </div>
     </div>
     </div>
@@ -69,9 +69,9 @@
         <div class="add" >
         <button @click="cartStore.toggleCarrinho(produto)">
             <img :src="MAISUMCARRINHO" alt="">
-            <p>{{ produtoEstaNoCarrinho(produto.id) ? 'Remover' : 'Adicionar' }}</p>
+            <p>{{ cartStore.produtoEstaNoCarrinho(produto.id) ? 'Remover' : 'Adicionar' }}</p>
         </button>
-        <img :src="produtoEstaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="" @click="toggleFavorito(produto.id)" style="cursor: pointer;" :class="{ 'coracao-favorito': produtoEstaNosFavoritos(produto.id) }">
+        <img :src="favoritesStore.estaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="" @click="favoritesStore.toggleFavorito(produto.id)" style="cursor: pointer;" :class="{ 'coracao-favorito': favoritesStore.estaNosFavoritos(produto.id) }">
         </div>
     </div>
     </div>
@@ -117,10 +117,7 @@ const isLoggedIn = computed(() => userStore.isAuthenticated)
 // Carrinho - usando o store
 const itensCarrinho = computed(() => cartStore.itensCarrinho)
 
-// Função para verificar se um produto está no carrinho
-const produtoEstaNoCarrinho = (produtoId) => {
-    return cartStore.produtoEstaNoCarrinho(produtoId)
-}
+
 
 // Função para obter quantidade de um produto no carrinho
 const getQuantidadeNoCarrinho = (produtoId) => {
@@ -128,15 +125,7 @@ const getQuantidadeNoCarrinho = (produtoId) => {
     return item ? item.quantity : 0
 }
 
-// Função para verificar se um produto está nos favoritos
-const produtoEstaNosFavoritos = (produtoId) => {
-    return favoritesStore.estaNosFavoritos(produtoId)
-}
 
-// Função para adicionar/remover dos favoritos
-function toggleFavorito(produtoId) {
-    favoritesStore.toggleFavorito(produtoId)
-}
 
 onMounted(async () => {
     try {

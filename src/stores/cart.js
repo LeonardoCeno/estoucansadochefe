@@ -189,6 +189,43 @@ export const useCartStore = defineStore('cart', () => {
         }
     }
     
+    // Função para adicionar item com quantidade específica
+    async function adicionarItem(produtoId, quantidade, precoUnitario) {
+        // Validações
+        if (quantidade < 1) {
+            toast.error('Quantidade inválida.')
+            return
+        }
+        
+        // Verificar se produto já está no carrinho
+        if (produtoEstaNoCarrinho(produtoId)) {
+            toast.error('Produto já está no carrinho.')
+            return
+        }
+        
+        // Adicionar à lista local
+        itensCarrinho.value.push({
+            product_id: produtoId,
+            quantity: quantidade,
+            unit_price: precoUnitario,
+            image_path: null // Será processado pelo carregarCarrinho
+        })
+        toast.success('Item adicionado ao carrinho!')
+        
+        // Fazer operação em background
+        try {
+            // Garantir que o carrinho existe
+            try {
+                await api.post('/cart/')
+            } catch (cartError) {}
+            
+            await adicionarItemCarrinho(produtoId, quantidade, precoUnitario)
+        } catch (error) {
+            // Se falhar, sincronizar com o estado real
+            await carregarCarrinho()
+        }
+    }
+    
     return {
         // Estado
         itensCarrinho,
@@ -208,6 +245,7 @@ export const useCartStore = defineStore('cart', () => {
         limparCarrinhoLocal,
         produtoEstaNoCarrinho,
         toggleCarrinho,
-        removerItemDoCarrinho
+        removerItemDoCarrinho,
+        adicionarItem
     }
 }) 

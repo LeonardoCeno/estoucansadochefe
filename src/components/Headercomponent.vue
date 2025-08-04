@@ -56,7 +56,7 @@
                                     <span>Qtd: {{ item.quantity }}</span>
                                 </div>
                             </div>
-                            <button @click="removerItemCarrinhoLocal(item.product_id)" class="carrinho-remover">
+                            <button @click="cartStore.removerItemDoCarrinho(item)" class="carrinho-remover">
                                 ×
                             </button>
                         </div>
@@ -157,7 +157,7 @@
                                         <span>{{ item.quantity }}</span>
                                     </div>
                                 </div>
-                                <button @click="removerItemCarrinhoLocal(item.product_id)" class="carrinho-remover">
+                                <button @click="cartStore.removerItemDoCarrinho(item)" class="carrinho-remover">
                                     ×
                                 </button>
                             </div>
@@ -433,9 +433,7 @@ function toggleCarrinhoDropdown() {
     }
 }
 
-async function removerItemCarrinhoLocal(produtoId) {
-    await cartStore.removerItem(produtoId)
-}
+
 
 
 

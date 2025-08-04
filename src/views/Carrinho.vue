@@ -37,14 +37,14 @@
                                 <div class="item-quantidade">
                                     <div class="quantidade-controles">
                                         <button 
-                                            @click="diminuirQuantidade(item)" 
+                                            @click="cartStore.diminuirQuantidade(item)" 
                                             :disabled="item.quantity <= 1"
                                             class="btn-quantidade">
                                             -
                                         </button>
                                         <span class="quantidade-valor">{{ item.quantity }}</span>
                                         <button 
-                                            @click="aumentarQuantidade(item)" 
+                                            @click="cartStore.aumentarQuantidade(item)" 
                                             class="btn-quantidade">
                                             +
                                         </button>
@@ -54,7 +54,7 @@
                                     <p class="subtotal-valor">R$ {{ formatarPreco(item.unit_price * item.quantity) }}</p>
                                 </div>
                                 <div class="item-acoes">
-                                    <button @click="removerDoCarrinho(item)" class="btn-remover">
+                                    <button @click="cartStore.removerItemDoCarrinho(item)" class="btn-remover">
                                         ✕
                                     </button>
                                 </div>
@@ -116,7 +116,7 @@
                         </div>
                         </div>
                         <div class="resumo-acoes">
-                            <button @click="limparCarrinho" class="btn-limpar-carrinho">
+                            <button @click="cartStore.limparCarrinho" class="btn-limpar-carrinho">
                                 Limpar Carrinho
                             </button>
                             <button @click="finalizarCompra" class="btn-finalizar-compra">
@@ -171,21 +171,7 @@ function formatarPreco(preco) {
     return preco.toFixed(2).replace('.', ',')
 }
 
-async function aumentarQuantidade(item) {
-    await cartStore.aumentarQuantidade(item)
-}
 
-async function diminuirQuantidade(item) {
-    await cartStore.diminuirQuantidade(item)
-}
-
-async function removerDoCarrinho(item) {
-    await cartStore.removerItemDoCarrinho(item)
-}
-
-async function limparCarrinho() {
-    await cartStore.limparCarrinho()
-}
 
 async function aplicarCupomCodigo() {
     if (!codigoCupom.value.trim()) {

@@ -113,7 +113,7 @@
                         <div class="produto-acoes">
                             <div class="acoes-principais">
                                 <button 
-                                    v-if="!produtoEstaNoCarrinho(produto.id)" 
+                                    v-if="!cartStore.produtoEstaNoCarrinho(produto.id)" 
                                     @click="adicionarAoCarrinho(produto)"
                                     class="btn-adicionar"
                                     :disabled="produto.stock < 1">
@@ -122,7 +122,7 @@
                                 </button>
                                 <button 
                                     v-else 
-                                    @click="removerDoCarrinho(produto)" 
+                                    @click="cartStore.removerItemDoCarrinho({product_id: produto.id})" 
                                     class="btn-remover">
                                     <img src="../components/img/maisumcarrinho.png" alt="" class="carrinho-icon">
                                     <span>Remover do Carrinho</span>
@@ -173,8 +173,11 @@ const produto = ref(null)
 
 const quantidade = ref(1)
 
-// Verificação de login
-const isLoggedIn = computed(() => !!api.defaults.headers.common['Authorization'])
+// Verificação de login otimizada
+const isLoggedIn = computed(() => {
+    const token = localStorage.getItem('token')
+    return !!token && !!api.defaults.headers.common['Authorization']
+})
 
 // Variável reativa para forçar atualização dos favoritos
 const favoritosAtualizados = ref(0)
@@ -192,11 +195,6 @@ import CORACAOVAZIO from '../components/img/coraçaovazio.png'
 const cartStore = useCartStore()
 const itensCarrinho = computed(() => cartStore.itensCarrinho)
 
-// Função para verificar se um produto está no carrinho
-const produtoEstaNoCarrinho = (produtoId) => {
-    return cartStore.produtoEstaNoCarrinho(produtoId)
-}
-
 // Função para verificar se um produto está nos favoritos
 const produtoEstaNosFavoritos = (produtoId) => {
     // Usar a variável reativa para forçar recálculo
@@ -209,6 +207,10 @@ const produtoEstaNosFavoritos = (produtoId) => {
     }
     return false
 }
+
+
+
+
 
 function diminuirQuantidade() {
     if (quantidade.value > 1) {
@@ -257,22 +259,21 @@ async function adicionarAoCarrinho(produto) {
     }
     
     // Verificar se produto já está no carrinho
-    if (produtoEstaNoCarrinho(produto.id)) {
+    if (cartStore.produtoEstaNoCarrinho(produto.id)) {
         toast.error('Produto já está no carrinho.')
         return
     }
     
     try {
-        // Primeiro, garantir que o carrinho existe
-        try {
-            await api.post('/cart/')
-        } catch (cartError) {
-            // Carrinho já existe
+        // Garantir que o carrinho foi carregado
+        if (!cartStore.itensCarrinho.length && !cartStore.carregando) {
+            await cartStore.carregarCarrinho()
         }
         
         // Converter preço para número se for string
         const precoUnitario = typeof produto.price === 'string' ? parseFloat(produto.price) : produto.price
         
+        // Adicionar com a quantidade selecionada
         await cartStore.adicionarItem(produto.id, quantidade.value, precoUnitario)
     } catch (error) {
         console.error('Erro ao adicionar produto:', error)
@@ -280,10 +281,7 @@ async function adicionarAoCarrinho(produto) {
     }
 }
 
-// Função para remover produto do carrinho
-async function removerDoCarrinho(produto) {
-    await cartStore.removerItem(produto.id)
-}
+
 
 // Função para adicionar/remover dos favoritos
 function toggleFavorito(produtoId) {
@@ -326,11 +324,16 @@ function voltarPaginaAnterior() {
 }
 
 onMounted(async () => {
-    await Promise.all([
-        carregarProduto(),
-        cartStore.carregarCarrinho()
-    ])
+    // Carregar produto primeiro (prioridade)
+    await carregarProduto()
+    
+    // Carregar carrinho apenas se usuário estiver logado
+    if (isLoggedIn.value) {
+        await cartStore.carregarCarrinho()
+    }
 })
+
+
 </script>
 
 <style scoped>

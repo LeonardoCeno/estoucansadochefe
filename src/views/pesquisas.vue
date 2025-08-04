@@ -125,11 +125,11 @@
                         </router-link>
                     </div>
                     <div class="add">
-                        <button @click="cartStore.toggleCarrinho(produto)">
-                            <img :src="MAISUMCARRINHO" alt="">
-                            <p>{{ produtoEstaNoCarrinho(produto.id) ? 'Remover' : 'Adicionar' }}</p>
-                        </button>
-                        <img :src="produtoEstaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="" @click="toggleFavorito(produto.id)" style="cursor: pointer;" :class="{ 'coracao-favorito': produtoEstaNosFavoritos(produto.id) }">
+                                                  <button @click="cartStore.toggleCarrinho(produto)">
+                              <img :src="MAISUMCARRINHO" alt="">
+                              <p>{{ cartStore.produtoEstaNoCarrinho(produto.id) ? 'Remover' : 'Adicionar' }}</p>
+                          </button>
+                          <img :src="favoritesStore.estaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="" @click="favoritesStore.toggleFavorito(produto.id)" style="cursor: pointer;" :class="{ 'coracao-favorito': favoritesStore.estaNosFavoritos(produto.id) }">
                     </div>
                 </div>
             </div>
@@ -146,15 +146,15 @@
                             <p>R$ {{ produto.price }}</p>
                         </router-link>
                         <div class="add2" >
-                        <button v-if="!produtoEstaNoCarrinho(produto.id)" @click="adicionarAoCarrinho(produto)">
+                        <button v-if="!cartStore.produtoEstaNoCarrinho(produto.id)" @click="adicionarAoCarrinho(produto)">
                             <img src="../components/img/maisumcarrinho.png" alt="">
                             <p>Adicionar</p>
                         </button>
-                        <button v-else @click="removerDoCarrinho(produto)" class="remover-btn">
+                        <button v-else @click="cartStore.removerItemDoCarrinho({product_id: produto.id})" class="remover-btn">
                             <img src="../components/img/maisumcarrinho.png" alt="">
                             <p>Remover</p>
                         </button>
-                        <img :src="produtoEstaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="" @click="toggleFavorito(produto.id)" style="cursor: pointer;" :class="{ 'coracao-favorito': produtoEstaNosFavoritos(produto.id) }">
+                            <img :src="favoritesStore.estaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="" @click="favoritesStore.toggleFavorito(produto.id)" style="cursor: pointer;" :class="{ 'coracao-favorito': favoritesStore.estaNosFavoritos(produto.id) }">
                         </div>
                         </div>
                     </div>
@@ -257,20 +257,9 @@ const cartStore = useCartStore()
 const favoritesStore = useFavoritesStore()
 const itensCarrinho = computed(() => cartStore.itensCarrinho)
 
-// Função para verificar se um produto está no carrinho
-const produtoEstaNoCarrinho = (produtoId) => {
-    return cartStore.produtoEstaNoCarrinho(produtoId)
-}
 
-// Função para verificar se um produto está nos favoritos
-const produtoEstaNosFavoritos = (produtoId) => {
-    return favoritesStore.estaNosFavoritos(produtoId)
-}
 
-// Função para adicionar/remover dos favoritos
-function toggleFavorito(produtoId) {
-    favoritesStore.toggleFavorito(produtoId)
-}
+
 
 // Sistema de paginação completamente novo
 const totalPaginas = computed(() => {
@@ -537,7 +526,7 @@ async function adicionarAoCarrinho(produto) {
     }
     
     // Verificar se produto já está no carrinho
-    if (produtoEstaNoCarrinho(produto.id)) {
+    if (cartStore.produtoEstaNoCarrinho(produto.id)) {
         toast.error('Produto já está no carrinho.')
         return
     }
@@ -560,10 +549,7 @@ async function adicionarAoCarrinho(produto) {
     }
 }
 
-// Função para remover produto do carrinho
-async function removerDoCarrinho(produto) {
-    await cartStore.removerItem(produto.id)
-}
+
 
 // Funções de paginação simplificadas
 function irParaPagina(pagina) {
