@@ -282,30 +282,6 @@ if (token) {
   api.defaults.headers.common['Authorization'] = `Bearer ${token}`
 }
 
-// Funções para descontos
-export async function getDescontos() {
-  const response = await api.get('/discounts/')
-  return response.data
-}
 
-export async function getDesconto(id) {
-  const response = await api.get(`/discounts/${id}`)
-  return response.data
-}
-
-export async function criarDesconto(dados) {
-  const response = await api.post('/discounts/', dados)
-  return response.data
-}
-
-export async function atualizarDesconto(id, dados) {
-  const response = await api.put(`/discounts/${id}`, dados)
-  return response.data
-}
-
-export async function excluirDesconto(id) {
-  const response = await api.delete(`/discounts/${id}`)
-  return response.data
-}
 
 export default api

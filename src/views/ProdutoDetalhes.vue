@@ -61,12 +61,7 @@
                         <h1 class="produto-titulo">{{ produto.name }}</h1>
                         
                         <div class="produto-preco-container">
-                            <span class="produto-preco">R$ {{ formatarPreco(produto.price) }}</span>
-                            <div v-if="produto.discounts && produto.discounts.length > 0" class="descontos">
-                                <span v-for="desconto in produto.discounts" :key="desconto.id" class="desconto-badge">
-                                    -{{ desconto.discount_percentage }}%
-                                </span>
-                            </div>
+                            <span class="produto-preco">R$ {{ produto.price }}</span>
                         </div>
                         
                         <div class="produto-categoria">
@@ -118,11 +113,19 @@
                         <div class="produto-acoes">
                             <div class="acoes-principais">
                                 <button 
-                                    @click="cartStore.toggleCarrinho(produto)"
+                                    v-if="!produtoEstaNoCarrinho(produto.id)" 
+                                    @click="adicionarAoCarrinho(produto)"
                                     class="btn-adicionar"
                                     :disabled="produto.stock < 1">
-                                    <img :src="MAISUMCARRINHO" alt="">
-                                    <p>{{ produtoEstaNoCarrinho(produto.id) ? 'Remover' : 'Adicionar' }}</p>
+                                    <img src="../components/img/maisumcarrinho.png" alt="" class="carrinho-icon">
+                                    <span>Adicionar ao Carrinho</span>
+                                </button>
+                                <button 
+                                    v-else 
+                                    @click="removerDoCarrinho(produto)" 
+                                    class="btn-remover">
+                                    <img src="../components/img/maisumcarrinho.png" alt="" class="carrinho-icon">
+                                    <span>Remover do Carrinho</span>
                                 </button>
                                 
                                 <button 
@@ -158,7 +161,6 @@ import Header from '../components/Headercomponent.vue'
 import Footer from '../components/Footercomponent.vue'
 import api, { getProduto } from '../services/api'
 import { useCartStore } from '../stores/cart'
-import { useFavoritesStore } from '../stores/favorites'
 
 const route = useRoute()
 const router = useRouter()
@@ -175,7 +177,7 @@ const quantidade = ref(1)
 const isLoggedIn = computed(() => !!api.defaults.headers.common['Authorization'])
 
 // Variável reativa para forçar atualização dos favoritos
-
+const favoritosAtualizados = ref(0)
 
 // Estado da galeria de imagens
 const imagemAtiva = ref(0)
@@ -185,16 +187,9 @@ import DISPONIVELREAL from '../components/img/DISPONIVELREAL.png'
 import INDISPONIVELREAL from '../components/img/INDISPONIVELREAL.png'
 import CORACAOFAV from '../components/img/coraçaofav.png'
 import CORACAOVAZIO from '../components/img/coraçaovazio.png'
-import MAISUMCARRINHO from '../components/img/maisumcarrinho.png'
-
-// Funções
-function formatarPreco(preco) {
-    return parseFloat(preco).toFixed(2).replace('.', ',')
-}
 
 // Carrinho - usando o store
 const cartStore = useCartStore()
-const favoritesStore = useFavoritesStore()
 const itensCarrinho = computed(() => cartStore.itensCarrinho)
 
 // Função para verificar se um produto está no carrinho
@@ -204,7 +199,15 @@ const produtoEstaNoCarrinho = (produtoId) => {
 
 // Função para verificar se um produto está nos favoritos
 const produtoEstaNosFavoritos = (produtoId) => {
-    return favoritesStore.estaNosFavoritos(produtoId)
+    // Usar a variável reativa para forçar recálculo
+    favoritosAtualizados.value
+    
+    const favoritosStorage = localStorage.getItem('favoritos')
+    if (favoritosStorage) {
+        const favoritosIds = JSON.parse(favoritosStorage)
+        return favoritosIds.includes(produtoId)
+    }
+    return false
 }
 
 function diminuirQuantidade() {
@@ -284,7 +287,27 @@ async function removerDoCarrinho(produto) {
 
 // Função para adicionar/remover dos favoritos
 function toggleFavorito(produtoId) {
-    favoritesStore.toggleFavorito(produtoId)
+    const favoritosStorage = localStorage.getItem('favoritos')
+    let favoritosIds = []
+    
+    if (favoritosStorage) {
+        favoritosIds = JSON.parse(favoritosStorage)
+    }
+    
+    if (produtoEstaNosFavoritos(produtoId)) {
+        // Remover dos favoritos
+        favoritosIds = favoritosIds.filter(id => id !== produtoId)
+        toast.success('Produto removido dos favoritos!', { timeout: 3500 })
+    } else {
+        // Adicionar aos favoritos
+        favoritosIds.push(produtoId)
+        toast.success('Produto adicionado aos favoritos!', { timeout: 3500 })
+    }
+    
+    localStorage.setItem('favoritos', JSON.stringify(favoritosIds))
+    
+    // Forçar atualização da interface
+    favoritosAtualizados.value++
 }
 
 // Função para selecionar imagem na galeria
@@ -513,19 +536,7 @@ onMounted(async () => {
     color: #4f79a3;
 }
 
-.descontos {
-    display: flex;
-    gap: 8px;
-}
 
-.desconto-badge {
-    background: #e11d48;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: bold;
-}
 
 .produto-categoria, .produto-estoque {
     display: flex;

@@ -1,90 +1,54 @@
 <template>
   <div class="tudo">
-    <!-- Formulário de Produto -->
-    <div v-if="productsStore.mostraFormulario && !discountsStore.modoDesconto" class="criacao-form-wrapper">
+    <div v-if="mostraFormulario" class="criacao-form-wrapper">
       <div class="criacao-form">
-        <h2>{{ productsStore.editando ? 'Editar Produto' : 'Criar Produto' }}</h2>
-        <form @submit.prevent="productsStore.editando ? productsStore.atualizarProduto() : productsStore.criarProduto()">
+        <h2>{{ editando ? 'Editar Produto' : 'Criar Produto' }}</h2>
+        <form @submit.prevent="editando ? atualizarProduto() : criarProduto()">
           <div>
             <label>Nome:</label>
-            <input v-model="productsStore.nomeForm" required />
+            <input v-model="nomeForm" required />
           </div>
           <div>
             <label>Descrição:</label>
-            <textarea v-model="productsStore.descricaoForm" required></textarea>
+            <textarea v-model="descricaoForm" required></textarea>
           </div>
           <div class="linha-dupla">
             <div class="campo-metade">
               <label>Preço:</label>
-              <input type="number" v-model.number="productsStore.precoForm" min="0" step="0.01" required />
+              <input type="number" v-model.number="precoForm" min="0" step="0.01" required />
             </div>
             <div class="campo-metade">
               <label>Estoque:</label>
-              <input type="number" v-model.number="productsStore.estoqueForm" min="0" required />
+              <input type="number" v-model.number="estoqueForm" min="0" required />
             </div>
           </div>
           <div>
             <label>Categoria:</label>
-            <select v-model="productsStore.categoriaIdForm" required>
+            <select v-model="categoriaIdForm" required>
               <option value="" disabled>Selecione</option>
-              <option v-for="cat in productsStore.categorias" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
+              <option v-for="cat in categorias" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
             </select>
           </div>
           <div>
             <label>Imagem:</label>
             <input type="file" @change="onFileChange" accept="image/*" />
           </div>
-          <button type="submit">{{ productsStore.editando ? 'Salvar' : 'Criar Produto' }}</button>
-          <button type="button" @click="productsStore.editando ? productsStore.cancelarEdicao() : productsStore.fecharFormulario()">Cancelar</button>
+          <button type="submit">{{ editando ? 'Salvar' : 'Criar Produto' }}</button>
+          <button type="button" @click="editando ? cancelarEdicao() : fecharFormulario()">Cancelar</button>
         </form>
-        <p v-if="productsStore.editando ? productsStore.mensagemEdicao : productsStore.mensagem">{{ productsStore.editando ? productsStore.mensagemEdicao : productsStore.mensagem }}</p>
+        <p v-if="editando ? mensagemEdicao : mensagem">{{ editando ? mensagemEdicao : mensagem }}</p>
       </div>
     </div>
-
-    <!-- Formulário de Desconto -->
-    <div v-if="discountsStore.mostraFormularioDesconto" class="criacao-form-wrapper">
-      <div class="criacao-form">
-        <h2>{{ discountsStore.editandoDesconto ? 'Editar Desconto' : 'Criar Desconto' }}</h2>
-        <form @submit.prevent="discountsStore.editandoDesconto ? discountsStore.atualizarDescontoLocal() : discountsStore.criarDescontoLocal()">
-          <div>
-            <label>Descrição:</label>
-            <input v-model="discountsStore.descricaoDescontoForm" required />
-          </div>
-          <div>
-            <label>Percentual de Desconto (%):</label>
-            <input type="number" v-model.number="discountsStore.percentualDescontoForm" min="0" max="100" required />
-          </div>
-          <div class="linha-dupla">
-            <div class="campo-metade">
-              <label>Data de Início:</label>
-              <input type="datetime-local" v-model="discountsStore.dataInicioForm" required />
-            </div>
-            <div class="campo-metade">
-              <label>Data de Fim:</label>
-              <input type="datetime-local" v-model="discountsStore.dataFimForm" required />
-            </div>
-          </div>
-          <div v-if="discountsStore.produtoSelecionado">
-            <label>Produto Selecionado:</label>
-            <p class="produto-selecionado">{{ discountsStore.produtoSelecionado.name }}</p>
-          </div>
-          <button type="submit">{{ discountsStore.editandoDesconto ? 'Salvar' : 'Criar Desconto' }}</button>
-          <button type="button" @click="discountsStore.editandoDesconto ? discountsStore.cancelarEdicaoDesconto() : discountsStore.fecharFormularioDesconto()">Cancelar</button>
-        </form>
-        <p v-if="discountsStore.editandoDesconto ? discountsStore.mensagemEdicaoDesconto : discountsStore.mensagemDesconto">{{ discountsStore.editandoDesconto ? discountsStore.mensagemEdicaoDesconto : discountsStore.mensagemDesconto }}</p>
-      </div>
-    </div>
-
     <div class="produtos" >
       <div class="titulo-container">
-      <h3 class="titulo-principal">{{ discountsStore.modoDesconto ? 'Descontos' : 'Produtos' }}</h3>
+      <h3 class="titulo-principal">{{ modoDesconto ? 'Descontos' : 'Produtos' }}</h3>
       </div>
       <div class="busca-container">
         <div class="input-busca">
           <input 
             type="text" 
             placeholder="Buscar produtos..." 
-            v-model="productsStore.termoBusca" 
+            v-model="termoBusca" 
             @input="onInputBusca" 
           />
           <img src="../components/img/LupaFinal.png" alt="Buscar" />
@@ -94,7 +58,7 @@
           <div class="filtro-categorias">
             <div class="filtro-estoque">
               <label for="filtroEstoque" style="margin-right: 6px; font-size: 1rem;">Estoque:</label>
-              <select id="filtroEstoque" v-model="productsStore.estoqueSelecionado">
+              <select id="filtroEstoque" v-model="estoqueSelecionado">
                 <option value="">Indefinido</option>
                 <option value="0">0</option>
                 <option value="10-30">10-30</option>
@@ -105,68 +69,42 @@
             </div>
             <div class="filtro-categoria">
               <label for="filtroCategoria" style="margin-right: 6px; font-size: 1rem;">Categoria:</label>
-              <select id="filtroCategoria" v-model="productsStore.categoriaSelecionada">
+              <select id="filtroCategoria" v-model="categoriaSelecionada">
                 <option value="">Todas</option>
-                <option v-for="cat in productsStore.categorias" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
-              </select>
-            </div>
-            <div v-if="discountsStore.modoDesconto" class="filtro-desconto">
-              <label for="filtroDesconto" style="margin-right: 6px; font-size: 1rem;">Status:</label>
-              <select id="filtroDesconto" v-model="discountsStore.filtroDescontoSelecionado">
-                <option value="">Todos</option>
-                <option value="ativos">Ativos</option>
-                <option value="futuros">Futuros</option>
-                <option value="expirados">Expirados</option>
-                <option value="sem-desconto">Sem desconto</option>
+                <option v-for="cat in categorias" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
               </select>
             </div>
           </div>
           <div class="botoes-container">
-            <button v-if="!discountsStore.modoDesconto" class="novo-produto-btn" @click="productsStore.abrirCriacao">Novo produto</button>
-            <button v-if="discountsStore.modoDesconto" class="novo-produto-btn" @click="discountsStore.selecionandoProduto ? discountsStore.cancelarSelecao() : discountsStore.abrirCriacaoDesconto()">
-              {{ discountsStore.selecionandoProduto ? 'Cancelar' : 'Novo desconto' }}
+            <button v-if="!modoDesconto" class="novo-produto-btn" @click="abrirCriacao">Novo produto</button>
+            <button v-if="modoDesconto" class="novo-produto-btn" @click="null">
+              Novo desconto
             </button>
-            <button class="alternar-modo-btn" @click="discountsStore.alternarModo">
-              {{ discountsStore.modoDesconto ? 'Produtos' : 'Descontos' }}
+            <button class="alternar-modo-btn" @click="alternarModo">
+              {{ modoDesconto ? 'Produtos' : 'Descontos' }}
             </button>
           </div>
         </div>
-    <div v-if="productsStore.carregandoProdutos" class="loading-container">
+    <div v-if="carregandoProdutos" class="loading-container">
         <div class="loading-spinner"></div>
         <p>Carregando produtos...</p>
     </div>
-    <div v-else-if="productsStore.erroProdutos">{{ productsStore.erroProdutos }}</div>
+    <div v-else-if="erroProdutos">{{ erroProdutos }}</div>
     <div v-else>
-        <div v-if="productsStore.produtosFiltrados.length === 0">
-          <div v-if="productsStore.termoBusca">Nenhum produto encontrado para "{{ productsStore.termoBusca }}".</div>
+        <div v-if="produtosFiltrados.length === 0">
+          <div v-if="termoBusca">Nenhum produto encontrado para "{{ termoBusca }}".</div>
           <div v-else>Nenhum produto cadastrado ainda.</div>
         </div>
       <ul v-else class="lista">
-        <li v-for="produto in produtosComFiltroDesconto" :key="produto.id" 
-            class="produto" 
-            :class="{
-              'produto-sem-desconto': discountsStore.modoDesconto && discountsStore.selecionandoProduto && !discountsStore.produtoTemDesconto(produto.id),
-              'produto-com-desconto': discountsStore.modoDesconto && discountsStore.produtoTemDesconto(produto.id) && discountsStore.descontoAtivo(produto.id),
-              'produto-desconto-futuro': discountsStore.modoDesconto && discountsStore.produtoTemDesconto(produto.id) && discountsStore.descontoFuturo(produto.id),
-              'produto-desconto-expirado': discountsStore.modoDesconto && discountsStore.produtoTemDesconto(produto.id) && discountsStore.descontoExpirado(produto.id)
-            }"
-            @click="discountsStore.modoDesconto && discountsStore.selecionandoProduto ? discountsStore.selecionarProdutoParaDesconto(produto) : null">
+        <li v-for="produto in produtosFiltrados" :key="produto.id" class="produto" @click="null">
           <div class="nome-preco-imagem">
             <img v-if="produto.image_path" :src="produto.image_path" alt="Imagem do produto" class="produto-imagem" />
             <h4>{{ produto.name }}</h4>
             <p>R$ {{ produto.price }}</p>
-            <p v-if="discountsStore.modoDesconto && discountsStore.produtoTemDesconto(produto.id)" class="desconto-info">
-              Desconto: {{ discountsStore.getDescontoProduto(produto.id)?.discount_percentage }}%
-            </p>
-            <p v-if="discountsStore.modoDesconto && discountsStore.produtoTemDesconto(produto.id) && discountsStore.descontoExpirado(produto.id)" class="desconto-expirado">
-              Desconto Expirado
-            </p>
           </div>
           <div class="BTli" @click.stop>
-            <button v-if="!discountsStore.modoDesconto" @click="productsStore.editarProduto(produto)">Editar</button>
-            <button v-if="discountsStore.modoDesconto" @click="discountsStore.editarDescontoProduto(produto)">Editar</button>
-            <button v-if="!discountsStore.modoDesconto" class="excluir-btn" @click="productsStore.abrirModalExclusao(produto.id)">Excluir</button>
-            <button v-if="discountsStore.modoDesconto" class="excluir-btn" @click="discountsStore.abrirModalExclusaoDesconto(discountsStore.getDescontoProduto(produto.id)?.id)">Excluir</button>
+            <button @click="editarProduto(produto)">Editar</button>
+            <button class="excluir-btn" @click="abrirModalExclusao(produto.id)">Excluir</button>
           </div>
           <span style="font-size:12px;color:#555;">Estoque: {{ produto.stock }}</span>
         </li>
@@ -175,52 +113,89 @@
     </div>
   </div>
   
-  <!-- Modal de Confirmação para Produto -->
-  <div v-if="productsStore.mostrarModalConfirmacao" class="modal-overlay">
+  <!-- Modal de Confirmação -->
+  <div v-if="mostrarModalConfirmacao" class="modal-overlay">
       <div class="modal-confirmacao">
           <h3>Confirmar Exclusão</h3>
           <p>Tem certeza que deseja excluir este produto?</p>
           <div class="modal-botoes">
-              <button @click="productsStore.confirmarExclusao" class="btn-confirmar">Confirmar</button>
-              <button @click="productsStore.fecharModalConfirmacao" class="btn-cancelar">Cancelar</button>
-          </div>
-    </div>
-  </div>
-
-  <!-- Modal de Confirmação para Desconto -->
-  <div v-if="discountsStore.mostrarModalConfirmacaoDesconto" class="modal-overlay">
-      <div class="modal-confirmacao">
-          <h3>Confirmar Exclusão</h3>
-          <p>Tem certeza que deseja excluir este desconto?</p>
-          <div class="modal-botoes">
-              <button @click="discountsStore.confirmarExclusaoDesconto" class="btn-confirmar">Confirmar</button>
-              <button @click="discountsStore.fecharModalConfirmacaoDesconto" class="btn-cancelar">Cancelar</button>
+              <button @click="confirmarExclusao" class="btn-confirmar">Confirmar</button>
+              <button @click="fecharModalConfirmacao" class="btn-cancelar">Cancelar</button>
           </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, computed } from 'vue'
-import { useProductsStore } from '../stores/products'
-import { useDiscountsStore } from '../stores/discounts'
+import { ref, onMounted, watch, computed } from 'vue'
+import { useToast } from 'vue-toastification'
+import api from '../services/api'
 
-const productsStore = useProductsStore()
-const discountsStore = useDiscountsStore()
+const imagem = ref(null)
+const categorias = ref([])
+const mensagem = ref('')
+const toast = useToast()
+const mostraFormulario = ref(false)
+const mostrarModalConfirmacao = ref(false)
+const produtoParaExcluir = ref(null)
 
+const termoBusca = ref('')
 let timeoutBusca = null
 
-// Computed para aplicar filtro de desconto
-const produtosComFiltroDesconto = computed(() => {
-  const produtosFiltrados = productsStore.produtosFiltrados
-  const filtroDesconto = discountsStore.filtroDescontoSelecionado
-  
-  if (!discountsStore.modoDesconto || !filtroDesconto) {
-    return produtosFiltrados
+const modoDesconto = ref(false)
+
+const editando = ref(false)
+const idProduto = ref(null)
+const mensagemEdicao = ref('')
+
+const nomeForm = ref('')
+const descricaoForm = ref('')
+const precoForm = ref(0)
+const estoqueForm = ref(0)
+const categoriaIdForm = ref('')
+const imagemForm = ref(null)
+
+const categoriaSelecionada = ref('')
+const estoqueSelecionado = ref('')
+
+const produtosFiltrados = computed(() => {
+  let produtosFiltrados = produtos.value
+  if (termoBusca.value.trim()) {
+    const termo = termoBusca.value.toLowerCase().trim()
+    produtosFiltrados = produtosFiltrados.filter(produto => 
+      produto.name && produto.name.toLowerCase().includes(termo)
+    )
   }
-  
-  return productsStore.aplicarFiltroDesconto(produtosFiltrados, filtroDesconto, discountsStore)
+  if (categoriaSelecionada.value) {
+    produtosFiltrados = produtosFiltrados.filter(produto => 
+      String(produto.category_id) === String(categoriaSelecionada.value)
+    )
+  }
+  if (estoqueSelecionado.value) {
+    produtosFiltrados = produtosFiltrados.filter(produto => {
+      const estoque = produto.stock
+      switch (estoqueSelecionado.value) {
+        case '0':
+          return estoque === 0
+        case '10-30':
+          return estoque >= 10 && estoque <= 30
+        case '30-50':
+          return estoque >= 30 && estoque <= 50
+        case '50-100':
+          return estoque >= 50 && estoque <= 100
+        case '100+':
+          return estoque >= 100
+        default:
+          return true
+      }
+    })
+  }
+  return produtosFiltrados
 })
+
+const produtos = ref([])
+const carregandoProdutos = ref(true)
+const erroProdutos = ref('')
 
 // Busca
 function onInputBusca() {
@@ -229,13 +204,170 @@ function onInputBusca() {
   }, 100)
 }
 
-function onFileChange(e) {
-  productsStore.imagemForm = e.target.files[0]
+function alternarModo() {
+  modoDesconto.value = !modoDesconto.value
+  termoBusca.value = ''
+  categoriaSelecionada.value = ''
+  estoqueSelecionado.value = ''
 }
 
 onMounted(async () => {
-  await productsStore.inicializar()
+  try {
+    const { data } = await api.get('/categories/user/228')
+    categorias.value = data
+  } catch (e) {
+    mensagem.value = 'Erro ao carregar categorias.'
+  }
+  await carregarProdutos()
 })
+
+function onFileChange(e) {
+  imagem.value = e.target.files[0]
+  imagemForm.value = e.target.files[0]
+}
+
+function abrirCriacao() {
+  editando.value = false
+  mostraFormulario.value = true
+  nomeForm.value = ''
+  descricaoForm.value = ''
+  precoForm.value = 0
+  estoqueForm.value = 0
+  categoriaIdForm.value = ''
+  imagemForm.value = null
+  mensagem.value = ''
+}
+
+function fecharFormulario() {
+  mostraFormulario.value = false
+  editando.value = false
+  idProduto.value = null
+  nomeForm.value = ''
+  descricaoForm.value = ''
+  precoForm.value = 0
+  estoqueForm.value = 0
+  categoriaIdForm.value = ''
+  imagemForm.value = null
+  mensagem.value = ''
+  mensagemEdicao.value = ''
+}
+
+async function criarProduto() {
+  mensagem.value = ''
+  try {
+    const formData = new FormData()
+    formData.append('name', nomeForm.value)
+    formData.append('description', descricaoForm.value)
+    formData.append('price', precoForm.value)
+    formData.append('stock', estoqueForm.value)
+    formData.append('category_id', categoriaIdForm.value)
+    if (imagemForm.value) formData.append('image', imagemForm.value)
+    await api.post('/products/', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+    toast.success('Produto criado com sucesso!')
+    await carregarProdutos()
+    fecharFormulario()
+  } catch (e) {
+    toast.error('Erro ao criar produto.')
+  }
+}
+
+function editarProduto(produto) {
+  editando.value = true
+  mostraFormulario.value = false
+  idProduto.value = produto.id
+  mensagemEdicao.value = ''
+  nomeForm.value = produto.name
+  descricaoForm.value = produto.description
+  precoForm.value = produto.price
+  estoqueForm.value = produto.stock
+  categoriaIdForm.value = produto.category_id
+  imagemForm.value = null
+  mostraFormulario.value = true
+}
+function cancelarEdicao() {
+  editando.value = false
+  idProduto.value = null
+  mensagemEdicao.value = ''
+  mostraFormulario.value = false
+  nomeForm.value = ''
+  descricaoForm.value = ''
+  precoForm.value = 0
+  estoqueForm.value = 0
+  categoriaIdForm.value = ''
+  imagemForm.value = null
+}
+
+async function atualizarProduto() {
+  mensagemEdicao.value = ''
+  try {
+    await api.put(`/products/${idProduto.value}`, {
+      name: nomeForm.value,
+      description: descricaoForm.value,
+      price: precoForm.value,
+      category_id: categoriaIdForm.value
+    })
+    await api.put(`/products/${idProduto.value}/stock`, {
+      stock: Number(estoqueForm.value)
+    })
+    if (imagemForm.value) {
+      const formData = new FormData()
+      formData.append('image', imagemForm.value)
+      await api.put(`/products/${idProduto.value}/image`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      })
+    }
+    toast.success('Produto atualizado com sucesso!')
+    await carregarProdutos()
+    cancelarEdicao()
+  } catch (e) {
+    toast.error('Erro ao atualizar produto.')
+  }
+}
+
+function abrirModalExclusao(id) {
+  produtoParaExcluir.value = id
+  mostrarModalConfirmacao.value = true
+}
+
+async function confirmarExclusao() {
+  try {
+    await api.delete(`/products/${produtoParaExcluir.value}`)
+    toast.success('Produto excluído com sucesso!')
+    await carregarProdutos()
+    fecharModalConfirmacao()
+  } catch (e) {
+    toast.error('Erro ao excluir produto.')
+    fecharModalConfirmacao()
+  }
+}
+
+function fecharModalConfirmacao() {
+  mostrarModalConfirmacao.value = false
+  produtoParaExcluir.value = null
+}
+
+async function carregarProdutos() {
+  carregandoProdutos.value = true
+  erroProdutos.value = ''
+  try {
+    const { data } = await api.get('/products/user/228')
+    const produtosCompletos = data.map(produto => ({
+      ...produto,
+      image_path: produto.image_path 
+        ? `http://35.196.79.227:8000${produto.image_path}` 
+        : '/placeholder-image.jpg'
+    }))
+    produtos.value = produtosCompletos
+  } catch (e) {
+    erroProdutos.value = 'Erro ao carregar produtos.'
+    produtos.value = []
+  } finally {
+    carregandoProdutos.value = false
+  }
+}
+
 </script>
 
 <style scoped>
@@ -522,16 +654,14 @@ li {
 }
 
 .filtro-estoque,
-.filtro-categoria,
-.filtro-desconto {
+.filtro-categoria {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .filtro-estoque select,
-.filtro-categoria select,
-.filtro-desconto select {
+.filtro-categoria select {
   padding: 8px 12px;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -541,8 +671,7 @@ li {
 }
 
 .filtro-estoque select:focus,
-.filtro-categoria select:focus,
-.filtro-desconto select:focus {
+.filtro-categoria select:focus {
   outline: none;
   border-color: #2196F3;
   box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
@@ -589,6 +718,7 @@ li {
   height: auto;
   margin-top: 3vh;
   padding: 10px;
+  transition: all 0.3s ease;
   box-sizing: border-box;
 }
 
@@ -857,8 +987,7 @@ li {
   }
   
   .filtro-estoque label,
-  .filtro-categoria label,
-  .filtro-desconto label {
+  .filtro-categoria label {
     font-size: 0.9rem !important;
   }
 }
@@ -915,17 +1044,24 @@ li {
   }
   
   .filtro-estoque select,
-  .filtro-categoria select,
-  .filtro-desconto select {
+  .filtro-categoria select {
     padding: 5px 6px;
     font-size: 0.7rem;
     min-width: 80px;
   }
   
   .filtro-estoque label,
-  .filtro-categoria label,
-  .filtro-desconto label {
+  .filtro-categoria label {
     font-size: 0.8rem !important;
+  }
+  
+  .produto h4 {
+    font-size: 13px;
+    height: 35px;
+  }
+  
+  .nome-preco-imagem p {
+    font-size: 18px;
   }
 }
 
@@ -944,7 +1080,6 @@ li {
   .produto {
     max-width: 180px;
     padding: 6px;
-    margin-top: 1vh;
   }
   
   .nome-preco-imagem img {
@@ -958,7 +1093,7 @@ li {
   
   .input-busca {
     max-width: 250px;
-    height: 28px;
+    height: 30px;
   }
   
   .input-busca input {
@@ -966,12 +1101,12 @@ li {
   }
   
   .produtos-header {
-    gap: 8px;
+    gap: 10px;
     padding: 0 5px;
   }
   
   .filtro-categorias {
-    gap: 8px;
+    gap: 10px;
   }
   
   .novo-produto-btn,
@@ -981,16 +1116,14 @@ li {
   }
   
   .filtro-estoque select,
-  .filtro-categoria select,
-  .filtro-desconto select {
+  .filtro-categoria select {
     padding: 4px 5px;
     font-size: 0.6rem;
     min-width: 70px;
   }
   
   .filtro-estoque label,
-  .filtro-categoria label,
-  .filtro-desconto label {
+  .filtro-categoria label {
     font-size: 0.7rem !important;
   }
   
@@ -1004,92 +1137,108 @@ li {
   }
 }
 
-/* Estilos para descontos */
-.produto-sem-desconto {
-  border: 1px solid #3b82f6 !important;
-  box-shadow: 0 0 5px rgba(59, 130, 246, 0.2);
-  cursor: pointer;
+/* Mobile Muito Pequeno (360px - 320px) */
+@media (max-width: 360px) {
+  .lista {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 5px;
+    padding: 4px;
+  }
+  
+  .produto {
+    max-width: 160px;
+    padding: 5px;
+  }
+  
+  .nome-preco-imagem img {
+    width: 80px;
+    height: 120px;
+  }
+  
+  .titulo-principal {
+    font-size: 1.1rem;
+  }
+  
+  .input-busca {
+    max-width: 200px;
+    height: 28px;
+  }
+  
+  .input-busca input {
+    font-size: 11px;
+  }
+  
+  .novo-produto-btn,
+  .alternar-modo-btn {
+    padding: 3px 6px;
+    font-size: 0.6rem;
+  }
+  
+  .filtro-estoque select,
+  .filtro-categoria select {
+    padding: 3px 4px;
+    font-size: 0.5rem;
+    min-width: 60px;
+  }
+  
+  .filtro-estoque label,
+  .filtro-categoria label {
+    font-size: 0.6rem !important;
+  }
+  
+  .produto h4 {
+    font-size: 11px;
+    height: 25px;
+  }
+  
+  .nome-preco-imagem p {
+    font-size: 14px;
+  }
 }
 
-.produto-com-desconto {
-  border: 1px solid #10b981 !important;
-  box-shadow: 0 0 5px rgba(16, 185, 129, 0.2);
-}
-
-.produto-desconto-expirado {
-  border: 1px solid #ef4444 !important;
-  box-shadow: 0 0 5px rgba(239, 68, 68, 0.2);
-}
-
-.produto-desconto-futuro {
-  border: 1px solid #f59e0b !important; /* Borda laranja para descontos futuros */
-  box-shadow: 0 0 5px rgba(245, 158, 11, 0.2);
-}
-
-.desconto-info {
-  color: #10b981 !important;
-  font-weight: bold;
-  font-size: 0.9rem;
-  margin-top: 5px;
-}
-
-.desconto-expirado {
-  color: #ef4444 !important;
-  font-weight: bold;
-  font-size: 0.9rem;
-  margin-top: 5px;
-}
-
-.produto-selecionado {
-  background-color: #f3f4f6;
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #d1d5db;
-  font-weight: 500;
-  color: #374151;
-  margin: 0;
-}
-
-/* Estilos responsivos para descontos */
+/* Modal responsivo */
 @media (max-width: 768px) {
-  .produto-sem-desconto,
-  .produto-com-desconto,
-  .produto-desconto-expirado,
-  .produto-desconto-futuro {
-    border-width: 1px !important;
+  .modal-confirmacao {
+    padding: 20px;
+    max-width: 90%;
   }
   
-  .desconto-info,
-  .desconto-expirado {
-    font-size: 0.8rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .produto-sem-desconto,
-  .produto-com-desconto,
-  .produto-desconto-expirado,
-  .produto-desconto-futuro {
-    border-width: 1px !important;
+  .modal-confirmacao h3 {
+    font-size: 1.1rem;
   }
   
-  .desconto-info,
-  .desconto-expirado {
-    font-size: 0.75rem;
+  .modal-confirmacao p {
+    font-size: 0.9rem;
+  }
+  
+  .modal-botoes {
+    gap: 10px;
+  }
+  
+  .btn-confirmar,
+  .btn-cancelar {
+    padding: 8px 16px;
+    font-size: 0.9rem;
   }
 }
 
 @media (max-width: 480px) {
-  .produto-sem-desconto,
-  .produto-com-desconto,
-  .produto-desconto-expirado,
-  .produto-desconto-futuro {
-    border-width: 1px !important;
+  .modal-confirmacao {
+    padding: 15px;
   }
   
-  .desconto-info,
-  .desconto-expirado {
-    font-size: 0.7rem;
+  .modal-confirmacao h3 {
+    font-size: 1rem;
+  }
+  
+  .modal-confirmacao p {
+    font-size: 0.8rem;
+  }
+  
+  .btn-confirmar,
+  .btn-cancelar {
+    padding: 6px 12px;
+    font-size: 0.8rem;
   }
 }
 
