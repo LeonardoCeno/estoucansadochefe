@@ -32,8 +32,8 @@
                         <!-- Imagem Principal -->
                         <div class="produto-imagem-container">
                             <img :src="imagemAtiva === 1 ? produto.image_path : produto.image_path" 
-                                 :alt="produto.name" 
-                                 :class="['produto-imagem', { 'invertida': imagemAtiva === 1 }]" />
+                                    :alt="produto.name" 
+                                    :class="['produto-imagem', { 'invertida': imagemAtiva === 1 }]" />
                             <div class="status-produto">
                                 <img :src="produto.stock >= 1 ? DISPONIVELREAL : INDISPONIVELREAL" 
                                     :alt="produto.stock >= 1 ? 'Disponível' : 'Indisponível'" 
@@ -44,13 +44,13 @@
                         <!-- Miniaturas Abaixo -->
                         <div class="miniaturas-container">
                             <div class="miniatura-item" 
-                                 :class="{ 'ativo': imagemAtiva === 0 }"
-                                 @click="selecionarImagem(0)">
+                                    :class="{ 'ativo': imagemAtiva === 0 }"
+                                    @click="selecionarImagem(0)">
                                 <img :src="produto.image_path" :alt="produto.name" class="miniatura-img" />
                             </div>
                             <div class="miniatura-item" 
-                                 :class="{ 'ativo': imagemAtiva === 1 }"
-                                 @click="selecionarImagem(1)">
+                                    :class="{ 'ativo': imagemAtiva === 1 }"
+                                    @click="selecionarImagem(1)">
                                 <img :src="produto.image_path" :alt="produto.name" class="miniatura-img invertida" />
                             </div>
                         </div>
@@ -129,11 +129,11 @@
                                 </button>
                                 
                                 <button 
-                                    @click="toggleFavorito(produto.id)"
+                                    @click="favoritesStore.toggleFavorito(produto.id)"
                                     class="btn-favorito"
-                                    :class="{ 'ativo': produtoEstaNosFavoritos(produto.id) }">
-                                    <img :src="produtoEstaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="">
-                                    <span>{{ produtoEstaNosFavoritos(produto.id) ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos' }}</span>
+                                    :class="{ 'ativo': favoritesStore.estaNosFavoritos(produto.id) }">
+                                    <img :src="favoritesStore.estaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="">
+                                    <span>{{ favoritesStore.estaNosFavoritos(produto.id) ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos' }}</span>
                                 </button>
                             </div>
                         </div>
@@ -161,6 +161,7 @@ import Header from '../components/Headercomponent.vue'
 import Footer from '../components/Footercomponent.vue'
 import api, { getProduto } from '../services/api'
 import { useCartStore } from '../stores/cart'
+import { useFavoritesStore } from '../stores/favorites'
 
 const route = useRoute()
 const router = useRouter()
@@ -179,8 +180,6 @@ const isLoggedIn = computed(() => {
     return !!token && !!api.defaults.headers.common['Authorization']
 })
 
-// Removida variável desnecessária
-
 // Estado da galeria de imagens
 const imagemAtiva = ref(0)
 
@@ -190,23 +189,9 @@ import INDISPONIVELREAL from '../components/img/INDISPONIVELREAL.png'
 import CORACAOFAV from '../components/img/coraçaofav.png'
 import CORACAOVAZIO from '../components/img/coraçaovazio.png'
 
-// Carrinho - usando o store
+// Stores
 const cartStore = useCartStore()
-const itensCarrinho = computed(() => cartStore.itensCarrinho)
-
-// Função para verificar se um produto está nos favoritos
-const produtoEstaNosFavoritos = (produtoId) => {
-    const favoritosStorage = localStorage.getItem('favoritos')
-    if (favoritosStorage) {
-        const favoritosIds = JSON.parse(favoritosStorage)
-        return favoritosIds.includes(produtoId)
-    }
-    return false
-}
-
-
-
-
+const favoritesStore = useFavoritesStore()
 
 function diminuirQuantidade() {
     if (quantidade.value > 1) {
@@ -268,27 +253,7 @@ async function adicionarAoCarrinho(produto) {
 
 
 
-// Função para adicionar/remover dos favoritos
-function toggleFavorito(produtoId) {
-    const favoritosStorage = localStorage.getItem('favoritos')
-    let favoritosIds = []
-    
-    if (favoritosStorage) {
-        favoritosIds = JSON.parse(favoritosStorage)
-    }
-    
-    if (produtoEstaNosFavoritos(produtoId)) {
-        // Remover dos favoritos
-        favoritosIds = favoritosIds.filter(id => id !== produtoId)
-        toast.success('Produto removido dos favoritos!', { timeout: 3500 })
-    } else {
-        // Adicionar aos favoritos
-        favoritosIds.push(produtoId)
-        toast.success('Produto adicionado aos favoritos!', { timeout: 3500 })
-    }
-    
-    localStorage.setItem('favoritos', JSON.stringify(favoritosIds))
-}
+
 
 // Função para selecionar imagem na galeria
 function selecionarImagem(index) {
