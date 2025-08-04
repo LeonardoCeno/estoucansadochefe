@@ -116,7 +116,7 @@
                         </div>
                         </div>
                         <div class="resumo-acoes">
-                            <button @click="cartStore.limparCarrinho" class="btn-limpar-carrinho">
+                            <button @click="abrirModalLimparCarrinho" class="btn-limpar-carrinho">
                                 Limpar Carrinho
                             </button>
                             <button @click="finalizarCompra" class="btn-finalizar-compra">
@@ -129,6 +129,28 @@
                             </router-link>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Confirmação para Limpar Carrinho -->
+        <div v-if="modalLimparCarrinho.ativo" class="modal-overlay" @click="fecharModalLimparCarrinho">
+            <div class="modal-content" @click.stop>
+                <div class="modal-header">
+                    <h3>Limpar Carrinho?</h3>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja remover todos os itens do carrinho?</p>
+                    <p>Esta ação não pode ser desfeita.</p>
+                </div>
+                <div class="modal-footer">
+                    <button @click="fecharModalLimparCarrinho" class="btn-cancelar">Cancelar</button>
+                    <button 
+                        @click="confirmarLimparCarrinho" 
+                        class="btn-confirmar"
+                        :disabled="limpandoCarrinho">
+                        {{ limpandoCarrinho ? 'Limpando...' : 'Confirmar' }}
+                    </button>
                 </div>
             </div>
         </div>
@@ -150,6 +172,11 @@ const cartStore = useCartStore()
 const cupomAplicado = ref(null)
 const codigoCupom = ref('')
 const aplicandoCupom = ref(false)
+const limpandoCarrinho = ref(false)
+
+const modalLimparCarrinho = ref({
+    ativo: false
+})
 
 // Computed - usando o store
 const carregando = computed(() => cartStore.carregando)
@@ -214,6 +241,29 @@ function finalizarCompra() {
     }
     
     router.push('/checkout')
+}
+
+function abrirModalLimparCarrinho() {
+    modalLimparCarrinho.value.ativo = true
+}
+
+function fecharModalLimparCarrinho() {
+    modalLimparCarrinho.value.ativo = false
+    limpandoCarrinho.value = false
+}
+
+async function confirmarLimparCarrinho() {
+    try {
+        limpandoCarrinho.value = true
+        await cartStore.limparCarrinho()
+        toast.success('Carrinho limpo com sucesso!')
+        fecharModalLimparCarrinho()
+    } catch (error) {
+        console.error('Erro ao limpar carrinho:', error)
+        toast.error('Erro ao limpar carrinho')
+    } finally {
+        limpandoCarrinho.value = false
+    }
 }
 
 onMounted(async () => {
@@ -878,6 +928,142 @@ onMounted(async () => {
     .btn-remover {
         width: 32px;
         height: 32px;
+    }
+}
+
+/* Estilos do Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    border: 2px solid #02060af5;
+}
+
+.modal-header {
+    margin-bottom: 15px;
+}
+
+.modal-header h3 {
+    color: #e11d48;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.modal-body {
+    margin-bottom: 20px;
+}
+
+.modal-body p {
+    color: #333;
+    font-size: 14px;
+    margin: 5px 0;
+    line-height: 1.4;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-cancelar {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-cancelar:hover {
+    background-color: #5a6268;
+}
+
+.btn-confirmar {
+    background-color: #e11d48;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-confirmar:hover:not(:disabled) {
+    background-color: #c81e3a;
+}
+
+.btn-confirmar:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Responsividade do Modal */
+@media (max-width: 768px) {
+    .modal-content {
+        padding: 15px;
+        margin: 20px;
+    }
+    
+    .modal-header h3 {
+        font-size: 16px;
+    }
+    
+    .modal-body p {
+        font-size: 13px;
+    }
+    
+    .modal-footer {
+        gap: 8px;
+    }
+    
+    .btn-cancelar,
+    .btn-confirmar {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        padding: 12px;
+        margin: 15px;
+    }
+    
+    .modal-header h3 {
+        font-size: 15px;
+    }
+    
+    .modal-body p {
+        font-size: 12px;
+    }
+    
+    .btn-cancelar,
+    .btn-confirmar {
+        padding: 5px 10px;
+        font-size: 12px;
     }
 }
 </style>

@@ -129,10 +129,9 @@ export const useCartStore = defineStore('cart', () => {
         try {
             await limparCarrinhoAPI()
             itensCarrinho.value = []
-            toast.success('Carrinho limpo com sucesso!')
         } catch (error) {
             console.error('Erro ao limpar carrinho:', error)
-            toast.error('Erro ao limpar carrinho')
+            throw error
         }
     }
     
