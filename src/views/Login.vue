@@ -4,7 +4,9 @@
         <img src="../components/img/fundodologin.jpeg" alt="">
       </div>
         <div class="login-card">
-          <button class="voltar-button">VOLTAR</button>
+          <router-link to="/">
+            <button class="voltar-button">VOLTAR</button>
+          </router-link>
             <div class="logo-container">
                 <router-link to="/">
                 <img :src="logo" alt="Logo" class="login-logo" />
@@ -262,7 +264,6 @@ button {
 }
 
 button:hover:not(:disabled) {
-  transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(79,70,229,0.3);
 }
 

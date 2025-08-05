@@ -1,11 +1,12 @@
 <template>
     <TopBar />
     <header>
-        <a class="logo desktop" href="/">
-        <img src="../components/img/agrsimtabao-Photoroom.png" alt="" />
-        </a>
-        <div class="input desktop" style="position:relative;">
-            <input type="text" placeholder="Livros, Mangás, novos olhares..." v-model="busca" @input="onInputBusca" @focus="onFocusBusca" @blur="onBlurBusca" @keyup.enter="pesquisarEnter" />
+        <router-link class="logo" to="/">
+            <img src="../components/img/agrsimtabao-Photoroom.png" alt="" />
+        </router-link>
+        
+        <div class="input" style="position:relative;">
+            <input type="text" :placeholder="placeholderText" v-model="busca" @input="onInputBusca" @focus="onFocusBusca" @blur="onBlurBusca" @keyup.enter="pesquisarEnter" />
             <img src="../components/img/LupaFinal.png" alt="" />
             <div v-if="mostrarSugestoes && sugestoes.length > 0 && busca.length > 0" class="autocomplete-sugestoes" @mousedown.prevent>
                 <div class="autocomplete-titulo">
@@ -23,7 +24,8 @@
                 </div>
             </div>
         </div>
-        <div class="botoes desktop">
+        
+        <div class="botoes">
             <div class="carrinho-dropdown-wrapper" style="position: relative; display: inline-block;">
                 <button @click.stop="toggleCarrinhoDropdown">
                     <p>Carrinho</p>
@@ -77,16 +79,21 @@
                     </div>
                 </div>
             </div>
-            <button>
-                <p>Pedidos</p>
-                <img src="../components/img/listafinal.png" alt="" />
-            </button>
+            
+            <router-link to="/pedidos">
+                <button>
+                    <p>Pedidos</p>
+                    <img src="../components/img/listafinal.png" alt="" />
+                </button>
+            </router-link>
+            
             <router-link v-if="!isLoggedIn" to="/login">   
-            <button>
-                <p>Entrar</p>
-                <img src="../components/img/usuariofinal.png" alt="" />
-            </button>
+                <button>
+                    <p>Entrar</p>
+                    <img src="../components/img/usuariofinal.png" alt="" />
+                </button>
             </router-link>
+            
             <div v-else class="conta-dropdown-wrapper" @mouseenter="showDropdown = true" @mouseleave="showDropdown = false" style="position: relative; display: inline-block;">
                 <button>
                     <p>Conta</p>
@@ -96,103 +103,6 @@
                     <button @click="goToPainel">Dados</button>
                     <button @click="goToFavoritos">Favoritos</button>
                     <button @click="logout">Sair</button>
-                </div>
-            </div>
-        </div>
-        <div class="topo-mobile mobile">
-            <a class="logo" href="/">
-            <img src="../components/img/agrsimtabao-Photoroom.png" alt="" />
-            </a>
-            <div class="botoes">
-                <router-link v-if="!isLoggedIn" to="/login">   
-            <button>
-                <p>Entrar</p>
-                <img src="../components/img/usuariofinal.png" alt="" />
-            </button>
-            </router-link>
-            <div v-else class="conta-dropdown-wrapper" @mouseenter="showDropdown = true" @mouseleave="showDropdown = false" style="position: relative; display: inline-block;">
-                <button>
-                    <p>Conta</p>
-                    <img src="../components/img/usuariofinal.png" alt="" />
-                </button>
-                <div v-if="showDropdown" class="conta-dropdown-menu">
-                    <button @click="goToPainel">Dados</button>
-                    <button @click="goToFavoritos">Favoritos</button>
-                    <button @click="logout">Sair</button>
-                </div>
-            </div>
-                <button>
-                <p>Pedidos</p>
-                <img src="../components/img/listafinal.png" alt="" />
-                </button>
-                <div class="carrinho-dropdown-wrapper" style="position: relative; display: inline-block;">
-                    <button @click.stop="toggleCarrinhoDropdown">
-                        <p>Carrinho</p>
-                        <img src="../components/img/carrinhofinal.png" alt="" />
-                        <span v-if="totalItensCarrinho > 0" class="carrinho-badge">{{ totalItensCarrinho }}</span>
-                    </button>
-                    <div v-if="showCarrinhoDropdown" class="carrinho-dropdown-menu mobile" @click.stop>
-                        <div class="carrinho-header">
-                            <h4>Seu Carrinho</h4>
-                            <span v-if="totalItensCarrinho > 0" class="carrinho-total">{{ totalItensCarrinho }} item{{ totalItensCarrinho > 1 ? 's' : '' }}</span>
-                        </div>
-                        
-                        <div v-if="carregandoCarrinho" class="carrinho-carregando">
-                            <p>Carregando...</p>
-                        </div>
-                        
-                        <div v-else-if="!itensCarrinho || itensCarrinho.length === 0" class="carrinho-vazio">
-                            <img src="../components/img/carrinhofinal.png" alt="Carrinho vazio" />
-                            <p>Seu carrinho está vazio</p>
-                            <span>Adicione produtos para começar</span>
-                        </div>
-                        
-                        <div v-else class="carrinho-itens">
-                            <div v-for="item in itensCarrinho.slice(0, 3)" :key="item.id" class="carrinho-item">
-                                <img v-if="item.image_path" :src="item.image_path.startsWith('http') ? item.image_path : apiBase + item.image_path" alt="Produto" />
-                                <div class="carrinho-item-info">
-                                    <span class="carrinho-item-nome">{{ item.name }}</span>
-                                    <span class="carrinho-item-preco">R$ {{ item.unit_price }}</span>
-                                    <div class="carrinho-item-quantidade">
-                                        <span>{{ item.quantity }}</span>
-                                    </div>
-                                </div>
-                                <button @click="cartStore.removerItemDoCarrinho(item)" class="carrinho-remover">
-                                    ×
-                                </button>
-                            </div>
-                            
-                            <div v-if="itensCarrinho.length > 3" class="carrinho-mais-itens">
-                                <span>+{{ itensCarrinho.length - 3 }} mais</span>
-                            </div>
-                            
-                            <div class="carrinho-footer">
-                                <div class="carrinho-total-preco">
-                                    <span>Total: R$ {{ totalPrecoCarrinho }}</span>
-                                </div>
-                                <div class="carrinho-botoes">
-                                    <button @click="verCarrinhoCompleto" class="btn-ver-carrinho">Ver Carrinho</button>
-                                    <button @click="finalizarCompra" class="btn-finalizar">Finalizar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="input mobile" style="position:relative;">
-            <input type="text" placeholder="Pesquisar" v-model="busca" @input="onInputBusca" @focus="onFocusBusca" @blur="onBlurBusca" @keyup.enter="pesquisarEnter" />
-            <img src="../components/img/LupaFinal.png" alt="" />
-            <div v-if="mostrarSugestoes && sugestoes.length > 0" class="autocomplete-sugestoes" @mousedown.prevent>
-                <div class="autocomplete-titulo">
-                    Resultados para "{{ busca }}"
-                </div>
-                <div v-for="produto in sugestoes.slice(0, 3)" :key="produto.id" class="sugestao-item" @mousedown.prevent="irParaProduto(produto.id)">
-                    <img v-if="produto.image_path" :src="produto.image_path.startsWith('http') ? produto.image_path : apiBase + produto.image_path" alt="imagem" />
-                    <div class="sugestao-info">
-                        <span class="sugestao-nome">{{ produto.name }}</span>
-                        <span class="sugestao-preco">R$ {{ produto.price }}</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -262,6 +172,21 @@ async function carregarCategorias() {
 onMounted(() => {
     carregarCategorias()
     
+    // Função para atualizar placeholder baseado no tamanho da tela
+    const atualizarPlaceholder = () => {
+        if (window.innerWidth <= 768) {
+            placeholderText.value = 'Pesquisar'
+        } else {
+            placeholderText.value = 'Livros, Mangás, novos olhares...'
+        }
+    }
+    
+    // Atualizar placeholder inicial
+    atualizarPlaceholder()
+    
+    // Escutar mudanças no tamanho da tela
+    window.addEventListener('resize', atualizarPlaceholder)
+    
     // Escutar logout do usuário
     window.addEventListener('user-logout', () => {
         cartStore.limparCarrinhoLocal()
@@ -291,6 +216,9 @@ onUnmounted(() => {
         showCarrinhoDropdown.value = false
         showDropdown.value = false
     })
+    
+    // Remover event listener do resize
+    window.removeEventListener('resize', () => {})
 })
 
 // Watcher para limpar carrinho quando o usuário fizer logout
@@ -324,6 +252,7 @@ const esconderCategorias = computed(() => {
 const busca = ref('')
 const sugestoes = ref([])
 const mostrarSugestoes = ref(false)
+const placeholderText = ref('Livros, Mangás, novos olhares...')
 let todosProdutosAdmin = []
 
 // simples, carrega os itens do ADM (eu)
@@ -577,41 +506,25 @@ button:hover img {
     height: 24px;
 }
 
-.mobile {
-    display: none;
-}
-
 @media (max-width: 768px) {
-    .desktop {
-        display: none;
-    }
-    .mobile {
-        display: flex;
-    }
     header {
         flex-direction: column;
         align-items: center;
         gap: 15px;
     }
 
-    .topo-mobile {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        width: 90vw;
-    }
-
-    .topo-mobile .logo {
-        justify-content: flex-start;
+    .logo {
+        position: static;
         width: auto;
+        left: 0;
     }
 
-    .topo-mobile .logo img {
+    .logo img {
         height: 60px;
         filter: brightness(20%);
     }
 
-    .topo-mobile .logo img:hover {
+    .logo img:hover {
         transition: 0.4s ease-in-out;
         filter: brightness(65%);
     }
@@ -624,10 +537,13 @@ button:hover img {
         width: 75vw;
     }
 
+
+
     .botoes {
         gap: 20px;
         flex-wrap: nowrap;
         justify-content: flex-end;
+        right: 0;
     }
 
     button p {
@@ -637,15 +553,11 @@ button:hover img {
     button img {
         height: 4vh;
     }
-
-    .logo {
-        position: static;
-    }
 }
 
 /* Responsividade para tablets pequenos (600px - 767px) */
 @media (min-width: 600px) and (max-width: 767px) {
-    .topo-mobile .logo img {
+    .logo img {
         height: 50px;
     }
     
@@ -664,11 +576,11 @@ button:hover img {
 
 /* Responsividade para celulares grandes (480px - 599px) */
 @media (min-width: 480px) and (max-width: 599px) {
-    .topo-mobile .logo {
+    .logo {
         display: none; /* Oculta a logo em telas pequenas */
     }
     
-    .topo-mobile {
+    header {
         justify-content: center;
     }
     
@@ -695,12 +607,14 @@ button:hover img {
 
 /* Responsividade para celulares pequenos (320px - 479px) */
 @media (min-width: 320px) and (max-width: 479px) {
-    .topo-mobile .logo {
+    .logo {
         display: none; /* Oculta a logo em telas pequenas */
     }
     
-    .topo-mobile {
+    header {
         justify-content: center;
+        gap: 10px;
+        padding: 8px;
     }
     
     .botoes {
@@ -722,21 +636,18 @@ button:hover img {
     input {
         width: 65vw;
     }
-    
-    header {
-        gap: 10px;
-        padding: 8px;
-    }
 }
 
 /* Responsividade para celulares muito pequenos (< 320px) */
 @media (max-width: 319px) {
-    .topo-mobile .logo {
+    .logo {
         display: none; /* Oculta a logo em telas pequenas */
     }
     
-    .topo-mobile {
+    header {
         justify-content: center;
+        gap: 8px;
+        padding: 5px;
     }
     
     .botoes {
@@ -758,11 +669,6 @@ button:hover img {
     input {
         width: 60vw;
     }
-    
-    header {
-        gap: 8px;
-        padding: 5px;
-    }
 }
 
 .Categorias {
@@ -770,7 +676,7 @@ button:hover img {
     justify-content: center;
     align-items: center;
     min-height: 6vh;
-    background: #02060af5;
+    background: linear-gradient(120deg, #0d4d3dda 0%, #000000 12% ,#000000 88%, #25768ada 100%);
     font-size: 14px;
     gap: 70px;
 }
@@ -907,13 +813,15 @@ button:hover img {
     flex-direction: column;
 }
 
-.carrinho-dropdown-menu.mobile {
-    display: flex;
-    flex-direction: column;
-    top: 100px;
-    min-width: 280px;
-    max-width: 320px;
-    height: 550px;
+@media (max-width: 768px) {
+    .carrinho-dropdown-menu {
+        display: flex;
+        flex-direction: column;
+        top: 100px;
+        min-width: 280px;
+        max-width: 320px;
+        height: 550px;
+    }
 }
 
 .carrinho-header {

@@ -373,12 +373,14 @@ onMounted(async () => {
 .produto-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    justify-content: center;
     gap: 40px;
     margin-bottom: 40px;
 }
 
 .produto-imagem-area {
     display: flex;
+    align-items: end;
     flex-direction: column;
     gap: 20px;
 }
@@ -387,9 +389,11 @@ onMounted(async () => {
     display: flex;
     gap: 12px;
     justify-content: start;
+    align-self: center;
 }
 
 .miniatura-item {
+    display: flex;
     width: 80px;
     height: 80px;
     border: 2px solid #eee;
@@ -398,11 +402,13 @@ onMounted(async () => {
     overflow: hidden;
     transition: all 0.3s ease;
     background: white;
+    align-items: center;
+    justify-content: center;
 }
 
 .miniatura-item:hover {
     border-color: #4f79a3;
-    transform: scale(1.05);
+    transform: scale(1.02);
 }
 
 .miniatura-item.ativo {
@@ -411,10 +417,9 @@ onMounted(async () => {
 }
 
 .miniatura-img {
-    width: 100%;
-    height: 100%;
+    height: 80%;
+    width: auto;
     object-fit: cover;
-    border-radius: 6px;
 }
 
 .miniatura-img.invertida {
@@ -427,7 +432,8 @@ onMounted(async () => {
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    flex: 1;
+    width: 70%;
+    height: auto;
 }
 
 .produto-imagem {
@@ -639,13 +645,12 @@ onMounted(async () => {
 }
 
 .btn-remover {
-    background: #dc3545;
+    background: #4f79a3;
     color: white;
 }
 
 .btn-remover:hover {
-    background: #c82333;
-    transform: translateY(-1px);
+    background: #3a5a7a;
 }
 
 .btn-favorito {

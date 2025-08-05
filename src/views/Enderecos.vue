@@ -258,7 +258,7 @@ onMounted(carregarEnderecos)
     display: flex;
     align-items: center;
     gap: 8px;
-    background-color: #1565C0;
+    background: linear-gradient(135deg, #14323b 0%, #4f46e5 100%);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -271,8 +271,7 @@ onMounted(carregarEnderecos)
 }
 
 .btn-novo-endereco:hover {
-    background-color: #0D47A1;
-    transform: translateY(-1px);
+    box-shadow: 0 6px 10px rgba(79,70,229,0.3);
 }
 
 .btn-novo-endereco span {
