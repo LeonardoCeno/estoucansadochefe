@@ -96,6 +96,24 @@
                 </div>
             </div>
 
+            <!-- Modal de confirmação de exclusão (INDEPENDENTE) -->
+            <div v-if="modalConfirmarExclusao" class="modal-exclusao-overlay" @click.self="fecharModalConfirmarExclusao">
+                <div class="modal-exclusao-box">
+                    <div class="modal-exclusao-header">
+                        <h2>Excluir endereço?</h2>
+                        <button class="modal-exclusao-close" @click="fecharModalConfirmarExclusao">&times;</button>
+                    </div>
+                    <div class="modal-exclusao-body">
+                        <p>Tem certeza que deseja excluir este endereço?</p>
+                        <p class="modal-exclusao-warning">Esta ação não pode ser desfeita.</p>
+                    </div>
+                    <div class="modal-exclusao-footer">
+                        <button class="modal-exclusao-cancelar" @click="fecharModalConfirmarExclusao">Cancelar</button>
+                        <button class="modal-exclusao-confirmar" @click="confirmarExclusaoEndereco">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+
             <div class="enderecos-lista">
                 <div v-if="carregando" class="loading-container">
                     <div class="loading-spinner"></div>
@@ -141,6 +159,7 @@ const toast = useToast()
 const mostrarModal = ref(false)
 const modalEditar = ref(false)
 const enderecoEditando = ref({})
+const modalConfirmarExclusao = ref(false)
 
 const novoEndereco = ref({
     street: '',
@@ -195,14 +214,23 @@ async function salvarEdicaoEndereco() {
 }
 
 async function excluirEndereco(id) {
-    if (confirm('Tem certeza que deseja excluir este endereço?')) {
-        try {
-            await deletarEndereco(id)
-            toast.success('Endereço excluído com sucesso!')
-            await carregarEnderecos()
-        } catch (e) {
-            toast.error('Erro ao excluir endereço.')
-        }
+    modalConfirmarExclusao.value = true
+    // A função confirmarExclusaoEndereco será definida abaixo
+}
+
+function fecharModalConfirmarExclusao() {
+    modalConfirmarExclusao.value = false
+}
+
+async function confirmarExclusaoEndereco() {
+    try {
+        await deletarEndereco(enderecoEditando.value.id)
+        toast.success('Endereço excluído com sucesso!')
+        await carregarEnderecos()
+        fecharModalEditar() // Fechar o modal de edição após a exclusão
+        fecharModalConfirmarExclusao() // Fechar o modal de confirmação
+    } catch (e) {
+        toast.error('Erro ao excluir endereço.')
     }
 }
 
@@ -258,7 +286,7 @@ onMounted(carregarEnderecos)
     display: flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(135deg, #14323b 0%, #4f46e5 100%);
+    background: linear-gradient(135deg, #215564 0%, #4690e5 100%);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -388,7 +416,7 @@ onMounted(carregarEnderecos)
 }
 
 .btn-salvar {
-    background-color: #1565C0;
+    background: linear-gradient(135deg, #255f70 0%, #5b70e7 100%);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -400,11 +428,11 @@ onMounted(carregarEnderecos)
 }
 
 .btn-salvar:hover {
-    background-color: #0D47A1;
+    background: linear-gradient(135deg, #14323b 0%, #4678e5 100%);
 }
 
 .btn-cancelar {
-    background-color: #6c757d;
+    background: linear-gradient(135deg, #525252 0%, #797979 100%);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -416,7 +444,7 @@ onMounted(carregarEnderecos)
 }
 
 .btn-cancelar:hover {
-    background-color: #5a6268;
+    background: linear-gradient(135deg, #505050 0%, #646464 100%);
 }
 
 /* Lista de Endereços */
@@ -560,21 +588,103 @@ onMounted(carregarEnderecos)
 }
 
 .btn-edit {
-    background-color: #6c757d;
+    background: linear-gradient(135deg, #2f6f83 0%, #4698e5 100%);
     color: white;
-}
-
-.btn-edit:hover {
-    background-color: #5a6268;
 }
 
 .btn-delete {
-    background-color: #dc3545;
+    background: linear-gradient(135deg, #8b2121d0 0%, #df3737 100%);
     color: white;
 }
 
-.btn-delete:hover {
-    background-color: #c82333;
+.modal-exclusao-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(20, 20, 20, 0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+.modal-exclusao-box {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 27px rgba(0,0,0,0.18);
+    border: 2px solid #000000;
+    max-width: 370px;
+    width: 92vw;
+    padding: 28px 28px 20px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.modal-exclusao-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+.modal-exclusao-header h2 {
+    color: #e11d48;
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 0;
+}
+.modal-exclusao-close {
+    background: none;
+    border: none;
+    font-size: 1.7rem;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.modal-exclusao-close:hover {
+    color: #e11d48;
+}
+.modal-exclusao-body {
+    color: #222;
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+.modal-exclusao-warning {
+    color: #e11d48;
+    font-size: 0.98rem;
+    margin-top: 8px;
+    font-weight: 500;
+}
+.modal-exclusao-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+.modal-exclusao-cancelar {
+    background: #6c757d;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 18px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.modal-exclusao-cancelar:hover {
+    background: #495057;
+}
+.modal-exclusao-confirmar {
+    background: #e11d48;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 18px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.modal-exclusao-confirmar:hover {
+    background: #c81e3a;
 }
 
 @media (max-width: 768px) {

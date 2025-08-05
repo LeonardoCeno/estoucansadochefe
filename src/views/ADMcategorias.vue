@@ -51,8 +51,7 @@
         </div>
         </div>
     </div>
-    
-    <!-- Modal de Confirmação -->
+
     <div v-if="mostrarModalConfirmacao" class="modal-overlay">
         <div class="modal-confirmacao">
             <h3>Confirmar Exclusão</h3>
@@ -63,6 +62,7 @@
             </div>
         </div>
     </div>
+
 </template>
 
 <script setup>
@@ -124,8 +124,6 @@ async function carregarCategorias() {
     erroCategorias.value = ''
     try {
         const { data } = await api.get('/categories/user/228')
-        
-        // Para cada categoria, buscar o número de produtos
         const categoriasComProdutos = await Promise.all(
             data.map(async (cat) => {
                 try {
@@ -248,22 +246,10 @@ function abrirCriacao() {
     padding: 50px 0px 0px 70px;
 }
 
-@media (max-width: 768px) {
-    .tudo {
-        padding: 20px 15px 0px 15px;
-    }
-}
-
-@media (max-width: 480px) {
-    .tudo {
-        padding: 15px 10px 0px 10px;
-    }
-}
-
 .nova-categoria-btn {
     padding: 10px 20px;
     font-size: 1.2rem;
-    background-color: #1565C0;
+    background: linear-gradient(135deg, #2d7083 0%, #4690e5 100%);
     color: white;
     border: none;
     border-radius: 5px;
@@ -272,22 +258,8 @@ function abrirCriacao() {
     margin-bottom: 1px;
 }
 
-@media (max-width: 768px) {
-    .nova-categoria-btn {
-        padding: 8px 16px;
-        font-size: 1rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .nova-categoria-btn {
-        padding: 6px 12px;
-        font-size: 0.9rem;
-    }
-}
-
 .nova-categoria-btn:hover {
-    background-color: #0D47A1;
+    background: linear-gradient(135deg, #2d7083 0%, #3c79be 100%);
 }
 
 .criacao-form-wrapper {
@@ -314,40 +286,10 @@ function abrirCriacao() {
     border: 2px solid #02060af5;
 }
 
-@media (max-width: 768px) {
-    .criacao-form {
-        width: 95%;
-        padding: 20px;
-        margin: 10px;
-    }
-}
-
-@media (max-width: 480px) {
-    .criacao-form {
-        width: 98%;
-        padding: 15px;
-        margin: 5px;
-    }
-}
-
 .criacao-form h2 {
     font-size: 2.5rem;
     font-family: helvetica;
     margin-bottom: 20px;
-}
-
-@media (max-width: 768px) {
-    .criacao-form h2 {
-        font-size: 2rem;
-        margin-bottom: 15px;
-    }
-}
-
-@media (max-width: 480px) {
-    .criacao-form h2 {
-        font-size: 1.5rem;
-        margin-bottom: 10px;
-    }
 }
 
 .criacao-form label {
@@ -378,21 +320,6 @@ function abrirCriacao() {
     font-size: 1.1rem;
 }
 
-@media (max-width: 768px) {
-    .criacao-form button {
-        padding: 8px 16px;
-        font-size: 1rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .criacao-form button {
-        padding: 6px 12px;
-        font-size: 0.9rem;
-        margin-bottom: 5px;
-    }
-}
-
 .criacao-form button:hover {
     background-color: #0D47A1;
 }
@@ -421,28 +348,9 @@ function abrirCriacao() {
     height: 30%;
 }
 
-@media (max-width: 768px) {
-    .categorias {
-        width: 100%;
-        height: auto;
-    }
-}
-
 .botoes h3 {
     font-size: 2.5rem;
     font-family: helvetica;
-}
-
-@media (max-width: 768px) {
-    .botoes h3 {
-        font-size: 2rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .botoes h3 {
-        font-size: 1.5rem;
-    }
 }
 
 .categorias ul {
@@ -460,23 +368,6 @@ function abrirCriacao() {
     justify-content: space-between;
     font-size: 1.1rem;
     border: 1px solid #a9b5b6;
-}
-
-@media (max-width: 768px) {
-    .categorias li {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-        padding: 12px;
-        font-size: 1rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .categorias li {
-        padding: 10px;
-        font-size: 0.9rem;
-    }
 }
 
 .categorias li img {
@@ -498,22 +389,6 @@ function abrirCriacao() {
     cursor: pointer;
     font-size: 0.9rem;
     margin-left: 10px;
-}
-
-@media (max-width: 768px) {
-    .categorias li button {
-        padding: 4px 8px;
-        font-size: 0.8rem;
-        margin-left: 5px;
-    }
-}
-
-@media (max-width: 480px) {
-    .categorias li button {
-        padding: 3px 6px;
-        font-size: 0.75rem;
-        margin-left: 3px;
-    }
 }
 
 .categorias li .edit-button {
@@ -543,37 +418,10 @@ function abrirCriacao() {
     gap: 5vw;
 }
 
-@media (max-width: 768px) {
-    .BTli {
-        gap: 10px;
-        width: 100%;
-        justify-content: flex-end;
-    }
-}
-
-@media (max-width: 480px) {
-    .BTli {
-        gap: 5px;
-    }
-}
-
 .separador {
     display: flex;
     align-items: center;
     gap: 4vw;
-}
-
-@media (max-width: 768px) {
-    .separador {
-        gap: 10px;
-        width: 100%;
-    }
-}
-
-@media (max-width: 480px) {
-    .separador {
-        gap: 8px;
-    }
 }
 
 .excluir-btn {
@@ -592,30 +440,10 @@ function abrirCriacao() {
     border-bottom: 1px solid rgb(134, 134, 134);
 }
 
-@media (max-width: 768px) {
-    .botoes {
-        flex-direction: column;
-        gap: 15px;
-        align-items: flex-start;
-    }
-}
-
-@media (max-width: 480px) {
-    .botoes {
-        gap: 10px;
-    }
-}
-
 .categoria-info {
     display: flex;
     align-items: center;
     gap: 8px;
-}
-
-@media (max-width: 768px) {
-    .categoria-info {
-        gap: 6px;
-    }
 }
 
 .produtos-count {
@@ -626,13 +454,6 @@ function abrirCriacao() {
     padding: 2px 8px;
     border-radius: 12px;
     border: 1px solid #ddd;
-}
-
-@media (max-width: 768px) {
-    .produtos-count {
-        font-size: 0.8rem;
-        padding: 1px 6px;
-    }
 }
 
 .loading-container {
@@ -659,14 +480,6 @@ function abrirCriacao() {
     100% { transform: rotate(360deg); }
 }
 
-@media (max-width: 480px) {
-    .produtos-count {
-        font-size: 0.75rem;
-        padding: 1px 4px;
-    }
-}
-
-/* Modal de Confirmação */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -739,20 +552,127 @@ function abrirCriacao() {
     background-color: #545b62;
 }
 
+@media (max-width: 768px) {
+    .produtos-count {
+        font-size: 0.8rem;
+        padding: 1px 6px;
+    }
+    .tudo {
+        padding: 20px 15px 0px 15px;
+    }
+    .categoria-info {
+        gap: 6px;
+    }
+    .botoes {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    .separador {
+        gap: 10px;
+        width: 100%;
+    }
+    .BTli {
+        gap: 10px;
+        width: 100%;
+        justify-content: flex-end;
+    }
+    .categorias li button {
+        padding: 4px 8px;
+        font-size: 0.8rem;
+        margin-left: 5px;
+    }
+    .categorias li {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px;
+        font-size: 1rem;
+    }
+    .categorias {
+        width: 100%;
+        height: auto;
+    }
+    .botoes h3 {
+        font-size: 2rem;
+    }
+    .criacao-form button {
+        padding: 8px 16px;
+        font-size: 1rem;
+    }
+    .criacao-form h2 {
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+    .criacao-form {
+        width: 95%;
+        padding: 20px;
+        margin: 10px;
+    }
+    .nova-categoria-btn {
+        padding: 8px 16px;
+        font-size: 1rem;
+    }
+}
+
 @media (max-width: 480px) {
     .modal-confirmacao {
         padding: 20px;
         margin: 20px;
     }
-    
     .modal-botoes {
         flex-direction: column;
         gap: 10px;
     }
-    
     .btn-confirmar,
     .btn-cancelar {
         padding: 12px 20px;
+    }
+    .nova-categoria-btn {
+        padding: 6px 12px;
+        font-size: 0.9rem;
+    }
+    .tudo {
+        padding: 15px 10px 0px 10px;
+    }
+    .criacao-form {
+        width: 98%;
+        padding: 15px;
+        margin: 5px;
+    }
+    .criacao-form h2 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+    .criacao-form button {
+        padding: 6px 12px;
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+    }
+    .botoes h3 {
+        font-size: 1.5rem;
+    }
+    .categorias li {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+    .categorias li button {
+        padding: 3px 6px;
+        font-size: 0.75rem;
+        margin-left: 3px;
+    }
+    .BTli {
+        gap: 5px;
+    }
+    .separador {
+        gap: 8px;
+    }
+    .botoes {
+        gap: 10px;
+    }
+    .produtos-count {
+        font-size: 0.75rem;
+        padding: 1px 4px;
     }
 }
 

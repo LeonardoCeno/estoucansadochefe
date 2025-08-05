@@ -492,8 +492,6 @@ onMounted(async () => {
     color: #4f79a3;
 }
 
-
-
 .produto-categoria, .produto-estoque {
     display: flex;
     align-items: center;
@@ -539,7 +537,6 @@ onMounted(async () => {
     line-height: 1.6;
 }
 
-/* Seletor de Quantidade */
 .quantidade-container {
     margin: 24px 0;
     padding: 16px;
@@ -674,9 +671,8 @@ onMounted(async () => {
     height: 20px;
 }
 
-/* Inverter cor do ícone do carrinho */
 .carrinho-icon {
-    filter: brightness(0) invert(1);
+    filter: invert(1);
 }
 
 .voltar-container {

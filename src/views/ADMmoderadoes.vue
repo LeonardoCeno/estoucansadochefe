@@ -119,7 +119,7 @@ async function criarModerador() {
 .tudo {
     width: 100%;
     height: 100%;
-    background-color: #f8f9fa;
+    background-color: #ffffff;
     overflow-y: hidden;
     overflow-x: hidden;
     padding: 20px;
@@ -145,9 +145,9 @@ async function criarModerador() {
     justify-content: center;
     background-color: #ffffff;
     padding: 32px;
-    margin-bottom: 24px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin-bottom: 50px;
+    border-radius: 7px;
+    border-bottom: 1px solid #e1e5e9;
 }
 
 .titulo h1 {
@@ -245,7 +245,7 @@ async function criarModerador() {
 .btn-criar {
     width: 100%;
     padding: 14px 24px;
-    background-color: #1565C0;
+    background: linear-gradient(135deg, #2d7083 0%, #4690e5 100%);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -257,8 +257,8 @@ async function criarModerador() {
     min-width: 0;
 }
 
-.btn-criar:hover:not(:disabled) {
-    background-color: #0D47A1;
+.btn-criar:hover {
+    background: linear-gradient(135deg, #2d7083 0%, #3c79be 100%);
 }
 
 .btn-criar:disabled {
