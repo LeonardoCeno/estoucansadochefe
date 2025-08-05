@@ -22,9 +22,9 @@
         <div class="footer-col">
             <h4>Categorias</h4>
             <ul>
-                <router-link to="/livros"><li><a href="#">Livros</a></li></router-link>
-                <router-link to="/mangas"><li><a href="#">Mangás</a></li></router-link>
-                <router-link to="/artbooks"><li><a href="#">Artbooks</a></li></router-link>
+                <router-link to="/pesquisas?categoriaId=316"><li><a href="#">Livros</a></li></router-link>
+                <router-link to="/pesquisas?categoriaId=318"><li><a href="#">Mangás</a></li></router-link>
+                <router-link to="/pesquisas?categoriaId=320"><li><a href="#">Artbooks</a></li></router-link>
                 <router-link to="/ofertas"><li><a href="#">Ofertas</a></li></router-link>
             </ul>
         </div>

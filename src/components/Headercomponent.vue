@@ -137,6 +137,9 @@
         <router-link to="/pesquisas?categoriaId=320">
             <button> <img src="../components/img/pincel.png" alt=""> <p>Artbooks</p></button>
         </router-link>
+        <router-link to="/pesquisas?categoriaId=320">
+            <button> <img src="../components/img/ofertasfinal.png" alt=""> <p>Ofertas</p></button>
+        </router-link>
         <router-link to="/pesquisas">
             <button> <img src="../components/img/Tudofinal-Photoroom.png" alt=""> <p>Tudo</p></button>
         </router-link>
@@ -147,7 +150,6 @@
 import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
 import { buscarProdutosAdmin228 } from '../services/api'
 import { useRouter, useRoute } from 'vue-router'
-import { useToast } from 'vue-toastification'
 import { useUserStore } from '../stores/user'
 import { useCartStore } from '../stores/cart'
 import DISPONIVELREAL from './img/DISPONIVELREAL.png'
@@ -156,7 +158,6 @@ import { getCategoriasPorUsuario228 } from '../services/api'
 import TopBar from './TopBar.vue'
 
 const apiBase = 'http://35.196.79.227:8000'
-const toast = useToast()
 const userStore = useUserStore()
 const cartStore = useCartStore()
 // Função para checar se o usuário ta logado (usando o store)

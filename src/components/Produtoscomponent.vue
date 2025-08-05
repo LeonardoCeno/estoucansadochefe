@@ -2,7 +2,7 @@
 
 <div class="tudo" >
 <div class="comercial" >
-    <img src="./img/bannerbaguazera.png" alt="">
+    <img src="./img/CEHGAAAAA-Photoroom.png" alt="">
 </div>
 <div class="titulo" >
     <div class="linebranca" ></div>
@@ -216,7 +216,7 @@ function alternarOfertas() {
     justify-content: space-between;
     align-items: center;
     margin-top: 20px;
-    background-color: #4f79a3;
+    background: linear-gradient(to right,  hsl(189, 100%, 38%),  #4f96a3);
     height: 4.5rem;
     width: 100%;
     max-width: 1250px;
