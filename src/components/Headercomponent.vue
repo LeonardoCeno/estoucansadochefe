@@ -131,7 +131,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
-import api, { buscarProdutosAdmin228 } from '../services/api'
+import { buscarProdutosAdmin228 } from '../services/api'
 import { useRouter, useRoute } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { useUserStore } from '../stores/user'
@@ -360,9 +360,30 @@ function toggleCarrinhoDropdown() {
         return
     }
     
-    showCarrinhoDropdown.value = !showCarrinhoDropdown.value
-    if (showCarrinhoDropdown.value && itensCarrinho.value.length === 0) {
-        cartStore.carregarCarrinho()
+    if (!showCarrinhoDropdown.value) {
+        // Abrindo
+        showCarrinhoDropdown.value = true
+        if (itensCarrinho.value.length === 0) {
+            cartStore.carregarCarrinho()
+        }
+        // Adiciona a classe show após um pequeno delay para a animação funcionar
+        setTimeout(() => {
+            const carrinho = document.querySelector('.carrinho-dropdown-menu')
+            if (carrinho) {
+                carrinho.classList.add('show')
+            }
+        }, 10)
+    } else {
+        // Fechando com animação
+        const carrinho = document.querySelector('.carrinho-dropdown-menu')
+        if (carrinho) {
+            carrinho.classList.remove('show')
+            setTimeout(() => {
+                showCarrinhoDropdown.value = false
+            }, 300)
+        } else {
+            showCarrinhoDropdown.value = false
+        }
     }
 }
 
@@ -486,7 +507,9 @@ button {
 }
 
 .botoes button:hover {
-    color: #079ac7;
+    background: linear-gradient(to right, #4e759c, #00c3ff);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 button img {
@@ -504,170 +527,6 @@ button:hover img {
     height: 24px;
 }
 
-@media (max-width: 768px) {
-    header {
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-    }
-
-    .logo {
-        position: static;
-        width: auto;
-        left: 0;
-    }
-
-    .logo img {
-        height: 60px;
-        filter: brightness(20%);
-    }
-
-    .logo img:hover {
-        transition: 0.4s ease-in-out;
-        filter: brightness(65%);
-    }
-
-    .input {
-        width: 90vw;
-    }
-
-    input {
-        width: 75vw;
-    }
-
-
-
-    .botoes {
-        gap: 20px;
-        flex-wrap: nowrap;
-        justify-content: flex-end;
-        right: 0;
-    }
-
-    button p {
-        font-size: 14px;
-    }
-
-    button img {
-        height: 4vh;
-    }
-}
-
-/* Responsividade para tablets pequenos (600px - 767px) */
-@media (min-width: 600px) and (max-width: 767px) {
-    .logo img {
-        height: 50px;
-    }
-    
-    .botoes {
-        gap: 15px;
-    }
-    
-    button p {
-        font-size: 13px;
-    }
-    
-    .input {
-        width: 85vw;
-    }
-}
-
-/* Responsividade para celulares grandes (480px - 599px) */
-@media (min-width: 480px) and (max-width: 599px) {
-    .logo {
-        display: none; /* Oculta a logo em telas pequenas */
-    }
-    
-    header {
-        justify-content: center;
-    }
-    
-    .botoes {
-        gap: 12px;
-    }
-    
-    button p {
-        font-size: 12px;
-    }
-    
-    button img {
-        height: 3.5vh;
-    }
-    
-    .input {
-        width: 88vw;
-    }
-    
-    input {
-        width: 70vw;
-    }
-}
-
-/* Responsividade para celulares pequenos (320px - 479px) */
-@media (min-width: 320px) and (max-width: 479px) {
-    .logo {
-        display: none; /* Oculta a logo em telas pequenas */
-    }
-    
-    header {
-        justify-content: center;
-        gap: 10px;
-        padding: 8px;
-    }
-    
-    .botoes {
-        gap: 8px;
-    }
-    
-    button p {
-        font-size: 11px;
-    }
-    
-    button img {
-        height: 3vh;
-    }
-    
-    .input {
-        width: 92vw;
-    }
-    
-    input {
-        width: 65vw;
-    }
-}
-
-/* Responsividade para celulares muito pequenos (< 320px) */
-@media (max-width: 319px) {
-    .logo {
-        display: none; /* Oculta a logo em telas pequenas */
-    }
-    
-    header {
-        justify-content: center;
-        gap: 8px;
-        padding: 5px;
-    }
-    
-    .botoes {
-        gap: 5px;
-    }
-    
-    button p {
-        font-size: 10px;
-    }
-    
-    button img {
-        height: 2.5vh;
-    }
-    
-    .input {
-        width: 95vw;
-    }
-    
-    input {
-        width: 60vw;
-    }
-}
 
 .Categorias {
     display: flex;
@@ -701,11 +560,13 @@ button:hover img {
 }
 
 .Categorias button:hover {
-    color: #63b3ed;
-    background: transparent;
+    background: linear-gradient(to right, #4e759c, #00c3ff);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .Categorias button:hover img {
+    transition: 0s;
     filter: brightness(0) invert(45%) sepia(65%) saturate(1050%) hue-rotate(160deg) brightness(115%) contrast(100%);
 }
 
@@ -764,7 +625,9 @@ button:hover img {
     border-radius: 0px;
 }
 .categorias-dropdown-menu button:hover {
-    color: #079ac7;
+    background: linear-gradient(to right, #4e759c, #00c3ff);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     transition: 0s;
     border-top: 0.5px solid grey;
     border-bottom: 0.5px solid grey;
@@ -785,14 +648,14 @@ button:hover img {
     color: #ffffff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     border-radius: 50%;
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
-    min-width: 22px;
+    min-width: 20px;
 }
 
 .carrinho-dropdown-menu {
@@ -800,30 +663,26 @@ button:hover img {
     top: 80px;
     right: 20px;
     background: #fff;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #0000007e;
     border-radius: 8px;
-    min-width: 380px;
-    max-width: 480px;
+    min-width: 320px;
+    max-width: 400px;
     height: auto;
-    min-height: 600px;
+    min-height: 500px;
     z-index: 1000;
     padding: 0;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    transform: translateX(110%);
+    transition: transform 0.3s ease;
 }
 
-@media (max-width: 768px) {
-    .carrinho-dropdown-menu {
-        display: flex;
-        flex-direction: column;
-        top: 100px;
-        min-width: 320px;
-        max-width: 380px;
-        height: 650px;
-    }
+.carrinho-dropdown-menu.show {
+    transform: translateX(0);
 }
+
 
 .carrinho-header {
     background: #f8f9fa;
@@ -1021,11 +880,67 @@ button:hover img {
     background: #02060ac2;
 }
 
-/* Responsividade do carrinho */
+/* ===== RESPONSIVIDADE SIMPLES ===== */
+
+/* Tablet e Mobile (768px e abaixo) */
 @media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px 20px;
+    }
+    
+    .logo {
+        position: static;
+        left: 0;
+    }
+    
+    .logo img {
+        height: 60px;
+    }
+    
+    .input {
+        width: 90vw;
+        max-width: 600px;
+    }
+    
+    input {
+        width: 75vw;
+    }
+    
+    .botoes {
+        gap: 15px;
+        right: 0;
+    }
+    
+    .botoes p {
+        font-size: 14px;
+    }
+    
+    .botoes img {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .Categorias {
+        gap: 40px;
+        padding: 0 10px;
+    }
+    
+    .Categorias button {
+        font-size: 13px;
+        padding: 4px 8px;
+    }
+    
+    .Categorias img {
+        width: 10px;
+        min-width: 10px;
+    }
+    
+    /* Carrinho */
     .carrinho-dropdown-menu {
         right: 10px;
-        min-width: 260px;
+        min-width: 280px;
         max-width: calc(100vw - 20px);
     }
     
@@ -1036,9 +951,69 @@ button:hover img {
     .carrinho-botoes {
         flex-direction: column;
     }
+    
+    /* Dropdowns */
+    .conta-dropdown-menu,
+    .categorias-dropdown-menu {
+        min-width: 140px;
+    }
+    
+    .conta-dropdown-menu button,
+    .categorias-dropdown-menu button {
+        width: 140px;
+        font-size: 14px;
+    }
 }
 
+/* Mobile Pequeno (480px e abaixo) */
 @media (max-width: 480px) {
+    .logo {
+        display: none;
+    }
+    
+    header {
+        gap: 10px;
+        padding: 10px 15px;
+    }
+    
+    .botoes {
+        gap: 10px;
+    }
+    
+    .botoes p {
+        font-size: 12px;
+    }
+    
+    .botoes img {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .input {
+        width: 92vw;
+    }
+    
+    input {
+        width: 70vw;
+        font-size: 14px;
+    }
+    
+    .Categorias {
+        gap: 25px;
+        padding: 0 5px;
+    }
+    
+    .Categorias button {
+        font-size: 12px;
+        padding: 3px 6px;
+    }
+    
+    .Categorias img {
+        width: 8px;
+        min-width: 8px;
+    }
+    
+    /* Carrinho */
     .carrinho-dropdown-menu {
         right: 5px;
         left: 5px;
@@ -1061,6 +1036,75 @@ button:hover img {
     
     .carrinho-footer {
         padding: 12px;
+    }
+    
+    /* Dropdowns */
+    .conta-dropdown-menu,
+    .categorias-dropdown-menu {
+        min-width: 120px;
+    }
+    
+    .conta-dropdown-menu button,
+    .categorias-dropdown-menu button {
+        width: 120px;
+        font-size: 13px;
+    }
+}
+
+/* Mobile Muito Pequeno (320px e abaixo) */
+@media (max-width: 320px) {
+    header {
+        gap: 8px;
+        padding: 8px 10px;
+    }
+    
+    .botoes {
+        gap: 8px;
+    }
+    
+    .botoes p {
+        font-size: 11px;
+    }
+    
+    .botoes img {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .input {
+        width: 95vw;
+    }
+    
+    input {
+        width: 65vw;
+        font-size: 13px;
+    }
+    
+    .Categorias {
+        gap: 20px;
+        padding: 0 3px;
+    }
+    
+    .Categorias button {
+        font-size: 11px;
+        padding: 2px 4px;
+    }
+    
+    .Categorias img {
+        width: 6px;
+        min-width: 6px;
+    }
+    
+    /* Dropdowns */
+    .conta-dropdown-menu,
+    .categorias-dropdown-menu {
+        min-width: 100px;
+    }
+    
+    .conta-dropdown-menu button,
+    .categorias-dropdown-menu button {
+        width: 100px;
+        font-size: 12px;
     }
 }
 
@@ -1130,175 +1174,6 @@ button:hover img {
     margin-top: 2px;
     text-align: left;
     letter-spacing: 0.01em;
-}
-
-@media (max-width: 950px) {
-    .Categorias button:nth-child(3),
-    .Categorias button:nth-child(5),
-    .Categorias button:nth-child(4) {
-        display: none;
-    }
-    .Categorias {
-        gap: 55px;
-    }
-}
-
-@media (max-width: 768px) {
-    .Categorias {
-        gap: 40px;
-        padding: 0 10px;
-    }
-    
-    .Categorias button {
-        padding: 4px 8px;
-        font-size: 13px;
-    }
-    
-    .Categorias img {
-        width: 10px;
-        min-width: 10px;
-    }
-}
-
-@media (max-width: 550px) {
-    .Categorias button:nth-child(6) {
-        display: none;
-    }
-    .Categorias {
-        gap: 30px;
-        padding: 0 5px;
-    }
-    
-    .Categorias button {
-        padding: 3px 6px;
-        font-size: 12px;
-    }
-    
-    .Categorias img {
-        width: 8px;
-        min-width: 8px;
-    }
-}
-
-@media (max-width: 480px) {
-    .Categorias {
-        gap: 20px;
-        padding: 0 3px;
-    }
-    
-    .Categorias button {
-        padding: 2px 4px;
-        font-size: 11px;
-    }
-    
-    .Categorias img {
-        width: 6px;
-        min-width: 6px;
-    }
-}
-
-@media (max-width: 320px) {
-    .Categorias {
-        gap: 15px;
-        padding: 0 2px;
-    }
-    
-    .Categorias button {
-        padding: 1px 3px;
-        font-size: 10px;
-    }
-    
-    .Categorias img {
-        width: 5px;
-        min-width: 5px;
-    }
-}
-
-
-
-/* Responsividade para TVs grandes (1200px+) */
-@media (min-width: 1200px) {
-    header {
-        gap: 8vw;
-        padding: 15px 30px;
-    }
-    
-    .input {
-        width: 35vw;
-        max-width: 800px;
-    }
-    
-    .logo img {
-        height: 110px;
-    }
-    
-    .botoes {
-        gap: 15px;
-    }
-    
-    .botoes p {
-        font-size: 18px;
-    }
-    
-    .botoes img {
-        width: 28px;
-        height: 28px;
-    }
-}
-
-/* Responsividade para monitores médios (992px - 1199px) */
-@media (min-width: 992px) and (max-width: 1199px) {
-    header {
-        gap: 7vw;
-        padding: 12px 25px;
-    }
-    
-    .input {
-        width: 38vw;
-        max-width: 750px;
-    }
-    
-    .logo img {
-        height: 100px;
-    }
-    
-    .botoes {
-        gap: 12px;
-    }
-    
-    .botoes p {
-        font-size: 17px;
-    }
-}
-
-/* Responsividade para tablets grandes (768px - 991px) */
-@media (min-width: 768px) and (max-width: 991px) {
-    header {
-        gap: 6vw;
-        padding: 10px 20px;
-    }
-    
-    .input {
-        width: 42vw;
-        max-width: 650px;
-    }
-    
-    .logo img {
-        height: 85px;
-    }
-    
-    .botoes {
-        gap: 10px;
-    }
-    
-    .botoes p {
-        font-size: 16px;
-    }
-    
-    .botoes img {
-        width: 22px;
-        height: 22px;
-    }
 }
 
 </style>
