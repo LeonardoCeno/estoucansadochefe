@@ -8,9 +8,9 @@
             class="carousel-slide"
             v-for="(banner, i) in banners"
             :key="i">
-            <a :href="bannerLinks[i]" class="banner-link">
+            <div class="banner-link" @click="navegarParaBanner(i)">
                 <img class="img1" :src="banner" alt="banner" />
-            </a>
+            </div>
         </div>
         </div>
         <div class="indicators">
@@ -86,6 +86,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import banner1 from './img/bannervariante.png'
 import banner2 from './img/bannerprincipal2.jpg'
 import banner3 from './img/bannerprincipal3.png'
@@ -109,6 +110,12 @@ const voltar = () => {
 
 const irParaBanner = (index) => {
     indexAtual.value = index
+}
+
+const router = useRouter()
+
+const navegarParaBanner = (index) => {
+    router.push(bannerLinks[index])
 }
 
 onMounted(() => {
@@ -139,7 +146,7 @@ onUnmounted(() => {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background-color: #ffffff;
+    background: white;
     width: 100%;
     max-width: 100%;
 }
@@ -153,7 +160,7 @@ onUnmounted(() => {
 .carrosel-linha img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    margin-right: 25px;
 }
 
 .carrosel-movimento {

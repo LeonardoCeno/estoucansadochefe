@@ -48,8 +48,8 @@
                         <span>Adicione produtos para começar</span>
                     </div>
                     
-                    <div v-else class="carrinho-itens">
-                        <div v-for="item in itensCarrinho.slice(0, 3)" :key="item.id" class="carrinho-item">
+                                            <div v-else class="carrinho-itens">
+                        <div v-for="item in itensCarrinho.slice(0, 4)" :key="item.id" class="carrinho-item">
                             <img v-if="item.image_path" :src="item.image_path.startsWith('http') ? item.image_path : apiBase + item.image_path" alt="Produto" />
                             <div class="carrinho-item-info">
                                 <span class="carrinho-item-nome">{{ item.name }}</span>
@@ -63,8 +63,8 @@
                             </button>
                         </div>
                         
-                        <div v-if="itensCarrinho.length > 3" class="carrinho-mais-itens">
-                            <span>+{{ itensCarrinho.length - 3 }} mais</span>
+                        <div v-if="itensCarrinho.length > 4" class="carrinho-mais-itens">
+                            <span>+{{ itensCarrinho.length - 4 }} mais</span>
                         </div>
                         
                         <div class="carrinho-footer">
@@ -379,8 +379,6 @@ function finalizarCompra() {
 </script>
 
 <style scoped>
-
-
 
 header {
     display: flex;
@@ -783,16 +781,18 @@ button:hover img {
     top: -5px;
     right: -5px;
     background: #e74c3c;
-    color: white;
+    border: 1px solid #ffffff;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     border-radius: 50%;
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
+    font-size: 14px;
     font-weight: bold;
-    min-width: 18px;
+    min-width: 22px;
 }
 
 .carrinho-dropdown-menu {
@@ -802,9 +802,10 @@ button:hover img {
     background: #fff;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
-    min-width: 320px;
-    max-width: 400px;
+    min-width: 380px;
+    max-width: 480px;
     height: auto;
+    min-height: 600px;
     z-index: 1000;
     padding: 0;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -818,9 +819,9 @@ button:hover img {
         display: flex;
         flex-direction: column;
         top: 100px;
-        min-width: 280px;
-        max-width: 320px;
-        height: 550px;
+        min-width: 320px;
+        max-width: 380px;
+        height: 650px;
     }
 }
 
