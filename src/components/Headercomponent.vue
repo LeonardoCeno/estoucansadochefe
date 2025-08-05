@@ -34,7 +34,10 @@
                 </button>
                 <div v-if="showCarrinhoDropdown" class="carrinho-dropdown-menu" @click.stop>
                     <div class="carrinho-header">
-                        <h4>Seu Carrinho</h4>
+                        <div class="carrinho-header-left">
+                            <button @click="toggleCarrinhoDropdown" class="carrinho-close-btn">×</button>
+                            <h4>Seu Carrinho</h4>
+                        </div>
                         <span v-if="totalItensCarrinho > 0" class="carrinho-total">{{ totalItensCarrinho }} item{{ totalItensCarrinho > 1 ? 's' : '' }}</span>
                     </div>
                     
@@ -117,15 +120,26 @@
                 <div v-for="cat in categorias" :key="cat.id">
                     <button @click="irParaCategoria(cat.id)"> {{ cat.name }} </button>
                 </div>
-                <button @click="irParaPesquisas">Tudo</button>
+                <router-link to="/pesquisas">
+                    <button>Tudo</button>
+                </router-link>
             </div>
         </div>
-        <button @click="irParaLancamentos"> <img src="../components/img/Lancamentofinal-Photoroom.png" alt=""> <p>Lançamentos</p></button>
-        <button @click="irParaLivros"> <img src="../components/img//Livrofinalverdadeiro-Photoroom.png" alt=""> <p>Livros</p></button>
-        <button @click="irParaMangás"> <img src="../components/img/mangáfinal.png" alt=""> <p>Mangás</p></button>
-        <button @click="irParaArtbooks" > <img src="../components/img/pincel.png" alt=""> <p>Artbooks</p></button>
-        <button @click="irParaOfertas"> <img src="../components/img/ofertasfinal.png" alt=""> <p>Ofertas</p></button>
-        <button @click="irParaPesquisas"> <img src="../components/img/Tudofinal-Photoroom.png" alt=""> <p>Tudo</p></button>
+        <router-link to="/pesquisas?lancamentos=1">
+            <button> <img src="../components/img/Lancamentofinal-Photoroom.png" alt=""> <p>Lançamentos</p></button>
+        </router-link>
+        <router-link to="/pesquisas?categoriaId=316">
+            <button> <img src="../components/img//Livrofinalverdadeiro-Photoroom.png" alt=""> <p>Livros</p></button>
+        </router-link>
+        <router-link to="/pesquisas?categoriaId=318">
+            <button> <img src="../components/img/mangáfinal.png" alt=""> <p>Mangás</p></button>
+        </router-link>
+        <router-link to="/pesquisas?categoriaId=320">
+            <button> <img src="../components/img/pincel.png" alt=""> <p>Artbooks</p></button>
+        </router-link>
+        <router-link to="/pesquisas">
+            <button> <img src="../components/img/Tudofinal-Photoroom.png" alt=""> <p>Tudo</p></button>
+        </router-link>
     </div>
 </template>
 
@@ -324,23 +338,7 @@ function goToFavoritos() {
     showDropdown.value = false
     router.push('/favoritos')
 }
-function irParaPesquisas() {
-    router.push('/pesquisas')
-}
-function irParaLancamentos() {
-    router.push({ path: '/pesquisas', query: { lancamentos: 1 } })
-}
-function irParaLivros() {
-    router.push({ path: '/pesquisas', query: { categoriaId: 316 } })
-}
-function irParaArtbooks() {
-    router.push({ path: '/pesquisas', query: { categoriaId: 320 } })
-}
-function irParaMangás() {
-    router.push({ path: '/pesquisas', query: { categoriaId: 318 } })
-}
-// aqui criei um "genérico" pras categorias dentro da div que abre quando voce passa o mouse em cima da "Categorias" do header
-// nao repliquei em todas pra que o Categorias (falo da div toda) fique fixo, e pra funções futuras
+
 function irParaCategoria(id) {
     router.push({ path: '/pesquisas', query: { categoriaId: id } })
 }
@@ -692,6 +690,31 @@ button:hover img {
     justify-content: space-between;
     align-items: center;
     flex-shrink: 0;
+}
+
+.carrinho-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.carrinho-close-btn {
+    background: none;
+    border: none;
+    color: #646464;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    line-height: 1;
+    min-width: auto;
+    height: auto;
+}
+
+.carrinho-close-btn:hover {
+    background-color: #fdf2f2;
 }
 
 .carrinho-header h4 {

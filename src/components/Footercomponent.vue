@@ -22,10 +22,10 @@
         <div class="footer-col">
             <h4>Categorias</h4>
             <ul>
-                <li><a href="#">Livros</a></li>
-                <li><a href="#">Mangás</a></li>
-                <li><a href="#">Artbooks</a></li>
-                <li><a href="#">Ofertas</a></li>
+                <router-link to="/livros"><li><a href="#">Livros</a></li></router-link>
+                <router-link to="/mangas"><li><a href="#">Mangás</a></li></router-link>
+                <router-link to="/artbooks"><li><a href="#">Artbooks</a></li></router-link>
+                <router-link to="/ofertas"><li><a href="#">Ofertas</a></li></router-link>
             </ul>
         </div>
         <div class="footer-col">
