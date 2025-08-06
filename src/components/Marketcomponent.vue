@@ -141,6 +141,17 @@ onUnmounted(() => {
 
 <style scoped>
 
+/* Esconder apenas scroll horizontal, manter vertical */
+:global(body) {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+:global(html) {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
 .carrosel-container {
     padding-top: 10px;
     display: flex;
@@ -188,41 +199,19 @@ onUnmounted(() => {
 .banner {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     flex-direction: column;
     position: relative;
     overflow: hidden;
-    background-color: rgb(255, 255, 255);
-    height: 45vh;
-    min-height: 300px;
-    width: 100%;
-    max-width: 100%;
-    transition: all 0.3s ease;
-}
-
-@media (max-width: 1300px) {
-    .banner {
-        max-width: 98%;
-    }
-}
-@media (max-width: 900px) {
-    .banner {
-        min-height: 180px;
-        height: 32vw;
-        max-width: 100%;
-    }
-}
-@media (max-width: 650px) {
-    .banner {
-        min-height: 120px;
-        height: 28vw;
-        max-width: 100%;
-    }
-}
-@media (max-width: 480px) {
-    .banner {
-        display: none;
-    }
+    background-color: #ffffff00;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    height: 290px;
+    min-height: 260px;
+    max-height: 325px;
+    margin-top: 15px;
+    padding-bottom: 25px;
+    box-sizing: border-box;
 }
 
 .carousel-wrapper {
@@ -248,41 +237,61 @@ onUnmounted(() => {
 .img1 {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
-    background-size: contain;
-    transform: translateY(-10px);
-    overflow: hidden;
+    background-size: cover;
+    display: block;
 }
 
 .nav {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 2rem;
-    background: rgba(0, 0, 0, 0.623);
-    color: white;
+    font-size: 2.2rem;
+    background: transparent;
     border: none;
     padding: 8px 8px;
     cursor: pointer;
-    z-index: 10;
+    z-index: 9999;
+    border-radius: 7px;
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+    text-shadow: 
+        -2px -2px 0 white,
+        2px -2px 0 white,
+        -2px 2px 0 white,
+        2px 2px 0 white;
 }
 
 .left {
     left: 10px;
+    color: #4db377;
+}
+
+.left:hover {
+    color: #3d8f5e;
 }
 
 .right {
     right: 10px;
+    color: #6bb5d1;
+}
+
+.right:hover {
+    color: #5496b3;
 }
 
 .indicators {
     display: flex;
     gap: 12px;
-    z-index: 10;
+    z-index: 999999;
     align-items: center;
     position: relative;
-    bottom: 0.2rem;
+    bottom: -0.6rem;
     left: 0.1rem;
 }
 
@@ -294,6 +303,7 @@ onUnmounted(() => {
     cursor: pointer;
     transition: all 0.3s ease;
     padding: 0;
+    z-index: 9999;
 }
 
 .indicator:hover {
@@ -332,6 +342,7 @@ onUnmounted(() => {
     box-sizing: border-box;
     border-radius: 10px;
     transition: max-width 0.2s, min-width 0.2s, padding 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .item img {
@@ -359,95 +370,279 @@ onUnmounted(() => {
     font-weight: bold;
 }
 
-@media (max-width: 768px) {
-    .indicators {
-    display: none;
-    }
-    
-    .beneficios {
-    padding: 30px 16px;
-    gap: 20px;
-    }
-    
-    .item {
-    padding: 20px 10px;
-    }
-    
-    .item img {
-    width: 48px;
-    height: 48px;
-    }
-    
-    .item img[src*="caminhao"] {
-    transform: scale(1.8);
-    }
-    
-    .texto {
-    font-size: 0.9rem;
+
+
+.espaco2 {
+    background-color:  #02060af5;
+    min-height: 0.2vh;
+}
+
+/* ================================
+    MEDIA QUERIES - RESPONSIVIDADE
+   ================================ */
+
+/* Desktop grande (>1400px) */
+@media (min-width: 1401px) {
+    .banner {
+        height: 310px;
+        min-height: 290px;
+        margin-top: 20px;
     }
 }
 
-@media (max-width: 650px) {
+/* Desktop médio (1200px - 1400px) */
+@media (max-width: 1400px) {
+    .banner {
+        height: 270px;
+        min-height: 245px;
+        margin-top: 18px;
+    }
+}
+
+/* Tablet grande (1024px - 1200px) */
+@media (max-width: 1200px) {
+    .banner {
+        height: 245px;
+        min-height: 210px;
+        margin-top: 15px;
+    }
+}
+
+/* Tablet médio (768px - 1024px) */
+@media (max-width: 1024px) {
+    .banner {
+        height: 225px;
+        min-height: 180px;
+        margin-top: 12px;
+    }
+}
+
+/* Mobile/Tablet (768px) */
+@media (max-width: 768px) {
+    .carrosel-container {
+        padding-top: 8px;
+    }
+    
+    .carrosel-linha img {
+        margin-right: 20px;
+    }
+    
+    .banner {
+        height: 195px;
+        min-height: 160px;
+        margin-top: 10px;
+    }
     
     .indicators {
+        display: none;
+    }
+    
+    .beneficios {
+        padding: 25px 12px;
+        gap: 15px;
+        justify-content: center;
+        max-width: 600px;
+        margin: 10px auto;
+    }
+    
+    .item {
+        flex: 1 1 calc(50% - 15px);
+        max-width: calc(50% - 15px);
+        min-width: 140px;
+        padding: 18px 8px;
+    }
+    
+    .item img {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .item img[src*="caminhao"] {
+        transform: scale(1.6);
+    }
+    
+    .texto {
+        font-size: 0.85rem;
+    }
+}
+
+/* Mobile médio (480px - 650px) */
+@media (max-width: 650px) {
+    .banner {
+        height: 160px;
+        min-height: 130px;
+        margin-top: 8px;
+    }
+    
+    .indicators {
+        display: flex;
         bottom: 10px;
         gap: 8px;
     }
     
     .indicator {
-        width: 8px;
-        height: 8px;
+        width: 7px;
+        height: 7px;
     }
     
     .beneficios {
-        padding: 20px 12px;
-        gap: 16px;
+        padding: 20px 10px;
+        gap: 12px;
+        max-width: 500px;
     }
     
     .item {
-        padding: 16px 8px;
+        flex: 1 1 calc(50% - 12px);
+        max-width: calc(50% - 12px);
+        min-width: 120px;
+        padding: 15px 6px;
     }
     
     .item img {
-        width: 40px;
-        height: 40px;
+        width: 38px;
+        height: 38px;
+        margin-bottom: 12px;
     }
     
     .item img[src*="caminhao"] {
-        transform: scale(1.5);
+        transform: scale(1.4);
     }
     
     .texto {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
+        line-height: 1.3;
     }
 }
 
+/* Mobile pequeno (320px - 480px) */
 @media (max-width: 480px) {
+    .carrosel-container {
+        padding-top: 5px;
+    }
+    
+    .carrosel-linha img {
+        margin-right: 15px;
+    }
+    
+    .carrosel-movimento {
+        animation: deslizar-linha 100s linear infinite;
+    }
+    
+    .carrosel-movimento2 {
+        animation: deslizar-linha2 80s linear infinite;
+    }
+    
+    .banner {
+        height: 140px;
+        min-height: 115px;
+        margin-top: 8px;
+    }
+    
+    .nav {
+        font-size: 1.8rem;
+        width: 48px;
+        height: 48px;
+        padding: 6px;
+    }
+    
+    .left {
+        left: 8px;
+        color: #4db377;
+    }
+    
+    .left:hover {
+        color: #3d8f5e;
+    }
+    
+    .right {
+        right: 8px;
+        color: #6bb5d1;
+    }
+    
+    .right:hover {
+        color: #5496b3;
+    }
+    
+    .indicators {
+        gap: 8px;
+        bottom: 0.5rem;
+    }
+    
+    .indicator {
+        width: 6px;
+        height: 6px;
+    }
+    
     .beneficios {
-        padding: 16px 8px;
-        gap: 12px;
+        padding: 15px 8px;
+        gap: 10px;
+        max-width: 400px;
     }
     
     .item {
-        padding: 12px 6px;
+        flex: 1 1 calc(50% - 10px);
+        max-width: calc(50% - 10px);
+        min-width: 100px;
+        padding: 12px 4px;
     }
     
     .item img {
         width: 32px;
         height: 32px;
+        margin-bottom: 10px;
     }
     
     .item img[src*="caminhao"] {
-        transform: scale(1.3);
+        transform: scale(1.2);
     }
     
     .texto {
         font-size: 0.7rem;
+        line-height: 1.2;
     }
 }
 
-.espaco2 {
-    background-color:  #02060af5;
-    min-height: 0.2vh;
+/* Mobile muito pequeno (<320px) */
+@media (max-width: 320px) {
+    .banner {
+        height: 130px;
+        min-height: 105px;
+        margin-top: 6px;
+    }
+    
+    .nav {
+        font-size: 1.4rem;
+        width: 42px;
+        height: 42px;
+        padding: 4px;
+    }
+    
+    .left {
+        left: 5px;
+        color: #4db377;
+    }
+    
+    .left:hover {
+        color: #3d8f5e;
+    }
+    
+    .right {
+        right: 5px;
+        color: #6bb5d1;
+    }
+    
+    .right:hover {
+        color: #5496b3;
+    }
+    
+    .indicators {
+        gap: 6px;
+        bottom: 0.3rem;
+    }
+    
+    .indicator {
+        width: 5px;
+        height: 5px;
+    }
 }
 </style>

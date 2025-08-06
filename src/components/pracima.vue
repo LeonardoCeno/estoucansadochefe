@@ -24,6 +24,7 @@ function voltarAoTopo() {
     position: fixed;
     right: 22px;
     top: 80%;
+    z-index: 9999;
 }
 
 .colunas h1 {
@@ -36,7 +37,6 @@ function voltarAoTopo() {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 9999;
     background: #222;
     color: #fff;
     border: none;

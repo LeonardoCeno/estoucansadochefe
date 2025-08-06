@@ -532,7 +532,7 @@ button:hover img {
     justify-content: center;
     align-items: center;
     min-height: 6vh;
-    background: linear-gradient(120deg, #0d4d3dda 0%, #000000 12% ,#000000 88%, #25768ada 100%);
+    background: linear-gradient(120deg, #0d4d3dda 0%, #000000 10% ,#000000 90%, #25768ada 100%);
     font-size: 14px;
     gap: 70px;
 }
