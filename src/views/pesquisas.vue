@@ -11,7 +11,106 @@
     </div>
 
 <div class="tudo" >
-    <div class="filtros" >
+    <!-- Botão de filtros mobile -->
+    <div class="filtros-mobile-container">
+        <button class="filtros-mobile-btn" @click="modalFiltrosMobileAberto = true">
+            <img src="../components/img/filtrero.webp" alt="">
+            <span>Filtrar por</span>
+        </button>
+        <button 
+            v-if="algumFiltroAtivo" 
+            class="limpar-filtros-mobile-btn" 
+            @click="limparFiltros()"
+        >
+            Limpar
+        </button>
+    </div>
+    
+    <!-- Modal de filtros para mobile -->
+    <div v-if="modalFiltrosMobileAberto" class="filtros-modal-overlay" @click="modalFiltrosMobileAberto = false">
+        <div class="filtros-modal" @click.stop>
+            <div class="filtros-modal-header">
+                <h2>Filtros</h2>
+                <button @click="modalFiltrosMobileAberto = false" class="fechar-modal-btn">✕</button>
+            </div>
+            <div class="filtros-modal-content">
+                <!-- Conteúdo dos filtros (mesmo conteúdo da versão desktop) -->
+                <div class="filtro-botoes-separados">
+                    <div class="filtro-bloco">
+                        <button class="filtro-btn" @click="abertoPrecos = !abertoPrecos">
+                            <p>Preços</p>
+                            <img src="../components/img/setaprabaxo.png" alt=""
+                                :style="{ transform: abertoPrecos ? 'rotate(180deg)' : 'rotate(0deg)' }">
+                        </button>
+                        <transition name="fade">
+                            <div v-if="abertoPrecos" class="filtro-conteudo">
+                                <label><input type="radio" name="preco" value="ate20" v-model="precoSelecionado"> Até R$ 20</label><br>
+                                <label><input type="radio" name="preco" value="20a50" v-model="precoSelecionado"> R$ 20 a R$ 50</label><br>
+                                <label><input type="radio" name="preco" value="50a100" v-model="precoSelecionado"> R$ 50 a R$ 100</label><br>
+                                <label><input type="radio" name="preco" value="100a200" v-model="precoSelecionado"> R$ 100 a R$ 200</label><br>
+                                <label><input type="radio" name="preco" value="acima200" v-model="precoSelecionado"> Acima de R$ 200</label>
+                            </div>
+                        </transition>
+                    </div>
+                    <div class="filtro-bloco" v-if=" !categoriaSelecionadaId">
+                        <button class="filtro-btn" @click="abertoCategoria = !abertoCategoria">
+                            <p>Categoria</p>
+                            <img src="../components/img/setaprabaxo.png" alt=""
+                                :style="{ transform: abertoCategoria ? 'rotate(180deg)' : 'rotate(0deg)' }">
+                        </button>
+                        <transition name="fade">
+                            <div v-if="abertoCategoria" class="filtro-conteudo">
+                                <div v-for="cat in categorias" class="alinhando-categorias" :key="cat.id">
+                                    <label>
+                                        <input type="checkbox" v-model="categoriasSelecionadas[cat.id]"> <p> {{ cat.name }} </p>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label v-if="!isLancamentos" >
+                                        <input type="checkbox" v-model="ordenarPorMaisRecentes"> Lançamentos
+                                    </label>
+                                </div>
+                            </div>
+                        </transition>
+                    </div>
+                    <div class="filtro-bloco">
+                        <button class="filtro-btn" @click="abertoFormato = !abertoFormato">
+                            <p>Formato de capa</p>
+                            <img src="../components/img/setaprabaxo.png" alt=""
+                                :style="{ transform: abertoFormato ? 'rotate(180deg)' : 'rotate(0deg)' }">
+                        </button>
+                        <transition name="fade">
+                            <div v-if="abertoFormato" class="filtro-conteudo">
+                                <label><input type="checkbox"> Capa dura</label><br>
+                                <label><input type="checkbox"> Capa comum</label>
+                            </div>
+                        </transition>
+                    </div>
+                    <div class="filtro-bloco">
+                        <button class="filtro-btn" @click="abertoDescontos = !abertoDescontos">
+                            <p>Descontos</p>
+                            <img src="../components/img/setaprabaxo.png" alt=""
+                                :style="{ transform: abertoDescontos ? 'rotate(180deg)' : 'rotate(0deg)' }">
+                        </button>
+                        <transition name="fade">
+                            <div v-if="abertoDescontos" class="filtro-conteudo">
+                                <label><input type="checkbox"> 10% ou mais</label><br>
+                                <label><input type="checkbox"> 20% ou mais</label><br>
+                                <label><input type="checkbox"> 30% ou mais</label><br>
+                                <label><input type="checkbox"> 40% ou mais</label><br>
+                                <label><input type="checkbox"> 50% ou mais</label>
+                            </div>
+                        </transition>
+                    </div>
+                </div>
+                <div class="filtros-modal-footer">
+                    <button @click="fecharModalFiltros()" class="aplicar-filtros-btn">Aplicar Filtros</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="filtros filtros-desktop" >
         <div class="filtros-header" >
             <div class="header-cima" >
             <h2>Filtros</h2>
@@ -92,7 +191,7 @@
     </div>
     <div class="conteudos" >
         <div class="Header-conteudos" >
-            <div class="header-conteudos-left">
+            <div class="header-conteudos-left header-conteudos-left-mobile">
                 <button ref="btn2" @click="toggleModo2" class="header-btn-quadrado"  ><img src="../components/img/img1111.png" alt=""></button>
                 <button ref="btn1" @click="toggleModo" class="header-btn-quadrado" ><img src="../components/img/img2222.png" alt=""></button>
             </div>
@@ -126,21 +225,21 @@
                         </router-link>
                         <!-- Div aolado só aparece no modo lista -->
                         <div v-if="modoum" class="aolado">
-                            <router-link :to="`/produto/${produto.id}`" class="produto-link">
-                                <h4>{{ produto.name }}</h4>
-                                <p>R$ {{ produto.price }}</p>
-                            </router-link>
+                        <router-link :to="`/produto/${produto.id}`" class="produto-link">
+                            <h4>{{ produto.name }}</h4>
+                            <p>R$ {{ produto.price }}</p>
+                        </router-link>
                             <div class="add add-lista">
-                                <button v-if="!cartStore.produtoEstaNoCarrinho(produto.id)" @click="adicionarAoCarrinho(produto)">
+                        <button v-if="!cartStore.produtoEstaNoCarrinho(produto.id)" @click="adicionarAoCarrinho(produto)">
                                     <img :src="MAISUMCARRINHO" alt="">
-                                    <p>Adicionar</p>
-                                </button>
-                                <button v-else @click="cartStore.removerItemDoCarrinho({product_id: produto.id})" class="remover-btn">
+                            <p>Adicionar</p>
+                        </button>
+                        <button v-else @click="cartStore.removerItemDoCarrinho({product_id: produto.id})" class="remover-btn">
                                     <img :src="MAISUMCARRINHO" alt="">
-                                    <p>Remover</p>
-                                </button>
-                                <img :src="favoritesStore.estaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="" @click="favoritesStore.toggleFavorito(produto.id)" style="cursor: pointer;" :class="{ 'coracao-favorito': favoritesStore.estaNosFavoritos(produto.id) }">
-                            </div>
+                            <p>Remover</p>
+                        </button>
+                            <img :src="favoritesStore.estaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="" @click="favoritesStore.toggleFavorito(produto.id)" style="cursor: pointer;" :class="{ 'coracao-favorito': favoritesStore.estaNosFavoritos(produto.id) }">
+                        </div>
                         </div>
                     </div>
                     <!-- Botões do modo grid (aparecem só no hover) -->
@@ -230,6 +329,8 @@ const abertoCategoria = ref(false)
 const abertoFormato = ref(false)
 const abertoDescontos = ref(false)
 const mostrarBotaoTopo = ref(false)
+// Estado para modal de filtros mobile
+const modalFiltrosMobileAberto = ref(false)
 const ordemSelecionada = ref('Padrao')
 const produtos = ref([])
 const produtosFiltrados = ref([])
@@ -364,6 +465,22 @@ function limparFiltros() {
     precoSelecionado.value = ''
 }
 
+// Função para fechar modal de filtros mobile
+function fecharModalFiltros() {
+    modalFiltrosMobileAberto.value = false
+}
+
+// Função para verificar se é mobile e forçar modo grid
+function verificarMobileEForcarGrid() {
+    if (window.innerWidth <= 768) {
+        modoum.value = false // Força modo grid no mobile
+        if (btn1.value && btn2.value) {
+            btn1.value.style.filter = 'brightness(1.2)'
+            btn2.value.style.filter = 'brightness(0.9)'
+        }
+    }
+}
+
 // função async que renderiza os produtos
 async function buscarProdutos() {
     carregando.value = true
@@ -479,6 +596,10 @@ onMounted(async () => {
     
     // Adicionar listener para detectar quando o header dos filtros não está visível
     window.addEventListener('scroll', verificarVisibilidadeHeader)
+    
+    // Adicionar listener para detectar resize e forçar grid no mobile
+    window.addEventListener('resize', verificarMobileEForcarGrid)
+    verificarMobileEForcarGrid() // Executa na inicialização
 })
 
 // Watch q reage a mudanças na URL (termo, categoriaId, lancamentos etc)
@@ -570,6 +691,7 @@ function verificarVisibilidadeHeader() {
 // Limpar listener quando componente for desmontado
 onUnmounted(() => {
     window.removeEventListener('scroll', verificarVisibilidadeHeader)
+    window.removeEventListener('resize', verificarMobileEForcarGrid)
 })
 
 // Watchers simplificados
@@ -596,7 +718,69 @@ watch(totalPaginas, (novoTotal) => {
     background: linear-gradient( to top, #dcdcdc49 0%, #ebebeb49 50%, #ffffff49 100% );
 }
 
-/* Estilos para o modo lista */
+/* ================================
+    ESTILOS PARA O MODO LISTA                                                       
+   ================================ */
+
+/* 1. CONTAINER PRINCIPAL */
+.lista-pesquisa.modo-lista {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 40px;
+    padding-bottom: 10px;
+    padding-left: 50px;
+    position: relative;
+    gap: 10px;
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid rgba(173, 173, 173, 0.507);
+}
+
+/* 2. PRODUTO INDIVIDUAL */
+.produto.produto-lista {
+    margin-bottom: 40px;
+    padding: 20px;
+    border: 0.5px solid transparent;
+    border-radius: 5px;
+    width: auto;
+    height: auto;
+    margin-top: 0;
+    text-align: left;
+}
+
+.produto.produto-lista:hover {
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.116);
+    border-color: rgba(0, 0, 0, 0.555);
+}
+
+/* 3. LAYOUT DA IMAGEM E INFORMAÇÕES */
+.nome-preco-imagem.nome-preco-imagem-lista {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.nome-preco-imagem.nome-preco-imagem-lista .produto-imagem {
+    width: 210px;
+    height: 300px;
+    border: 1px solid rgba(173, 173, 173, 0.507);
+    cursor: pointer;
+    margin-top: 0;
+}
+
+.disponivel-selo.disponivel-selo-lista {
+    width: 200px !important;
+    height: auto;
+    border: none;
+    position: absolute;
+    left: 267px !important;
+    bottom: 7px !important;
+    z-index: 2;
+    border-radius: 9px;
+}
+
+/* 4. ÁREA DE INFORMAÇÕES (AOLADO) */
 .aolado {
     width: 100%;
     padding: 10px;
@@ -619,7 +803,7 @@ watch(totalPaginas, (novoTotal) => {
     align-items: center;
 }
 
-/* Estilos para os botões no modo lista */
+/* 5. CONTAINER DOS BOTÕES */
 .add.add-lista {
     display: flex;
     align-items: center;
@@ -634,6 +818,7 @@ watch(totalPaginas, (novoTotal) => {
     padding-bottom: 0;
 }
 
+/* 6. ÍCONE DO CORAÇÃO */
 .aolado .add img:not(button img) {
     width: 34px;
     height: 34px;
@@ -645,6 +830,7 @@ watch(totalPaginas, (novoTotal) => {
     filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
 }
 
+/* 7. BOTÃO ADICIONAR */
 .aolado .add button {
     display: flex;
     align-items: center;
@@ -676,62 +862,6 @@ watch(totalPaginas, (novoTotal) => {
 .aolado .add button p {
     font-size: 22px !important;
     color: rgb(0, 0, 0);
-}
-
-/* Estilos para o container no modo lista */
-.lista-pesquisa.modo-lista {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    padding: 40px;
-    padding-bottom: 10px;
-    padding-left: 50px;
-    position: relative;
-    gap: 10px;
-    width: 100%;
-    background-color: #ffffff;
-    border: 1px solid rgba(173, 173, 173, 0.507);
-}
-
-.produto.produto-lista {
-    margin-bottom: 40px;
-    padding: 20px;
-    border: 0.5px solid transparent;
-    border-radius: 5px;
-    width: auto;
-    height: auto;
-    margin-top: 0;
-    text-align: left;
-}
-
-.produto.produto-lista:hover {
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.116);
-    border-color: rgba(0, 0, 0, 0.555);
-}
-
-.nome-preco-imagem.nome-preco-imagem-lista {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-}
-
-.nome-preco-imagem.nome-preco-imagem-lista .produto-imagem {
-    width: 210px;
-    height: 300px;
-    border: 1px solid rgba(173, 173, 173, 0.507);
-    cursor: pointer;
-    margin-top: 0;
-}
-
-.disponivel-selo.disponivel-selo-lista {
-    width: 200px !important;
-    height: auto;
-    border: none;
-    position: absolute;
-    left: 267px !important;
-    bottom: 7px !important;
-    z-index: 2;
-    border-radius: 9px;
 }
 
 .botaoquelimpa span {
@@ -1240,6 +1370,486 @@ watch(totalPaginas, (novoTotal) => {
     .paginacao-select {
         padding: 4px 6px;
         font-size: 12px;
+    }
+}
+
+/* ================================
+   CSS RESPONSIVO - SISTEMA DE FILTROS
+   ================================ */
+
+/* 1. CONTAINER E BOTÕES DE FILTROS MOBILE */
+.filtros-mobile-container {
+    display: none; /* Oculto por padrão no desktop */
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.filtros-mobile-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background-color: #060f18fa;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    flex: 1;
+    max-width: 200px;
+}
+
+.filtros-mobile-btn:hover {
+    background-color: #1a2633;
+}
+
+.filtros-mobile-btn img {
+    width: 20px;
+    height: 17px;
+    filter: invert(1);
+}
+
+.filtros-mobile-btn span {
+    font-family: helvetica;
+}
+
+.limpar-filtros-mobile-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    background-color: #e11d48;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+.limpar-filtros-mobile-btn:hover {
+    background-color: #be185d;
+}
+
+/* 2. MODAL DE FILTROS MOBILE */
+.filtros-modal-overlay {
+    display: none; /* Oculto por padrão no desktop */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    padding: 20px;
+    overflow-y: auto;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.filtros-modal {
+    background: white;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 100%;
+    margin: 0 auto;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    box-sizing: border-box;
+}
+
+/* Garantir box-sizing para todos os elementos do modal */
+.filtros-modal *,
+.filtros-modal *::before,
+.filtros-modal *::after {
+    box-sizing: border-box;
+}
+
+.filtros-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    background: white;
+    border-radius: 12px 12px 0 0;
+}
+
+.filtros-modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.fechar-modal-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px 10px;
+    color: #666;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.fechar-modal-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.filtros-modal-content {
+    padding: 20px;
+}
+
+.filtros-modal-footer {
+    padding: 20px;
+    border-top: 1px solid #eee;
+    position: sticky;
+    bottom: 0;
+    background: white;
+    border-radius: 0 0 12px 12px;
+}
+
+.aplicar-filtros-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #060f18fa;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.aplicar-filtros-btn:hover {
+    background-color: #1a2633;
+}
+
+/* 3. RESPONSIVIDADE PARA TABLET */
+@media (max-width: 1024px) {
+    .tudo {
+        flex-direction: column;
+        gap: 15px;
+        padding: 10px;
+    }
+    
+    .filtros-desktop {
+        width: 100%;
+        max-width: none;
+        order: 2;
+    }
+    
+    .conteudos {
+        width: 100%;
+        margin-bottom: 50px;
+        order: 1;
+    }
+    
+    .filtros-mobile-container {
+        display: flex;
+        order: 0;
+        align-self: flex-start;
+    }
+    
+    .filtros-modal-overlay {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .inputpesquisa h2 {
+        font-size: 2.5rem;
+    }
+    
+    .lista-pesquisa {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    /* Botões sempre visíveis no tablet - sem hover */
+    .add {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+    }
+}
+
+/* 4. RESPONSIVIDADE PARA MOBILE */
+@media (max-width: 768px) {
+    .filtros-desktop {
+        display: none !important;
+    }
+    
+    .filtros-mobile-container {
+        display: flex;
+    }
+    
+    .filtros-modal-overlay {
+        display: block;
+        padding: 0;
+        margin: 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100vw;
+        height: 100vh;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+    
+    .filtros-modal {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 0;
+        overflow-y: auto;
+        position: relative;
+        box-sizing: border-box;
+    }
+    
+    .filtros-modal-header {
+        border-radius: 0;
+        box-sizing: border-box;
+        width: 100%;
+        padding: 20px;
+    }
+    
+    .filtros-modal-content {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 20px;
+    }
+    
+    .filtros-modal-footer {
+        border-radius: 0;
+        box-sizing: border-box;
+        width: 100%;
+        padding: 20px;
+    }
+    
+    .filtro-bloco {
+        box-sizing: border-box;
+        width: 100%;
+        margin-bottom: 15px;
+    }
+    
+    .filtro-btn {
+        box-sizing: border-box;
+        width: 100%;
+    }
+    
+    .tudo {
+        flex-direction: column;
+        gap: 10px;
+        padding: 8px;
+    }
+    
+    .conteudos {
+        width: 100%;
+        margin-bottom: 30px;
+    }
+    
+    .inputpesquisa {
+        height: 10vh;
+        padding: 0 10px;
+    }
+    
+    .inputpesquisa h2 {
+        font-size: 2rem;
+        text-align: center;
+    }
+    
+    .Header-conteudos {
+        flex-direction: column;
+        gap: 15px;
+        height: auto;
+        padding: 15px 10px;
+    }
+    
+    /* Ocultar botões de modo lista no mobile */
+    .header-conteudos-left-mobile {
+        display: none !important;
+    }
+    
+    .header-conteudos-right {
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+        width: 100%;
+    }
+    
+    .header-label {
+        font-size: 0.9rem;
+    }
+    
+    .header-select {
+        width: 100%;
+        max-width: 250px;
+        padding: 10px 12px;
+    }
+    
+    .lista-pesquisa {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 8px;
+    }
+    
+    .produto {
+        width: 100%;
+        margin-top: 2vh;
+        padding: 8px;
+    }
+    
+    .nome-preco-imagem img {
+        height: 200px;
+        width: 140px;
+    }
+    
+    .produto h4 {
+        font-size: 13px;
+        height: 35px;
+    }
+    
+    .nome-preco-imagem p {
+        font-size: 18px;
+    }
+    
+    .add button {
+        width: 120px;
+        padding: 6px;
+        gap: 5px;
+    }
+    
+    .add button p {
+        font-size: 12px;
+    }
+    
+    .add button img {
+        width: 16px;
+    }
+    
+    .add img {
+        width: 22px;
+    }
+    
+        .disponivel-selo {
+        width: 85px !important;
+        bottom: 65px !important;
+        left: 40px !important;
+    }
+    
+    /* Botões sempre visíveis no mobile - sem hover */
+    .add {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        margin-top: 8px !important;
+        margin-bottom: 8px !important;
+    }
+    
+    /* Remover hover effect no mobile para melhor UX touch */
+    .produto:hover .add {
+        opacity: 1;
+    }
+    
+    /* Melhorar espaçamento dos botões no mobile */
+    .add button {
+        min-height: 40px;
+        touch-action: manipulation;
+    }
+    
+    .add img {
+        width: 24px !important;
+        height: 24px !important;
+    }
+    
+}
+
+/* 5. RESPONSIVIDADE PARA MOBILE PEQUENO */
+@media (max-width: 480px) {
+    .lista-pesquisa {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 10px;
+    }
+    
+    .produto {
+        width: 100%;
+        max-width: 280px;
+        margin: 0 auto;
+        margin-top: 2vh;
+    }
+    
+    .inputpesquisa h2 {
+        font-size: 1.5rem;
+        padding: 0 5px;
+    }
+    
+    .filtros-mobile-container {
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+    }
+    
+    .filtros-mobile-btn {
+        max-width: none;
+    }
+    
+    .limpar-filtros-mobile-btn {
+        align-self: center;
+        min-width: 120px;
+    }
+    
+    .filtros-modal {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 0;
+        position: relative;
+        box-sizing: border-box;
+    }
+    
+    .filtros-modal-header,
+    .filtros-modal-content,
+    .filtros-modal-footer {
+        padding: 15px;
+        box-sizing: border-box;
+        width: 100%;
+    }
+    
+    .header-btn-quadrado {
+        width: 45px;
+        height: 40px;
+    }
+    
+    /* Botões sempre visíveis no mobile pequeno - sem hover */
+    .add {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+    }
+    
+    /* Ajuste do selo para mobile pequeno */
+    .disponivel-selo {
+        left: 30px !important;
     }
 }
 
