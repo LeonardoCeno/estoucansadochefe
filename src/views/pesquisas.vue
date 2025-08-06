@@ -1237,21 +1237,7 @@ watch(totalPaginas, (novoTotal) => {
     font-size: 1.1rem;
 }
 
-@media (max-width: 1200px) {
-    .lista-pesquisa {
-        grid-template-columns: repeat(4, 1fr);
-    }
-}
-@media (max-width: 950px) {
-    .lista-pesquisa {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-@media (max-width: 700px) {
-    .lista-pesquisa {
-        grid-template-columns: repeat(1, 1fr);
-    }
-}
+
 
 /* Estilos da Paginação */
 .paginacao-container {
@@ -1346,35 +1332,10 @@ watch(totalPaginas, (novoTotal) => {
         border-color: #02060af5;
     }
 
-@media (max-width: 768px) {
-    .paginacao-container {
-        flex-direction: column;
-        gap: 16px;
-        padding: 16px;
-    }
-    
-    .paginacao-numeros {
-        gap: 4px;
-    }
-    
-    .paginacao-btn {
-        padding: 6px 10px;
-        font-size: 12px;
-        min-width: 32px;
-    }
-    
-    .paginacao-direita {
-        font-size: 12px;
-    }
-    
-    .paginacao-select {
-        padding: 4px 6px;
-        font-size: 12px;
-    }
-}
+
 
 /* ================================
-   CSS RESPONSIVO - SISTEMA DE FILTROS
+    CSS RESPONSIVO - SISTEMA DE FILTROS
    ================================ */
 
 /* 1. CONTAINER E BOTÕES DE FILTROS MOBILE */
@@ -1539,7 +1500,18 @@ watch(totalPaginas, (novoTotal) => {
     background-color: #1a2633;
 }
 
-/* 3. RESPONSIVIDADE PARA TABLET */
+/* ================================
+   MEDIA QUERIES RESPONSIVOS
+   ================================ */
+
+/* Desktop grande */
+@media (max-width: 1200px) {
+    .lista-pesquisa {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Tablet grande */
 @media (max-width: 1024px) {
     .tudo {
         flex-direction: column;
@@ -1586,7 +1558,14 @@ watch(totalPaginas, (novoTotal) => {
     }
 }
 
-/* 4. RESPONSIVIDADE PARA MOBILE */
+/* Tablet médio */
+@media (max-width: 950px) {
+    .lista-pesquisa {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Mobile grande */
 @media (max-width: 768px) {
     .filtros-desktop {
         display: none !important;
@@ -1749,7 +1728,7 @@ watch(totalPaginas, (novoTotal) => {
         width: 22px;
     }
     
-        .disponivel-selo {
+    .disponivel-selo {
         width: 85px !important;
         bottom: 65px !important;
         left: 40px !important;
@@ -1779,26 +1758,92 @@ watch(totalPaginas, (novoTotal) => {
         height: 24px !important;
     }
     
+    /* Estilos da Paginação no mobile */
+    .paginacao-container {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px;
+    }
+    
+    .paginacao-numeros {
+        gap: 4px;
+    }
+    
+    .paginacao-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+        min-width: 32px;
+    }
+    
+    .paginacao-direita {
+        font-size: 12px;
+    }
+    
+    .paginacao-select {
+        padding: 4px 6px;
+        font-size: 12px;
+    }
 }
 
-/* 5. RESPONSIVIDADE PARA MOBILE PEQUENO */
+/* Mobile médio */
+@media (max-width: 700px) {
+    .lista-pesquisa {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile pequeno */
 @media (max-width: 480px) {
     .lista-pesquisa {
-        grid-template-columns: 1fr;
-        gap: 10px;
-        padding: 10px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 8px;
     }
     
     .produto {
         width: 100%;
-        max-width: 280px;
-        margin: 0 auto;
         margin-top: 2vh;
+        padding: 6px;
     }
     
     .inputpesquisa h2 {
         font-size: 1.5rem;
         padding: 0 5px;
+    }
+    
+    /* Ajustes para manter uniformidade em telas pequenas */
+    .nome-preco-imagem img {
+        height: 180px !important;
+        width: 125px !important;
+    }
+    
+    .produto h4 {
+        font-size: 12px !important;
+        height: 30px !important;
+        margin-top: 8px !important;
+    }
+    
+    .nome-preco-imagem p {
+        font-size: 16px !important;
+    }
+    
+    .add button {
+        width: 100px !important;
+        padding: 5px !important;
+        gap: 4px !important;
+    }
+    
+    .add button p {
+        font-size: 11px !important;
+    }
+    
+    .add button img {
+        width: 14px !important;
+    }
+    
+    .add img {
+        width: 20px !important;
+        height: 20px !important;
     }
     
     .filtros-mobile-container {
@@ -1847,9 +1892,14 @@ watch(totalPaginas, (novoTotal) => {
         pointer-events: auto !important;
     }
     
-    /* Ajuste do selo para mobile pequeno */
-    .disponivel-selo {
-        left: 30px !important;
+    /* Ajuste do selo para mobile pequeno - seletor mais específico */
+    .lista-pesquisa .produto .nome-preco-imagem .disponivel-selo {
+        left: 8px !important;
+        width: 65px !important;
+        bottom: 65px !important;
+        height: auto !important;
+        max-width: 65px !important;
+        max-height: 30px !important;
     }
 }
 
