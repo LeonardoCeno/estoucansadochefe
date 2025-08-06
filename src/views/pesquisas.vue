@@ -114,49 +114,42 @@
             </div>
             <div v-else-if="erro" class="erro">{{ erro }}</div>
             <div v-else-if="produtosFiltrados.length === 0" class="nenhum-produto">Nenhum produto encontrado.</div>
-            <div v-else-if="!modoum" class="lista-pesquisa">
-                <div class="produto" v-for="produto in produtosPaginados" :key="produto.id">
-                    <div class="nome-preco-imagem" style="position:relative;">
+            <div v-else :class="['lista-pesquisa', { 'modo-lista': modoum }]">
+                <div :class="['produto', { 'produto-lista': modoum }]" v-for="produto in produtosPaginados" :key="produto.id">
+                    <div :class="['nome-preco-imagem', { 'nome-preco-imagem-lista': modoum }]" style="position:relative;">
                         <router-link :to="`/produto/${produto.id}`" class="produto-link">
                             <img :src="produto.image_path" alt="Imagem do produto" class="produto-imagem" />
-                            <img :src="produto.stock >= 1 ? DISPONIVELREAL : INDISPONIVELREAL" :alt="produto.stock >= 1 ? 'Disponível' : 'Indisponível'" class="disponivel-selo" />
-                            <h4>{{ produto.name }}</h4>
-                            <p>R$ {{ produto.price }}</p>
+                            <img :src="produto.stock >= 1 ? DISPONIVELREAL : INDISPONIVELREAL" :alt="produto.stock >= 1 ? 'Disponível' : 'Indisponível'" :class="['disponivel-selo', { 'disponivel-selo-lista': modoum }]" />
+                            <!-- Título e preço no modo grid ficam dentro do router-link -->
+                            <h4 v-if="!modoum">{{ produto.name }}</h4>
+                            <p v-if="!modoum">R$ {{ produto.price }}</p>
                         </router-link>
+                        <!-- Div aolado só aparece no modo lista -->
+                        <div v-if="modoum" class="aolado">
+                            <router-link :to="`/produto/${produto.id}`" class="produto-link">
+                                <h4>{{ produto.name }}</h4>
+                                <p>R$ {{ produto.price }}</p>
+                            </router-link>
+                            <div class="add add-lista">
+                                <button v-if="!cartStore.produtoEstaNoCarrinho(produto.id)" @click="adicionarAoCarrinho(produto)">
+                                    <img :src="MAISUMCARRINHO" alt="">
+                                    <p>Adicionar</p>
+                                </button>
+                                <button v-else @click="cartStore.removerItemDoCarrinho({product_id: produto.id})" class="remover-btn">
+                                    <img :src="MAISUMCARRINHO" alt="">
+                                    <p>Remover</p>
+                                </button>
+                                <img :src="favoritesStore.estaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="" @click="favoritesStore.toggleFavorito(produto.id)" style="cursor: pointer;" :class="{ 'coracao-favorito': favoritesStore.estaNosFavoritos(produto.id) }">
+                            </div>
+                        </div>
                     </div>
-                    <div class="add">
+                    <!-- Botões do modo grid (aparecem só no hover) -->
+                    <div v-if="!modoum" class="add">
                         <button @click="cartStore.toggleCarrinho(produto)">
                             <img :src="MAISUMCARRINHO" alt="">
                             <p>{{ cartStore.produtoEstaNoCarrinho(produto.id) ? 'Remover' : 'Adicionar' }}</p>
                         </button>
                         <img :src="favoritesStore.estaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="" @click="favoritesStore.toggleFavorito(produto.id)" style="cursor: pointer;" :class="{ 'coracao-favorito': favoritesStore.estaNosFavoritos(produto.id) }">
-                    </div>
-                </div>
-            </div>
-            <div v-if="modoum" class="lista-pesquisa2">
-                <div class="produto2" v-for="produto in produtosPaginados" :key="produto.id">
-                    <div class="nome-preco-imagem2" style="position:relative;">
-                        <router-link :to="`/produto/${produto.id}`" class="produto-link">
-                            <img :src="produto.image_path" alt="Imagem do produto" class="produto-imagem" />
-                            <img :src="produto.stock >= 1 ? DISPONIVELREAL : INDISPONIVELREAL" :alt="produto.stock >= 1 ? 'Disponível' : 'Indisponível'" class="disponivel-selo2" />
-                        </router-link>
-                        <div class="aolado" >
-                        <router-link :to="`/produto/${produto.id}`" class="produto-link">
-                            <h4>{{ produto.name }}</h4>
-                            <p>R$ {{ produto.price }}</p>
-                        </router-link>
-                        <div class="add2" >
-                        <button v-if="!cartStore.produtoEstaNoCarrinho(produto.id)" @click="adicionarAoCarrinho(produto)">
-                            <img src="../components/img/maisumcarrinho.png" alt="">
-                            <p>Adicionar</p>
-                        </button>
-                        <button v-else @click="cartStore.removerItemDoCarrinho({product_id: produto.id})" class="remover-btn">
-                            <img src="../components/img/maisumcarrinho.png" alt="">
-                            <p>Remover</p>
-                        </button>
-                            <img :src="favoritesStore.estaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="" @click="favoritesStore.toggleFavorito(produto.id)" style="cursor: pointer;" :class="{ 'coracao-favorito': favoritesStore.estaNosFavoritos(produto.id) }">
-                        </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -603,6 +596,7 @@ watch(totalPaginas, (novoTotal) => {
     background: linear-gradient( to top, #dcdcdc49 0%, #ebebeb49 50%, #ffffff49 100% );
 }
 
+/* Estilos para o modo lista */
 .aolado {
     width: 100%;
     padding: 10px;
@@ -610,43 +604,48 @@ watch(totalPaginas, (novoTotal) => {
 }
 
 .aolado h4 {
-    font-size: 30px;
+    font-size: 30px !important;
     color: rgb(65, 65, 65);
     font-family: sans-serif;
+    margin-top: 0 !important;
+    margin-bottom: 10px !important;
 }
 
 .aolado p {
-    font-size: 30px;
+    font-size: 30px !important;
     font-weight: bold;
     font-family: sans-serif;
     color: #242424;
+    align-items: center;
 }
 
-.add2 {
+/* Estilos para os botões no modo lista */
+.add.add-lista {
     display: flex;
     align-items: center;
     justify-content: start;
     gap: 10px;
     margin-top: 15px;
+    opacity: 1;
+    pointer-events: auto;
+    flex-direction: row;
+    width: auto;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
-.nome-preco-imagem2 .aolado img {
-    width: 27px;
-    height: 27px;
+.aolado .add img:not(button img) {
+    width: 34px;
+    height: 34px;
     border: none;
-    opacity: 0.92;
+    margin: 0 !important;
 }
 
-.nome-preco-imagem2 .aolado img:hover {
-    opacity: 0.8;
-}
-
-/* Filtro para deixar o coração vermelho quando estiver nos favoritos (modo modoum) */
-.nome-preco-imagem2 .aolado img.coracao-favorito {
+.aolado .add img.coracao-favorito {
     filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
 }
 
-.nome-preco-imagem2 .aolado button {
+.aolado .add button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -654,22 +653,33 @@ watch(totalPaginas, (novoTotal) => {
     gap: 10px;
     padding: 7px;
     border-radius: 7px;
-    width: 175px;
-    height: 50px;
+    width: 205px;
+    height: 60px;
     filter: invert(1);
-    opacity: 0.92;
 }
 
-.nome-preco-imagem2 .aolado button p {
-    font-size: 19px;
+.aolado .add button:hover {
+    opacity: 0.8 !important;
+    filter: invert(1) !important;
+    background-color: rgb(255, 255, 255) !important;
+    transform: none !important;
+}
+
+.aolado .add button img {
+    width: 30px;
+    height: 30px;
+    border: none;
+    filter: invert(0) !important;
+    margin-top: 0 !important;
+}
+
+.aolado .add button p {
+    font-size: 22px !important;
     color: rgb(0, 0, 0);
 }
 
-.nome-preco-imagem2 .aolado button:hover {
-    opacity: 0.8;
-}
-
-.lista-pesquisa2 {
+/* Estilos para o container no modo lista */
+.lista-pesquisa.modo-lista {
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -683,36 +693,43 @@ watch(totalPaginas, (novoTotal) => {
     border: 1px solid rgba(173, 173, 173, 0.507);
 }
 
-.produto2 {
-    margin-bottom:40px;
+.produto.produto-lista {
+    margin-bottom: 40px;
     padding: 20px;
     border: 0.5px solid transparent;
     border-radius: 5px;
+    width: auto;
+    height: auto;
+    margin-top: 0;
+    text-align: left;
 }
 
-.produto2:hover {
+.produto.produto-lista:hover {
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.116);
     border-color: rgba(0, 0, 0, 0.555);
 }
 
-.nome-preco-imagem2 {
+.nome-preco-imagem.nome-preco-imagem-lista {
     display: flex;
+    flex-direction: row;
+    align-items: flex-start;
 }
 
-.nome-preco-imagem2 img {
-    width: 270px;
-    height: 290px;
+.nome-preco-imagem.nome-preco-imagem-lista .produto-imagem {
+    width: 210px;
+    height: 300px;
     border: 1px solid rgba(173, 173, 173, 0.507);
     cursor: pointer;
+    margin-top: 0;
 }
 
-.nome-preco-imagem2 .disponivel-selo2 {
-    width: 160px;
+.disponivel-selo.disponivel-selo-lista {
+    width: 200px !important;
     height: auto;
     border: none;
     position: absolute;
-    left: 267px;
-    bottom: 5px;
+    left: 267px !important;
+    bottom: 7px !important;
     z-index: 2;
     border-radius: 9px;
 }

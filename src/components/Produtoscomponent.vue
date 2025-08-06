@@ -216,7 +216,7 @@ function alternarOfertas() {
     justify-content: space-between;
     align-items: center;
     margin-top: 20px;
-    background: linear-gradient(to right,  hsl(189, 100%, 38%),  #4f96a3);
+    background: linear-gradient(to right,  hsl(194, 100%, 38%),  #4f96a3);
     height: 4.5rem;
     width: 100%;
     max-width: 1250px;
@@ -225,7 +225,7 @@ function alternarOfertas() {
 }
 
 #cord {
-    background-color: #3a9c73;
+    background: linear-gradient(to right, hsl(145, 100%, 38%), #4fa36c);
 }
 
 .titulo h3 {

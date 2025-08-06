@@ -14,7 +14,7 @@ html, body {
   line-height: 1.5;
   background-image: url(../components/img/fundaogeral.jpg);
   background-size: cover;
-  background-color: rgba(209, 209, 209, 0.644);
+    background: linear-gradient(to bottom, #fcfcfc50 0%, #7fbbce59 60%, #4e46e548 100%);
   background-repeat: no-repeat;
   background-blend-mode: overlay;
   color: #000;
