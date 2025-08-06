@@ -128,19 +128,19 @@
         <router-link to="/pesquisas?lancamentos=1">
             <button> <img src="../components/img/Lancamentofinal-Photoroom.png" alt=""> <p>Lançamentos</p></button>
         </router-link>
-        <router-link to="/pesquisas?categoriaId=316">
+        <router-link to="/pesquisas?categoriaId=316" class="categoria-livros">
             <button> <img src="../components/img//Livrofinalverdadeiro-Photoroom.png" alt=""> <p>Livros</p></button>
         </router-link>
-        <router-link to="/pesquisas?categoriaId=318">
+        <router-link to="/pesquisas?categoriaId=318" class="categoria-mangas">
             <button> <img src="../components/img/mangáfinal.png" alt=""> <p>Mangás</p></button>
         </router-link>
-        <router-link to="/pesquisas?categoriaId=320">
+        <router-link to="/pesquisas?categoriaId=320" class="categoria-artbooks">
             <button> <img src="../components/img/pincel.png" alt=""> <p>Artbooks</p></button>
         </router-link>
-        <router-link to="/pesquisas?categoriaId=320">
+        <router-link to="/pesquisas?categoriaId=320" class="categoria-ofertas">
             <button> <img src="../components/img/ofertasfinal.png" alt=""> <p>Ofertas</p></button>
         </router-link>
-        <router-link to="/pesquisas">
+        <router-link to="/pesquisas" class="categoria-tudo">
             <button> <img src="../components/img/Tudofinal-Photoroom.png" alt=""> <p>Tudo</p></button>
         </router-link>
     </div>
@@ -1199,5 +1199,64 @@ button:hover img {
     text-align: left;
     letter-spacing: 0.01em;
 }
+
+/* ================================
+   RESPONSIVIDADE DAS CATEGORIAS
+   ================================ */
+
+/* Primeira redução: ocultar "Ofertas" em telas menores */
+@media (max-width: 1400px) {
+    .categoria-ofertas {
+        display: none !important;
+    }
+    
+    /* Manter tamanho das imagens mesmo com menos categorias */
+    .Categorias img {
+        width: 1.1vw !important;
+        min-width: 12px !important;
+    }
+}
+
+/* Segunda redução: ocultar "Artbooks" */
+@media (max-width: 1200px) {
+    .categoria-artbooks {
+        display: none !important;
+    }
+    
+    /* Manter tamanho das imagens */
+    .Categorias img {
+        width: 1.2vw !important;
+        min-width: 13px !important;
+    }
+}
+
+/* Terceira redução: ocultar "Livros" */
+@media (max-width: 1000px) {
+    .categoria-livros {
+        display: none !important;
+    }
+    
+    /* Aumentar ligeiramente as imagens para compensar */
+    .Categorias img {
+        width: 1.4vw !important;
+        min-width: 14px !important;
+    }
+}
+
+/* Quarta redução: ocultar "Mangás" */
+@media (max-width: 800px) {
+    .categoria-mangas {
+        display: none !important;
+    }
+    
+    /* Imagens maiores para as 3 categorias restantes */
+    .Categorias img {
+        width: 1.6vw !important;
+        min-width: 16px !important;
+    }
+}
+
+/* Mantém sempre visíveis: "Categorias", "Lançamentos" e "Tudo" */
+/* Estas nunca são ocultadas, mesmo nas telas menores */
 
 </style>

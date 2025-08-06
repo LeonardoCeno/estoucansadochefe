@@ -299,7 +299,7 @@ onMounted(carregarEnderecos)
 }
 
 .btn-novo-endereco:hover {
-    box-shadow: 0 6px 10px rgba(79,70,229,0.3);
+    box-shadow: 0 1.5px 2.5px rgba(79,70,229,0.3);
 }
 
 .btn-novo-endereco span {
