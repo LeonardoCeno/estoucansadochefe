@@ -389,7 +389,7 @@ function alternarOfertas() {
 
 .disponivel-selo {
     position: absolute;
-    left: 0px;
+    left: 10px;
     bottom: 80px;
     width: 80px;
     height: auto;
@@ -406,6 +406,17 @@ function alternarOfertas() {
     .lista {
         grid-template-columns: repeat(3, 1fr);
     }
+    
+    /* Botões sempre visíveis no tablet - sem hover */
+    .add {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+    }
+    
+    /* Reduzir margin-top do título em tablets */
+    .titulo {
+        margin-top: 12px !important;
+    }
 }
 @media (max-width: 700px) {
     .lista {
@@ -421,6 +432,12 @@ function alternarOfertas() {
     .titulo, .soumdetalhe, .comercial img, .produtos {
         max-width: 98vw;
     }
+    
+    /* Reduzir margin-top do título em mobile grande */
+    .titulo {
+        margin-top: 8px !important;
+    }
+    
     .nome-preco-imagem img {
         height: 200px;
         width: 140px;
@@ -447,9 +464,34 @@ function alternarOfertas() {
         width: 22px;
     }
     .disponivel-selo {
-        width: 85px !important;
+        width: 95px !important;
         bottom: 65px !important;
         left: 40px !important;
+        height: 25px !important;
+    }
+    
+    /* Botões sempre visíveis no mobile - sem hover */
+    .add {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        margin-top: 8px !important;
+        margin-bottom: 8px !important;
+    }
+    
+    /* Remover hover effect no mobile para melhor UX touch */
+    .produto:hover .add {
+        opacity: 1;
+    }
+    
+    /* Melhorar espaçamento dos botões no mobile */
+    .add button {
+        min-height: 40px;
+        touch-action: manipulation;
+    }
+    
+    .add img {
+        width: 24px !important;
+        height: 24px !important;
     }
 }
 @media (max-width: 480px) {
@@ -466,6 +508,12 @@ function alternarOfertas() {
     .titulo, .soumdetalhe, .comercial img, .produtos {
         max-width: 100vw;
     }
+    
+    /* Reduzir margin-top do título em mobile pequeno */
+    .titulo {
+        margin-top: 3px !important;
+    }
+    
     .nome-preco-imagem img {
         height: 180px !important;
         width: 125px !important;
@@ -494,12 +542,18 @@ function alternarOfertas() {
         height: 20px !important;
     }
     .disponivel-selo {
-        width: 65px !important;
+        width: 75px !important;
         bottom: 65px !important;
         left: 8px !important;
-        height: auto !important;
-        max-width: 65px !important;
-        max-height: 30px !important;
+        height: 20px !important;
+        max-width: 75px !important;
+        max-height: 20px !important;
+    }
+    
+    /* Botões sempre visíveis no mobile pequeno - sem hover */
+    .add {
+        opacity: 1 !important;
+        pointer-events: auto !important;
     }
 }
 
