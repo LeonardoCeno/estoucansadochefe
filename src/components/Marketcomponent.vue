@@ -252,7 +252,7 @@ onUnmounted(() => {
     border: none;
     padding: 8px 8px;
     cursor: pointer;
-    z-index: 9999;
+    z-index: 99;
     border-radius: 7px;
     width: 55px;
     height: 55px;
@@ -401,6 +401,13 @@ onUnmounted(() => {
 
 /* Tablet grande (1024px - 1200px) */
 @media (max-width: 1200px) {
+    .carrosel-linha img {
+        width: 100%;
+        height: 90px;
+        object-fit: cover;
+        margin-right: 22px;
+    }
+    
     .banner {
         height: 245px;
         min-height: 210px;
@@ -410,6 +417,13 @@ onUnmounted(() => {
 
 /* Tablet médio (768px - 1024px) */
 @media (max-width: 1024px) {
+    .carrosel-linha img {
+        width: 100%;
+        height: 85px;
+        object-fit: cover;
+        margin-right: 20px;
+    }
+    
     .banner {
         height: 225px;
         min-height: 180px;
@@ -425,6 +439,9 @@ onUnmounted(() => {
     
     .carrosel-linha img {
         margin-right: 20px;
+        width: 100%;
+        height: 80px;
+        object-fit: cover;
     }
     
     .banner {
@@ -468,6 +485,13 @@ onUnmounted(() => {
 
 /* Mobile médio (480px - 650px) */
 @media (max-width: 650px) {
+    .carrosel-linha img {
+        width: 100%;
+        height: 70px;
+        object-fit: cover;
+        margin-right: 18px;
+    }
+    
     .banner {
         height: 160px;
         min-height: 130px;
@@ -522,6 +546,9 @@ onUnmounted(() => {
     
     .carrosel-linha img {
         margin-right: 15px;
+        width: 100%;
+        height: 60px;
+        object-fit: cover;
     }
     
     .carrosel-movimento {
@@ -604,6 +631,13 @@ onUnmounted(() => {
 
 /* Mobile muito pequeno (<320px) */
 @media (max-width: 320px) {
+    .carrosel-linha img {
+        width: 100%;
+        height: 55px;
+        object-fit: cover;
+        margin-right: 12px;
+    }
+    
     .banner {
         height: 130px;
         min-height: 105px;

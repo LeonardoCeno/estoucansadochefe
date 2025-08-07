@@ -410,23 +410,96 @@ function alternarOfertas() {
 @media (max-width: 700px) {
     .lista {
         grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 8px;
+    }
+    .produto {
+        width: 100%;
+        margin-top: 2vh;
+        padding: 8px;
     }
     .titulo, .soumdetalhe, .comercial img, .produtos {
         max-width: 98vw;
     }
+    .nome-preco-imagem img {
+        height: 200px;
+        width: 140px;
+    }
+    .produto h4 {
+        font-size: 13px;
+        height: 35px;
+    }
+    .nome-preco-imagem p {
+        font-size: 18px;
+    }
+    .add button {
+        width: 120px;
+        padding: 6px;
+        gap: 5px;
+    }
+    .add button p {
+        font-size: 12px;
+    }
+    .add button img {
+        width: 16px;
+    }
+    .add img {
+        width: 22px;
+    }
+    .disponivel-selo {
+        width: 85px !important;
+        bottom: 65px !important;
+        left: 40px !important;
+    }
 }
 @media (max-width: 480px) {
     .lista {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 8px;
     }
     .produto {
-        width: 95vw;
-        min-width: 0;
-        padding-left: 2vw;
-        padding-right: 2vw;
+        width: 100%;
+        margin-top: 2vh;
+        padding: 6px;
     }
     .titulo, .soumdetalhe, .comercial img, .produtos {
         max-width: 100vw;
+    }
+    .nome-preco-imagem img {
+        height: 180px !important;
+        width: 125px !important;
+    }
+    .produto h4 {
+        font-size: 12px !important;
+        height: 30px !important;
+        margin-top: 8px !important;
+    }
+    .nome-preco-imagem p {
+        font-size: 16px !important;
+    }
+    .add button {
+        width: 100px !important;
+        padding: 5px !important;
+        gap: 4px !important;
+    }
+    .add button p {
+        font-size: 11px !important;
+    }
+    .add button img {
+        width: 14px !important;
+    }
+    .add img {
+        width: 20px !important;
+        height: 20px !important;
+    }
+    .disponivel-selo {
+        width: 65px !important;
+        bottom: 65px !important;
+        left: 8px !important;
+        height: auto !important;
+        max-width: 65px !important;
+        max-height: 30px !important;
     }
 }
 

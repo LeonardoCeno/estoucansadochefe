@@ -196,21 +196,15 @@ onMounted(() => {
         }
     }
     
-    // Atualizar placeholder inicial
-    atualizarPlaceholder()
-    
-    // Escutar mudanças no tamanho da tela
-    window.addEventListener('resize', atualizarPlaceholder)
-    
-    // Escutar logout do usuário
-    window.addEventListener('user-logout', () => {
+    // Função para lidar com logout do usuário
+    const handleUserLogout = () => {
         cartStore.limparCarrinhoLocal()
         showCarrinhoDropdown.value = false
         showDropdown.value = false
-    })
+    }
     
-    // Event listener para fechar carrinho ao clicar fora
-    document.addEventListener('click', (event) => {
+    // Função para fechar carrinho ao clicar fora
+    const handleClickOutside = (event) => {
         const carrinhoWrapper = document.querySelector('.carrinho-dropdown-wrapper')
         const carrinhoMenu = document.querySelector('.carrinho-dropdown-menu')
         
@@ -221,19 +215,44 @@ onMounted(() => {
             !carrinhoMenu.contains(event.target)) {
             showCarrinhoDropdown.value = false
         }
-    })
+    }
+    
+    // Atualizar placeholder inicial
+    atualizarPlaceholder()
+    
+    // Escutar mudanças no tamanho da tela
+    window.addEventListener('resize', atualizarPlaceholder)
+    
+    // Escutar logout do usuário
+    window.addEventListener('user-logout', handleUserLogout)
+    
+    // Event listener para fechar carrinho ao clicar fora
+    document.addEventListener('click', handleClickOutside)
+    
+    // Armazenar referências para remoção posterior
+    window._atualizarPlaceholder = atualizarPlaceholder
+    window._handleUserLogout = handleUserLogout
+    window._handleClickOutside = handleClickOutside
 })
 
 onUnmounted(() => {
-    // Remover event listeners
-    window.removeEventListener('user-logout', () => {
-        cartStore.limparCarrinhoLocal()
-        showCarrinhoDropdown.value = false
-        showDropdown.value = false
-    })
+    // Remover event listeners usando as referências corretas
+    if (window._atualizarPlaceholder) {
+        window.removeEventListener('resize', window._atualizarPlaceholder)
+    }
     
-    // Remover event listener do resize
-    window.removeEventListener('resize', () => {})
+    if (window._handleUserLogout) {
+        window.removeEventListener('user-logout', window._handleUserLogout)
+    }
+    
+    if (window._handleClickOutside) {
+        document.removeEventListener('click', window._handleClickOutside)
+    }
+    
+    // Limpar referências
+    delete window._atualizarPlaceholder
+    delete window._handleUserLogout
+    delete window._handleClickOutside
 })
 
 // Watcher para limpar carrinho quando o usuário fizer logout
@@ -533,7 +552,7 @@ button:hover img {
     min-height: 7.2vh;
     background: linear-gradient(120deg, #0d4d3dda 0%, #000000d5 10% ,#000000d5 90%, #25768ada 100%);
     font-size: 14px;
-    gap: 70px;
+    gap: 55px;
 }
 
 .Categorias img {
@@ -580,6 +599,19 @@ button:hover img {
 /* Estilo específico para a imagem do botão Categorias */
 .categorias-btn img {
     filter: brightness(0) invert(1) sepia(1) saturate(1000%) hue-rotate(120deg) brightness(1.2) contrast(1.5);
+}
+
+/* Hover específico para o botão Categorias */
+.categorias-btn:hover p {
+    background: linear-gradient(to right, #4e759c, #00c3ff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 100% 100%;
+}
+
+.categorias-btn:hover img {
+    filter: brightness(0) invert(45%) sepia(65%) saturate(1050%) hue-rotate(160deg) brightness(115%) contrast(100%);
 }
 
 .conta-dropdown-menu {
@@ -635,6 +667,8 @@ button:hover img {
     font-size: 15px;
     cursor: pointer;
     border-radius: 0px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 .categorias-dropdown-menu button:hover {
     background: linear-gradient(to right, #4e759c, #00c3ff);
@@ -977,12 +1011,14 @@ button:hover img {
     /* Carrinho */
     .carrinho-dropdown-menu {
         right: 10px;
-        min-width: 280px;
+        min-width: 240px;
         max-width: calc(100vw - 20px);
+        height: auto;
+        min-height: 400px;
     }
     
     .carrinho-item-nome {
-        max-width: 140px;
+        max-width: 120px;
     }
     
     .carrinho-botoes {
@@ -1056,23 +1092,30 @@ button:hover img {
         left: 5px;
         min-width: auto;
         max-width: none;
-        width: calc(100vw - 10px);
+        width: calc(100vw - 15px);
+        height: auto;
+        min-height: 350px;
     }
     
     .carrinho-item-nome {
-        max-width: 120px;
+        max-width: 100px;
     }
     
     .carrinho-header {
-        padding: 12px;
+        padding: 8px;
     }
     
     .carrinho-item {
-        padding: 10px 12px;
+        padding: 6px 8px;
     }
     
     .carrinho-footer {
-        padding: 12px;
+        padding: 8px;
+    }
+    
+    .carrinho-dropdown-menu .carrinho-item img {
+        width: 45px;
+        height: 60px;
     }
     
     /* Dropdowns */
@@ -1130,6 +1173,19 @@ button:hover img {
     .Categorias img {
         width: 6px;
         min-width: 6px;
+    }
+    
+    /* Carrinho */
+    .carrinho-dropdown-menu {
+        right: 3px;
+        left: 3px;
+        width: calc(100vw - 10px);
+        height: auto;
+        min-height: 300px;
+    }
+    
+    .carrinho-item-nome {
+        max-width: 80px;
     }
     
     /* Dropdowns */
