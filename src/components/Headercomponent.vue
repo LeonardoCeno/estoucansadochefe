@@ -221,13 +221,13 @@ onMounted(() => {
     atualizarPlaceholder()
     
     // Escutar mudanças no tamanho da tela
-    window.addEventListener('resize', atualizarPlaceholder)
+    window.addEventListener('resize', window._atualizarPlaceholder)
     
     // Escutar logout do usuário
-    window.addEventListener('user-logout', handleUserLogout)
+    window.addEventListener('user-logout', window._handleUserLogout)
     
     // Event listener para fechar carrinho ao clicar fora
-    document.addEventListener('click', handleClickOutside)
+    document.addEventListener('click', window._handleClickOutside)
     
     // Armazenar referências para remoção posterior
     window._atualizarPlaceholder = atualizarPlaceholder

@@ -152,14 +152,14 @@ async function handleRegister() {
   background: #fff;
   border-radius: 0 10px 10px 0;
   box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-  padding: 28px 20px 20px 20px;
+  padding: 24px 20px 20px 20px;
   width: 40%;
   height: 90vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 24px;
+  gap: 20px;
   margin-right: 50px;
   position: relative;
 }
@@ -168,14 +168,15 @@ async function handleRegister() {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 8px;
-  padding: 16px;
+  padding: 0px;
   border-radius: 12px;
   width: 100%;
+  position: relative;
+  left: -2.5px;
 }
 
 .login-logo {
-  width: 200px;
+  width: 160px;
   height: auto;
   transition: transform 0.3s ease;
 }
@@ -186,7 +187,7 @@ async function handleRegister() {
 
 h2 {
   color: #06080a;
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   margin: 0;
   font-weight: 700;
   text-align: center;
@@ -198,33 +199,33 @@ h2 {
 
 .login-form {
   width: 100%;
-  max-width: 320px;
+  max-width: 280px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .form-group {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 label {
   font-weight: 600;
   color: #14323b;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   margin: 0;
   letter-spacing: 0.5px;
 }
 
 input {
   width: 100%;
-  padding: 14px 16px;
+  padding: 10px 12px;
   border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 6px;
+  font-size: 14px;
   background: #f8fafc;
   color: #1e293b;
   transition: all 0.3s ease;
@@ -242,25 +243,24 @@ input:focus {
 
 input::placeholder {
   color: #94a3b8;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 button {
   width: 100%;
-  padding: 14px 16px;
+  padding: 10px 12px;
   background: linear-gradient(135deg, #14323b 0%, #4f46e5 100%);
   color: #fff;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 6px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  margin-top: 8px;
+  margin-top: 6px;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(79,70,229,0.2);
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  font-size: 14px;
 }
 
 button:hover:not(:disabled) {
@@ -321,36 +321,69 @@ button:disabled {
   border-left: 3px solid #22c55e;
 }
 
+/* ===== RESPONSIVIDADE SIMPLES ===== */
+
+/* Tablet e Mobile (768px e abaixo) */
 @media (max-width: 768px) {
+  .login-bg {
+    flex-direction: column;
+    padding: 15px;
+  }
+  
+  .imagem {
+    display: none;
+  }
+  
   .login-card {
-    width: 90%;
-    max-width: 400px;
+    width: 100%;
+    max-width: 450px;
+    height: auto;
+    min-height: 80vh;
     margin-right: 0;
-    padding: 32px 24px;
+    border-radius: 10px;
+    padding: 20px 16px;
+    gap: 16px;
   }
   
   .login-logo {
-    width: 100px;
+    width: 120px;
+  }
+  
+  h2 {
+    font-size: 1.4rem;
   }
   
   .login-form {
     max-width: 100%;
   }
   
-  h2 {
-    font-size: 1.5rem;
+  .voltar-button {
+    top: 8px;
+    left: 8px;
+    padding: 6px 10px;
+    font-size: 11px;
   }
 }
 
+/* Mobile (600px e abaixo) */
 @media (max-width: 600px) {
   .login-card {
-    width: 95%;
+    width: 100%;
+    max-width: 400px;
     height: auto;
     min-height: 80vh;
+    margin-right: 0;
+    border-radius: 10px;
+    padding: 20px 16px;
+    gap: 16px;
   }
   
   .login-logo {
-    width: 80px;
+    width: 100px;
+  }
+  
+  h2 {
+    font-size: 1.3rem;
   }
   
   .form-group {
@@ -367,4 +400,53 @@ button:disabled {
     font-size: 13px;
   }
 }
+
+/* Mobile Pequeno (480px e abaixo) */
+@media (max-width: 480px) {
+  .login-bg {
+    padding: 10px;
+  }
+  
+  .login-card {
+    padding: 16px 12px;
+    gap: 12px;
+    max-width: 350px;
+  }
+  
+  .login-logo {
+    width: 90px;
+  }
+  
+  h2 {
+    font-size: 1.2rem;
+  }
+  
+  input {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  
+  button {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+  
+  .toggle-form {
+    font-size: 13px;
+  }
+  
+  .error,
+  .success {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+  
+  .voltar-button {
+    top: 5px;
+    left: 5px;
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+}
 </style>
+
