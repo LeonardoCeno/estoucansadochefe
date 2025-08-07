@@ -275,9 +275,12 @@ button:disabled {
 }
 
 .toggle-form {
+  position: relative;
+  bottom: 10px;
   width: 100%;
+  margin-bottom: 16px;
+  margin-top: 12px;
   text-align: center;
-  margin-top: 16px;
   font-size: 14px;
   color: #64748b;
 }

@@ -113,7 +113,7 @@
 
     <div v-if="!esconderCategorias" class="Categorias">
         <div class="categorias-dropdown-wrapper" @mouseenter="showCategoriasDropdown = true" @mouseleave="showCategoriasDropdown = false" style="position: relative; display: inline-block;">
-            <button href="#">
+            <button href="#" class="categorias-btn">
                 <img src="../components/img/listafinal.png" alt=""> <p>Categorias</p>
             </button>
             <div v-if="showCategoriasDropdown" class="categorias-dropdown-menu">
@@ -526,20 +526,19 @@ button:hover img {
     height: 24px;
 }
 
-
 .Categorias {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 6vh;
-    background: linear-gradient(120deg, #0d4d3dda 0%, #000000 10% ,#000000 90%, #25768ada 100%);
+    min-height: 7.2vh;
+    background: linear-gradient(120deg, #0d4d3dda 0%, #000000d5 10% ,#000000d5 90%, #25768ada 100%);
     font-size: 14px;
     gap: 70px;
 }
 
 .Categorias img {
-    width: 1.1vw;
-    min-width: 12px;
+    width: 1.2vw;
+    min-width: 13.5px;
     height: auto;
     filter: brightness(0) invert(1);
     transition: all 0.3s ease;
@@ -567,6 +566,20 @@ button:hover img {
 .Categorias button:hover img {
     transition: 0s;
     filter: brightness(0) invert(45%) sepia(65%) saturate(1050%) hue-rotate(160deg) brightness(115%) contrast(100%);
+}
+
+/* Estilo específico para o botão Categorias */
+.categorias-btn p {
+    background: linear-gradient(to right, #3bff86 0%, #76fff8 60%, #15ffff 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 100% 100%;
+}
+
+/* Estilo específico para a imagem do botão Categorias */
+.categorias-btn img {
+    filter: brightness(0) invert(1) sepia(1) saturate(1000%) hue-rotate(120deg) brightness(1.2) contrast(1.5);
 }
 
 .conta-dropdown-menu {
@@ -1212,8 +1225,8 @@ button:hover img {
     
     /* Manter tamanho das imagens mesmo com menos categorias */
     .Categorias img {
-        width: 1.1vw !important;
-        min-width: 12px !important;
+        width: 1.3vw !important;
+        min-width: 14px !important;
     }
 }
 
@@ -1225,8 +1238,8 @@ button:hover img {
     
     /* Manter tamanho das imagens */
     .Categorias img {
-        width: 1.2vw !important;
-        min-width: 13px !important;
+        width: 1.4vw !important;
+        min-width: 15px !important;
     }
 }
 
@@ -1238,8 +1251,8 @@ button:hover img {
     
     /* Aumentar ligeiramente as imagens para compensar */
     .Categorias img {
-        width: 1.4vw !important;
-        min-width: 14px !important;
+        width: 1.6vw !important;
+        min-width: 16px !important;
     }
 }
 
@@ -1251,8 +1264,8 @@ button:hover img {
     
     /* Imagens maiores para as 3 categorias restantes */
     .Categorias img {
-        width: 1.6vw !important;
-        min-width: 16px !important;
+        width: 1.8vw !important;
+        min-width: 18px !important;
     }
 }
 

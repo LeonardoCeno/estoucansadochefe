@@ -288,7 +288,7 @@ onUnmounted(() => {
 .indicators {
     display: flex;
     gap: 12px;
-    z-index: 999999;
+    z-index: 99;
     align-items: center;
     position: relative;
     bottom: -0.6rem;
@@ -303,7 +303,7 @@ onUnmounted(() => {
     cursor: pointer;
     transition: all 0.3s ease;
     padding: 0;
-    z-index: 9999;
+    z-index: 99;
 }
 
 .indicator:hover {
