@@ -17,42 +17,18 @@
             <div v-else-if="produto" class="produto-content">
                 <!-- Breadcrumb -->
                 <div class="breadcrumb">
-                    <button @click="voltarPaginaAnterior" class="btn-voltar-breadcrumb">
-                        ← Voltar
-                    </button>
-                    <span class="separator">|</span>
-                    <router-link to="/pesquisas">Produtos</router-link>
-                    <span class="separator">/</span>
+                    <span>Início</span>
+                    <span class="separator">></span>
                     <span>{{ produto.name }}</span>
                 </div>
                 
                 <div class="produto-grid">
                     <!-- Área da Imagem do Produto -->
                     <div class="produto-imagem-area">
-                        <!-- Imagem Principal -->
                         <div class="produto-imagem-container">
-                            <img :src="imagemAtiva === 1 ? produto.image_path : produto.image_path" 
+                            <img :src="produto.image_path" 
                                     :alt="produto.name" 
-                                    :class="['produto-imagem', { 'invertida': imagemAtiva === 1 }]" />
-                            <div class="status-produto">
-                                <img :src="produto.stock >= 1 ? DISPONIVELREAL : INDISPONIVELREAL" 
-                                    :alt="produto.stock >= 1 ? 'Disponível' : 'Indisponível'" 
-                                    class="status-selo" />
-                            </div>
-                        </div>
-                        
-                        <!-- Miniaturas Abaixo -->
-                        <div class="miniaturas-container">
-                            <div class="miniatura-item" 
-                                    :class="{ 'ativo': imagemAtiva === 0 }"
-                                    @click="selecionarImagem(0)">
-                                <img :src="produto.image_path" :alt="produto.name" class="miniatura-img" />
-                            </div>
-                            <div class="miniatura-item" 
-                                    :class="{ 'ativo': imagemAtiva === 1 }"
-                                    @click="selecionarImagem(1)">
-                                <img :src="produto.image_path" :alt="produto.name" class="miniatura-img invertida" />
-                            </div>
+                                    class="produto-imagem" />
                         </div>
                     </div>
                     
@@ -61,29 +37,17 @@
                         <h1 class="produto-titulo">{{ produto.name }}</h1>
                         
                         <div class="produto-preco-container">
-                            <span class="produto-preco">R$ {{ produto.price }}</span>
+                            <span class="produto-preco-atual">R$ {{ produto.price }}</span>
+                            <div class="parcela-info">1X de R$ {{ produto.price }} sem juros</div>
                         </div>
                         
-                        <div class="produto-categoria">
-                            <span class="categoria-label">Categoria:</span>
-                            <span class="categoria-nome">{{ produto.category?.name || 'Sem categoria' }}</span>
-                        </div>
-                        
-                        <div class="produto-estoque">
-                            <span class="estoque-label">Estoque:</span>
-                            <span :class="['estoque-quantidade', { 'baixo': produto.stock <= 5 }]">
-                                {{ produto.stock }} unidades
-                            </span>
-                        </div>
-                        
-                        <div v-if="produto.description" class="produto-descricao">
-                            <h3>Descrição</h3>
-                            <p>{{ produto.description }}</p>
+                        <div class="estoque-info">
+                            <span class="estoque-status">EM ESTOQUE</span>
+                            <span class="estoque-quantidade">{{ produto.stock }} itens</span>
                         </div>
                         
                         <!-- Seletor de Quantidade -->
                         <div class="quantidade-container">
-                            <label for="quantidade" class="quantidade-label">Quantidade:</label>
                             <div class="quantidade-controles">
                                 <button 
                                     @click="diminuirQuantidade" 
@@ -92,7 +56,6 @@
                                     -
                                 </button>
                                 <input 
-                                    id="quantidade"
                                     v-model.number="quantidade" 
                                     type="number" 
                                     min="1" 
@@ -111,40 +74,36 @@
                         
                         <!-- Ações do Produto -->
                         <div class="produto-acoes">
-                            <div class="acoes-principais">
+                            <div class="add">
                                 <button 
                                     v-if="!cartStore.produtoEstaNoCarrinho(produto.id)" 
                                     @click="adicionarAoCarrinho(produto)"
-                                    class="btn-adicionar"
                                     :disabled="produto.stock < 1">
-                                    <img src="../components/img/maisumcarrinho.png" alt="" class="carrinho-icon">
-                                    <span>Adicionar ao Carrinho</span>
+                                    <img :src="MAISUMCARRINHO" alt="">
+                                    <p>{{ cartStore.produtoEstaNoCarrinho(produto.id) ? 'Remover' : 'Adicionar' }}</p>
                                 </button>
                                 <button 
                                     v-else 
-                                    @click="cartStore.removerItemDoCarrinho({product_id: produto.id})" 
-                                    class="btn-remover">
-                                    <img src="../components/img/maisumcarrinho.png" alt="" class="carrinho-icon">
-                                    <span>Remover do Carrinho</span>
+                                    @click="cartStore.removerItemDoCarrinho({product_id: produto.id})">
+                                    <img :src="MAISUMCARRINHO" alt="">
+                                    <p>Remover</p>
                                 </button>
                                 
-                                <button 
-                                    @click="favoritesStore.toggleFavorito(produto.id)"
-                                    class="btn-favorito"
-                                    :class="{ 'ativo': favoritesStore.estaNosFavoritos(produto.id) }">
-                                    <img :src="favoritesStore.estaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" alt="">
-                                    <span>{{ favoritesStore.estaNosFavoritos(produto.id) ? 'Remover dos Favoritos' : 'Adicionar aos Favoritos' }}</span>
-                                </button>
+                                <img :src="favoritesStore.estaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" 
+                                     alt="" 
+                                     @click="favoritesStore.toggleFavorito(produto.id)" 
+                                     :class="{ 'coracao-favorito': favoritesStore.estaNosFavoritos(produto.id) }">
                             </div>
                         </div>
+                        
+
                     </div>
                 </div>
                 
-                <!-- Botão Voltar -->
-                <div class="voltar-container">
-                    <router-link to="/pesquisas" class="btn-voltar">
-                        ← Voltar para Produtos
-                    </router-link>
+                <!-- Descrição Separada -->
+                <div v-if="produto.description" class="descricao-separada">
+                    <h3>Descrição do Produto</h3>
+                    <p>{{ produto.description }}</p>
                 </div>
             </div>
         </div>
@@ -188,6 +147,7 @@ import DISPONIVELREAL from '../components/img/DISPONIVELREAL.png'
 import INDISPONIVELREAL from '../components/img/INDISPONIVELREAL.png'
 import CORACAOFAV from '../components/img/coraçaofav.png'
 import CORACAOVAZIO from '../components/img/coraçaovazio.png'
+import MAISUMCARRINHO from '../components/img/maisumcarrinho.png'
 
 // Stores
 const cartStore = useCartStore()
@@ -271,6 +231,9 @@ function voltarPaginaAnterior() {
 }
 
 onMounted(async () => {
+    // Fazer scroll para o topo da página
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    
     // Carregar produto primeiro (prioridade)
     await carregarProduto()
     
@@ -286,7 +249,11 @@ onMounted(async () => {
 <style scoped>
 .produto-detalhes {
     min-height: 100vh;
-    background-color: #f8f9fa;
+    background-image: url(../components/img/fundaogeral.jpg);
+    background-size: cover;
+    background: linear-gradient(to bottom, #fcfcfc50 0%, #7fbbce59 60%, #4e46e548 100%);
+    background-repeat: no-repeat;
+    background-blend-mode: overlay;
 }
 
 .container {
@@ -332,369 +299,229 @@ onMounted(async () => {
 .breadcrumb {
     margin-bottom: 30px;
     font-size: 14px;
-    color: #666;
+    color: #333;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.btn-voltar-breadcrumb {
-    background: #6c757d;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    cursor: pointer;
-    transition: background 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.btn-voltar-breadcrumb:hover {
-    background: #5a6268;
-}
-
-.breadcrumb a {
-    color: #4f79a3;
-    text-decoration: none;
-}
-
-.breadcrumb a:hover {
-    text-decoration: underline;
-}
-
 .separator {
     margin: 0 4px;
-    color: #999;
+    color: #666;
 }
 
 .produto-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    justify-content: center;
-    gap: 40px;
-    margin-bottom: 40px;
+    gap: 15px;
+    margin-bottom: 30px;
 }
 
 .produto-imagem-area {
     display: flex;
-    align-items: end;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.miniaturas-container {
-    display: flex;
-    gap: 12px;
-    justify-content: start;
-    align-self: center;
-}
-
-.miniatura-item {
-    display: flex;
-    width: 80px;
-    height: 80px;
-    border: 2px solid #eee;
-    border-radius: 8px;
-    cursor: pointer;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    background: white;
-    align-items: center;
     justify-content: center;
-}
-
-.miniatura-item:hover {
-    border-color: #4f79a3;
-    transform: scale(1.02);
-}
-
-.miniatura-item.ativo {
-    border-color: #4f79a3;
-    box-shadow: 0 0 0 2px rgba(79, 121, 163, 0.2);
-}
-
-.miniatura-img {
-    height: 80%;
-    width: auto;
-    object-fit: cover;
-}
-
-.miniatura-img.invertida {
-    transform: scaleX(-1);
+    align-items: flex-start;
 }
 
 .produto-imagem-container {
-    position: relative;
+    width: 100%;
+    max-width: 350px;
     background: white;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    width: 70%;
-    height: auto;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .produto-imagem {
     width: 100%;
     height: auto;
-    border-radius: 8px;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.produto-imagem.invertida {
-    transform: scaleX(-1);
-}
-
-.status-produto {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-}
-
-.status-produto img {
-    width: 200px;
-    height: auto;
-    border-radius: 7px;
-}
-
-.status-selo {
-    width: 60px;
-    height: auto;
+    display: block;
 }
 
 .produto-info {
-    background: white;
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px 0;
 }
 
 .produto-titulo {
-    font-size: 28px;
+    font-size: 40px;
     color: #333;
-    margin: 0 0 20px 0;
-    font-weight: bold;
+    margin: 0 0 15px 0;
+    font-weight: 600;
+    line-height: 1.3;
 }
 
 .produto-preco-container {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
-.produto-preco {
-    font-size: 32px;
+.produto-preco-atual {
+    display: block;
+    font-size: 24px;
     font-weight: bold;
-    color: #4f79a3;
-}
-
-.produto-categoria, .produto-estoque {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 16px;
-}
-
-.categoria-label, .estoque-label {
-    font-weight: bold;
-    color: #666;
-    min-width: 80px;
-}
-
-.categoria-nome {
     color: #333;
+    margin-bottom: 5px;
+}
+
+.parcela-info {
+    font-size: 14px;
+    color: #666;
+}
+
+.estoque-info {
+    margin-bottom: 15px;
+}
+
+.estoque-status {
+    display: block;
+    font-size: 14px;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 5px;
 }
 
 .estoque-quantidade {
-    color: #28a745;
-    font-weight: bold;
-}
-
-.estoque-quantidade.baixo {
-    color: #ffc107;
-}
-
-.produto-descricao {
-    margin: 24px 0;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 8px;
-}
-
-.produto-descricao h3 {
-    margin: 0 0 12px 0;
-    color: #333;
-    font-size: 18px;
-}
-
-.produto-descricao p {
-    margin: 0;
-    color: #666;
-    line-height: 1.6;
+    font-size: 14px;
+    color: #707070;
 }
 
 .quantidade-container {
-    margin: 24px 0;
-    padding: 16px;
-    background: #f8f9fa;
-    border-radius: 8px;
-}
-
-.quantidade-label {
-    display: block;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 12px;
+    margin-bottom: 15px;
 }
 
 .quantidade-controles {
     display: flex;
     align-items: center;
-    gap: 12px;
-    justify-content: center;
+    gap: 10px;
+    justify-content: flex-start;
 }
 
 .btn-quantidade {
-    width: 40px;
-    height: 40px;
-    border: 2px solid #4f79a3;
+    width: 35px;
+    height: 35px;
+    border: 1px solid #ddd;
     background: white;
-    color: #4f79a3;
-    border-radius: 50%;
-    font-size: 18px;
+    color: #333;
+    border-radius: 4px;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .btn-quantidade:hover:not(:disabled) {
-    background: #4f79a3;
-    color: white;
+    background: #f8f9fa;
+    border-color: #999;
 }
 
 .btn-quantidade:disabled {
-    border-color: #ccc;
+    border-color: #eee;
     color: #ccc;
     cursor: not-allowed;
 }
 
 .quantidade-input {
-    width: 80px;
-    height: 40px;
+    width: 60px;
+    height: 35px;
     text-align: center;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
     color: #333;
 }
 
 .quantidade-input:focus {
     outline: none;
-    border-color: #4f79a3;
+    border-color: #007bff;
 }
 
 .produto-acoes {
-    margin: 30px 0;
+    margin-bottom: 20px;
 }
 
-.acoes-principais {
+.add {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
-.btn-adicionar, .btn-remover, .btn-favorito {
+.add button {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    width: 100%;
+    background-color: #030a11f5;
     justify-content: center;
+    padding: 15px 20px;
+    border-radius: 7px;
+    gap: 8px;
+    width: 180px;
+    border: none;
+    cursor: pointer;
 }
 
-.btn-adicionar {
-    background: #4f79a3;
+.add button:hover {
+    background-color: #02060ac2;
+}
+
+.add button p {
     color: white;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
 }
 
-.btn-adicionar:hover:not(:disabled) {
-    background: #3a5a7a;
-    transform: translateY(-1px);
-}
-
-.btn-adicionar:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-}
-
-.btn-remover {
-    background: #4f79a3;
-    color: white;
-}
-
-.btn-remover:hover {
-    background: #3a5a7a;
-}
-
-.btn-favorito {
-    background: transparent;
-    color: #666;
-    border: 2px solid #ddd;
-}
-
-.btn-favorito:hover {
-    border-color: #4f79a3;
-    color: #4f79a3;
-}
-
-.btn-favorito.ativo {
-    border-color: #e11d48;
-    color: #e11d48;
-}
-
-.btn-adicionar img, .btn-remover img, .btn-favorito img {
+.add button img {
     width: 20px;
     height: 20px;
-}
-
-.carrinho-icon {
+    border: none;
     filter: invert(1);
 }
 
-.voltar-container {
-    text-align: center;
-    margin-top: 40px;
+.add img {
+    width: 40px;
+    height: 40px;
+    filter: invert(6%) sepia(50%) saturate(200%) hue-rotate(160deg) brightness(100%) contrast(100%);
+    cursor: pointer;
+    transition: opacity 0.2s ease;
 }
 
-.btn-voltar {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 24px;
-    background: #6c757d;
-    color: white;
-    text-decoration: none;
+.add img:hover {
+    opacity: 0.8;
+}
+
+/* Estilo para coração vermelho quando está nos favoritos */
+.add img.coracao-favorito {
+    filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
+}
+
+
+
+.descricao-separada {
+    margin-top: 30px;
+    padding: 25px;
+    background: white;
     border-radius: 8px;
-    font-weight: bold;
-    transition: background 0.3s;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.btn-voltar:hover {
-    background: #5a6268;
+.descricao-separada h3 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    color: #333;
+    font-weight: 600;
+}
+
+.descricao-separada p {
+    margin: 0;
+    color: #666;
+    line-height: 1.6;
+    font-size: 14px;
 }
 
 /* Responsividade */
@@ -704,50 +531,14 @@ onMounted(async () => {
         gap: 20px;
     }
     
-    .produto-imagem-area {
-        gap: 16px;
-    }
-    
-    .miniaturas-container {
-        justify-content: center;
-    }
-    
-    .miniatura-item {
-        width: 60px;
-        height: 60px;
-    }
-    
     .produto-titulo {
+        font-size: 20px;
+    }
+    
+    .produto-preco-atual {
         font-size: 24px;
     }
     
-    .produto-preco {
-        font-size: 28px;
-    }
-    
-    .acoes-principais {
-        gap: 8px;
-    }
-    
-    .btn-adicionar, .btn-remover, .btn-favorito {
-        padding: 10px 16px;
-        font-size: 14px;
-    }
-    
-    .quantidade-controles {
-        gap: 8px;
-    }
-    
-    .btn-quantidade {
-        width: 36px;
-        height: 36px;
-        font-size: 16px;
-    }
-    
-    .quantidade-input {
-        width: 70px;
-        height: 36px;
-        font-size: 14px;
-    }
+
 }
 </style> 
