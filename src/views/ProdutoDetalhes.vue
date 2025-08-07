@@ -23,7 +23,6 @@
                 </div>
                 
                 <div class="produto-grid">
-                    <!-- Área da Imagem do Produto -->
                     <div class="produto-imagem-area">
                         <div class="produto-imagem-container">
                             <img :src="produto.image_path" 
@@ -31,48 +30,29 @@
                                     class="produto-imagem" />
                         </div>
                     </div>
-                    
-                    <!-- Informações do Produto -->
                     <div class="produto-info">
                         <h1 class="produto-titulo">{{ produto.name }}</h1>
-                        
                         <div class="produto-preco-container">
                             <span class="produto-preco-atual">R$ {{ produto.price }}</span>
                             <div class="parcela-info">1X de R$ {{ produto.price }} sem juros</div>
                         </div>
-                        
                         <div class="estoque-info">
                             <span class="estoque-status">EM ESTOQUE</span>
                             <span class="estoque-quantidade">{{ produto.stock }} itens</span>
                         </div>
-                        
-                        <!-- Seletor de Quantidade -->
                         <div class="quantidade-container">
                             <div class="quantidade-controles">
-                                <button 
-                                    @click="diminuirQuantidade" 
-                                    :disabled="quantidade <= 1"
-                                    class="btn-quantidade">
-                                    -
-                                </button>
+                                <button @click="diminuirQuantidade" :disabled="quantidade <= 1" class="btn-quantidade"> - </button>
                                 <input 
                                     v-model.number="quantidade" 
                                     type="number" 
                                     min="1" 
                                     :max="produto.stock"
                                     class="quantidade-input"
-                                    @input="validarQuantidade"
-                                />
-                                <button 
-                                    @click="aumentarQuantidade" 
-                                    :disabled="quantidade >= produto.stock"
-                                    class="btn-quantidade">
-                                    +
-                                </button>
+                                    @input="validarQuantidade"/>
+                                <button @click="aumentarQuantidade" :disabled="quantidade >= produto.stock" class="btn-quantidade"> + </button>
                             </div>
                         </div>
-                        
-                        <!-- Ações do Produto -->
                         <div class="produto-acoes">
                             <div class="add">
                                 <button 
@@ -81,26 +61,20 @@
                                     <img :src="MAISUMCARRINHO" alt="">
                                     <p>{{ cartStore.produtoEstaNoCarrinho(produto.id) ? 'Remover' : 'Adicionar' }}</p>
                                 </button>
-                                
                                 <img :src="favoritesStore.estaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" 
-                                     alt="" 
-                                     @click="favoritesStore.toggleFavorito(produto.id)" 
-                                     :class="{ 'coracao-favorito': favoritesStore.estaNosFavoritos(produto.id) }">
+                                    alt="" 
+                                    @click="favoritesStore.toggleFavorito(produto.id)" 
+                                    :class="{ 'coracao-favorito': favoritesStore.estaNosFavoritos(produto.id) }">
                             </div>
                         </div>
-                        
-
                     </div>
                 </div>
-                
-                <!-- Descrição Separada -->
                 <div v-if="produto.description" class="descricao-separada">
                     <h3>Descrição do Produto</h3>
                     <p>{{ produto.description }}</p>
                 </div>
             </div>
         </div>
-        
         <Footer></Footer>
     </div>
 </template>
@@ -126,20 +100,15 @@ const produto = ref(null)
 
 const quantidade = ref(1)
 
-// Verificação de login otimizada
 const isLoggedIn = computed(() => {
     const token = localStorage.getItem('token')
     return !!token && !!api.defaults.headers.common['Authorization']
 })
 
-
-
-// Imagens
 import CORACAOFAV from '../components/img/coraçaofav.png'
 import CORACAOVAZIO from '../components/img/coraçaovazio.png'
 import MAISUMCARRINHO from '../components/img/maisumcarrinho.png'
 
-// Stores
 const cartStore = useCartStore()
 const favoritesStore = useFavoritesStore()
 
@@ -177,14 +146,11 @@ async function carregarProduto() {
     }
 }
 
-// Função para adicionar/remover do carrinho com verificação de login
 async function toggleCarrinhoComLogin(produto) {
     if (!isLoggedIn.value) {
         toast.error('Faça login para adicionar produtos ao carrinho.')
         return
     }
-    
-    // Se o produto não está no carrinho, adicionar com a quantidade selecionada
     if (!cartStore.produtoEstaNoCarrinho(produto.id)) {
         const precoUnitario = typeof produto.price === 'string' ? parseFloat(produto.price) : produto.price
         await cartStore.adicionarItem(produto.id, quantidade.value, precoUnitario, produto.image_path)
@@ -194,28 +160,14 @@ async function toggleCarrinhoComLogin(produto) {
     }
 }
 
-
-
-
-
-
-
 onMounted(async () => {
-    // Fazer scroll para o topo da página
     window.scrollTo({ top: 0, behavior: 'smooth' })
-    
-    // Carregar produto primeiro (prioridade)
     await carregarProduto()
-    
-    // Carregar carrinho apenas se usuário estiver logado
     if (isLoggedIn.value) {
         await cartStore.carregarCarrinho()
     }
-    
-    // Carregar favoritos
     favoritesStore.carregarFavoritos()
 })
-
 
 </script>
 
@@ -468,12 +420,9 @@ onMounted(async () => {
     opacity: 0.8;
 }
 
-/* Estilo para coração vermelho quando está nos favoritos */
 .add img.coracao-favorito {
     filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
 }
-
-
 
 .descricao-separada {
     margin-top: 30px;
@@ -497,7 +446,6 @@ onMounted(async () => {
     font-size: 14px;
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
     .produto-grid {
         grid-template-columns: 1fr;
@@ -514,4 +462,5 @@ onMounted(async () => {
     
 
 }
+
 </style> 
