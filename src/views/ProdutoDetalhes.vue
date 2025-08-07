@@ -76,17 +76,10 @@
                         <div class="produto-acoes">
                             <div class="add">
                                 <button 
-                                    v-if="!cartStore.produtoEstaNoCarrinho(produto.id)" 
-                                    @click="adicionarAoCarrinho(produto)"
+                                    @click="toggleCarrinhoComLogin(produto)"
                                     :disabled="produto.stock < 1">
                                     <img :src="MAISUMCARRINHO" alt="">
                                     <p>{{ cartStore.produtoEstaNoCarrinho(produto.id) ? 'Remover' : 'Adicionar' }}</p>
-                                </button>
-                                <button 
-                                    v-else 
-                                    @click="cartStore.removerItemDoCarrinho({product_id: produto.id})">
-                                    <img :src="MAISUMCARRINHO" alt="">
-                                    <p>Remover</p>
                                 </button>
                                 
                                 <img :src="favoritesStore.estaNosFavoritos(produto.id) ? CORACAOFAV : CORACAOVAZIO" 
@@ -139,12 +132,9 @@ const isLoggedIn = computed(() => {
     return !!token && !!api.defaults.headers.common['Authorization']
 })
 
-// Estado da galeria de imagens
-const imagemAtiva = ref(0)
+
 
 // Imagens
-import DISPONIVELREAL from '../components/img/DISPONIVELREAL.png'
-import INDISPONIVELREAL from '../components/img/INDISPONIVELREAL.png'
 import CORACAOFAV from '../components/img/coraçaofav.png'
 import CORACAOVAZIO from '../components/img/coraçaovazio.png'
 import MAISUMCARRINHO from '../components/img/maisumcarrinho.png'
@@ -187,48 +177,28 @@ async function carregarProduto() {
     }
 }
 
-// Função para adicionar produto ao carrinho
-async function adicionarAoCarrinho(produto) {
+// Função para adicionar/remover do carrinho com verificação de login
+async function toggleCarrinhoComLogin(produto) {
     if (!isLoggedIn.value) {
         toast.error('Faça login para adicionar produtos ao carrinho.')
         return
     }
     
-    if (produto.stock < 1) {
-        toast.error('Produto indisponível no momento.')
-        return
-    }
-    
-    try {
-        // Converter preço para número se for string
+    // Se o produto não está no carrinho, adicionar com a quantidade selecionada
+    if (!cartStore.produtoEstaNoCarrinho(produto.id)) {
         const precoUnitario = typeof produto.price === 'string' ? parseFloat(produto.price) : produto.price
-        
-        // Adicionar com a quantidade selecionada
         await cartStore.adicionarItem(produto.id, quantidade.value, precoUnitario, produto.image_path)
-    } catch (error) {
-        console.error('Erro ao adicionar produto:', error)
-        toast.error('Erro ao adicionar produto ao carrinho.')
-    }
-}
-
-
-
-
-
-// Função para selecionar imagem na galeria
-function selecionarImagem(index) {
-    imagemAtiva.value = index
-}
-
-// Função para voltar à página anterior
-function voltarPaginaAnterior() {
-    if (window.history.length > 1) {
-        router.go(-1)
     } else {
-        // Se não há histórico, vai para a página de produtos
-        router.push('/pesquisas')
+        // Se já está no carrinho, remover usando a função específica
+        await cartStore.removerItemDoCarrinho({product_id: produto.id})
     }
 }
+
+
+
+
+
+
 
 onMounted(async () => {
     // Fazer scroll para o topo da página
@@ -241,6 +211,9 @@ onMounted(async () => {
     if (isLoggedIn.value) {
         await cartStore.carregarCarrinho()
     }
+    
+    // Carregar favoritos
+    favoritesStore.carregarFavoritos()
 })
 
 
@@ -356,7 +329,7 @@ onMounted(async () => {
 
 .produto-preco-atual {
     display: block;
-    font-size: 24px;
+    font-size: 30px;
     font-weight: bold;
     color: #333;
     margin-bottom: 5px;
