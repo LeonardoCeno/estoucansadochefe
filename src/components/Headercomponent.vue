@@ -12,7 +12,7 @@
                 <div class="autocomplete-titulo">
                     Resultados para "{{ busca }}"
                 </div>
-                <div v-for="produto in sugestoes.slice(0, 3)" :key="produto.id" class="sugestao-item" @mousedown.prevent="irParaProduto(produto.id)">
+                <div v-for="produto in sugestoes.slice(0, 4)" :key="produto.id" class="sugestao-item" @mousedown.prevent="irParaProduto(produto.id)">
                     <img v-if="produto.image_path" :src="produto.image_path.startsWith('http') ? produto.image_path : apiBase + produto.image_path" alt="imagem" />
                     <div class="sugestao-info">
                         <span class="disponivel">
@@ -30,7 +30,7 @@
                 <button @click.stop="toggleCarrinhoDropdown">
                     <p>Carrinho</p>
                     <img src="../components/img/carrinhofinal.png" alt="" />
-                    <span v-if="totalItensCarrinho > 0" class="carrinho-badge">{{ totalItensCarrinho }}</span>
+                    <span v-if="totalItensCarrinho > 0" id="contadoritens" class="carrinho-badge">{{ totalItensCarrinho }}</span>
                 </button>
                 <div v-if="showCarrinhoDropdown" class="carrinho-dropdown-menu" @click.stop>
                     <div class="carrinho-header">
@@ -530,6 +530,15 @@ button {
     -webkit-text-fill-color: transparent;
 }
 
+/* Proteger o badge do carrinho do hover do botão */
+.botoes button:hover #contadoritens {
+    background: #e74c3c !important;
+    background-clip: unset !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: #ffffff !important;
+    color: #ffffff !important;
+}
+
 button img {
     width: auto;
     height: 3vh;
@@ -589,7 +598,7 @@ button:hover img {
 
 /* Estilo específico para o botão Categorias */
 .categorias-btn p {
-    background: linear-gradient(to right, #3bff86 0%, #76fff8 60%, #15ffff 100%);
+    background: linear-gradient(to right, #4bff90 0%, #87fff9 60%, #2bffff 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -692,7 +701,7 @@ button:hover img {
     background: #e74c3c;
     border: 1px solid #ffffff;
     color: #ffffff;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.363);
     border-radius: 50%;
     width: 20px;
     height: 20px;
@@ -728,7 +737,6 @@ button:hover img {
 .carrinho-dropdown-menu.show {
     transform: translateX(0);
 }
-
 
 .carrinho-header {
     background: #f8f9fa;
@@ -867,8 +875,6 @@ button:hover img {
     align-items: center;
     gap: 8px;
 }
-
-
 
 .carrinho-remover {
     background: none;
@@ -1203,11 +1209,11 @@ button:hover img {
 
 .autocomplete-sugestoes {
     position: absolute;
-    top: 45px;
+    top: 48.5px;
     left: 0;
     width: 100%;
     background: #fff;
-    border: 1.5px solid #979797;
+    border: 1px solid #6d6d6d;
     border-radius: 0 0 12px 12px;
     z-index: 100;
     padding: 4px 0;
@@ -1216,15 +1222,15 @@ button:hover img {
 .sugestao-item {
     display: flex;
     align-items: center;
-    gap: 18px;
-    padding: 10px 18px;
+    gap: 12px;
+    padding: 8px 14px;
     cursor: pointer;
     border-bottom: 1px solid #e9e9e9;
 }
 
 .sugestao-item img {
-    width: 80px;
-    height: 108px;
+    width: 60px;
+    height: 80px;
     filter: none;
 }
 
@@ -1235,13 +1241,13 @@ button:hover img {
 }
 
 .sugestao-info .disponivel img{
-    width: 90px;
+    width: 70px;
     height: auto;
-    border-radius: 7px;
+    border-radius: 6px;
 }
 
 .sugestao-nome {
-    font-size: 1.08rem;
+    font-size: 0.95rem;
     font-weight: 600;
     color: #222;
     text-overflow: ellipsis;
@@ -1250,7 +1256,7 @@ button:hover img {
 
 .sugestao-preco {
     font-weight: Bold;
-    font-size: 1.2rem;
+    font-size: 1.05rem;
     color: #414141;
 }
 
@@ -1260,9 +1266,9 @@ button:hover img {
 
 .autocomplete-titulo {
     color: #888;
-    font-size: 0.98rem;
+    font-size: 0.9rem;
     font-weight: 500;
-    padding: 10px 18px 4px 18px;
+    padding: 8px 14px 4px 14px;
     margin-bottom: 2px;
     margin-top: 2px;
     text-align: left;
@@ -1270,7 +1276,7 @@ button:hover img {
 }
 
 /* ================================
-   RESPONSIVIDADE DAS CATEGORIAS
+    RESPONSIVIDADE DAS CATEGORIAS
    ================================ */
 
 /* Primeira redução: ocultar "Ofertas" em telas menores */

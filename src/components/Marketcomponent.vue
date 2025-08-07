@@ -499,9 +499,7 @@ onUnmounted(() => {
     }
     
     .indicators {
-        display: flex;
-        bottom: 10px;
-        gap: 8px;
+        display: none;
     }
     
     .indicator {
@@ -591,8 +589,7 @@ onUnmounted(() => {
     }
     
     .indicators {
-        gap: 8px;
-        bottom: 0.5rem;
+        display: none;
     }
     
     .indicator {
@@ -670,8 +667,7 @@ onUnmounted(() => {
     }
     
     .indicators {
-        gap: 6px;
-        bottom: 0.3rem;
+        display: none;
     }
     
     .indicator {
