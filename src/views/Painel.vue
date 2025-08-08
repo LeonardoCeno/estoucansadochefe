@@ -2,23 +2,24 @@
 <div class="painel-layout">
 <TopBar />
 <div class="Tudo">
-    <button class="menu-toggle" @click.stop="menuAberto = true">☰ Menu</button>
+    <button class="menu-toggle" @click.stop="menuAberto = !menuAberto" :class="{ 'ao-lado': menuAberto }">☰</button>
     <div class="offcanvas-overlay" v-if="menuAberto" @click="menuAberto = false"></div>
     <div class="menuesquerdo" :class="{ aberto: menuAberto }" >
-        <h2> <span class="h2fake" > Olá, {{ usuario.name }}</span> 👋 </h2>
-        <router-link to="/dados"> <button :class="{ active: $route.path === '/dados' }">Meus dados</button></router-link>
-        <router-link to="/carrinho"> <button :class="{ active: $route.path === '/carrinho' }">Carrinho</button></router-link>
-        <router-link to="/favoritos"> <button :class="{ active: $route.path === '/favoritos' }">Favoritos</button></router-link>
-        <router-link to="/pedidos"> <button :class="{ active: $route.path === '/pedidos' }">Pedidos</button></router-link>
-        <router-link to="/enderecos"> <button :class="{ active: $route.path === '/enderecos' }">Endereços</button></router-link>
-        <router-link to="/cupons"> <button :class="{ active: $route.path === '/cupons' }">Cupons</button></router-link>
+        
+        <h2> <span class="h2fake" > Olá, {{ usuario.name }}</span> </h2>
+        <router-link to="/dados" @click="fecharMenu"> <button :class="{ active: $route.path === '/dados' }">Meus dados</button></router-link>
+        <router-link to="/carrinho" @click="fecharMenu"> <button :class="{ active: $route.path === '/carrinho' }">Carrinho</button></router-link>
+        <router-link to="/favoritos" @click="fecharMenu"> <button :class="{ active: $route.path === '/favoritos' }">Favoritos</button></router-link>
+        <router-link to="/pedidos" @click="fecharMenu"> <button :class="{ active: $route.path === '/pedidos' }">Pedidos</button></router-link>
+        <router-link to="/enderecos" @click="fecharMenu"> <button :class="{ active: $route.path === '/enderecos' }">Endereços</button></router-link>
+        <router-link to="/cupons" @click="fecharMenu"> <button :class="{ active: $route.path === '/cupons' }">Cupons</button></router-link>
         <div class="admin" v-if="userRole && (userRole === 'ADMIN' || userRole === 'MODERATOR')">
         <h3>GERENCIAR</h3>
-        <router-link to="/ADMmoderadores"> <button :class="{ active: $route.path === '/ADMmoderadores' }">Moderadores</button></router-link>
-        <router-link to="/ADMcategorias"> <button :class="{ active: $route.path === '/ADMcategorias' }">Categorias</button></router-link>
-        <router-link to="/ADMprodutos"> <button :class="{ active: $route.path === '/ADMprodutos' }">Produtos</button></router-link>
-        <router-link to="/ADMpedidos"> <button :class="{ active: $route.path === '/ADMpedidos' }">Pedidos</button></router-link>
-        <router-link to="/ADMcupons"> <button :class="{ active: $route.path === '/ADMcupons' }">Cupons</button></router-link>
+        <router-link to="/ADMmoderadores" @click="fecharMenu"> <button :class="{ active: $route.path === '/ADMmoderadores' }">Moderadores</button></router-link>
+        <router-link to="/ADMcategorias" @click="fecharMenu"> <button :class="{ active: $route.path === '/ADMcategorias' }">Categorias</button></router-link>
+        <router-link to="/ADMprodutos" @click="fecharMenu"> <button :class="{ active: $route.path === '/ADMprodutos' }">Produtos</button></router-link>
+        <router-link to="/ADMpedidos" @click="fecharMenu"> <button :class="{ active: $route.path === '/ADMpedidos' }">Pedidos</button></router-link>
+        <router-link to="/ADMcupons" @click="fecharMenu"> <button :class="{ active: $route.path === '/ADMcupons' }">Cupons</button></router-link>
         
         </div>
     </div>
@@ -40,6 +41,10 @@ const userStore = useUserStore()
 const usuario = computed(() => userStore.user || {})
 const userRole = computed(() => userStore.user?.role)
 const menuAberto = ref(false)
+
+function fecharMenu() {
+  menuAberto.value = false
+}
 </script>
 
 <style scoped>
@@ -64,27 +69,80 @@ const menuAberto = ref(false)
 }
 
 .menu-toggle{
-    display: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 64px;
+    left: 0px;
+    z-index: 1300;
+    background: #02060af5;
+    color: #079ac7;
+    border: none;
+    padding: 16px 18px;
+    border-radius: 0 10px 10px 0;
+    font-size: 2rem;
+    font-weight: 600;
+    box-shadow: none;
+    cursor: pointer;
+    transition: left 0.25s ease, background 0.2s ease, color 0.2s ease;
+    
+}
+.menu-toggle.ao-lado {
+    left: calc(28vw - 1px);
+}
+
+@media (min-width: 769px) {
+    .menu-toggle.ao-lado {
+        left: calc(22vw - 1px);
+    }
+}
+.menu-toggle:hover {
+    background: #02060af5;
+    color: #079ac7;
+}
+
+.close-menu {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: transparent;
+    color: #fff;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 1301;
 }
 
 .offcanvas-overlay{
-    display: none;
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 1200;
 }
 
-.menuesquerdo{
-    width: 18vw;
-    max-width: 350px;
-    min-width: 250px;
-    height: auto;
-    background: #02060af5;
-    z-index: 10;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
+.menuesquerdo {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 28vw;
+    max-width: 480px;
+    min-width: 320px;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    margin-bottom: 0;
     padding: 0;
-    overflow: visible;
+    box-sizing: border-box;
     border-radius: 0;
-    border: none;
+    z-index: 1201;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #02060af5;
+}
+.menuesquerdo.aberto {
+    transform: translateX(0);
 }
 
 .menuesquerdo h2 {
@@ -235,6 +293,18 @@ const menuAberto = ref(false)
     }
 }
 
+@media (min-width: 769px) {
+    .menuesquerdo {
+        width: 22vw;
+        max-width: 350px;
+        min-width: 250px;
+    }
+    .menu-toggle {
+        top: 64px;
+        left: 0;
+    }
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
     .Tudo {
@@ -242,56 +312,12 @@ const menuAberto = ref(false)
         height: auto;
         padding: 0;
     }
-    .menu-toggle{
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        position: fixed;
-        bottom: 16px;
-        right: 16px;
-        z-index: 1200;
-        background: #079ac7;
-        color: #ffffff;
-        border: none;
-        padding: 12px 14px;
-        border-radius: 10px;
-        font-weight: 700;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        cursor: pointer;
-    }
-    .menu-toggle:active{ transform: scale(0.98); }
-
-    .offcanvas-overlay{
-        display: block;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.35);
-        z-index: 1100;
-    }
     
     .menuesquerdo {
-        position: fixed;
-        left: 0;
-        top: 0;
-        height: 100vh;
         width: 85vw;
         max-width: 320px;
-        min-width: 260px;
-        transform: translateX(-100%);
-        transition: transform 0.25s ease;
-        margin-bottom: 0;
-        padding: 0;
-        box-sizing: border-box;
-        border-radius: 0;
-        z-index: 1201;
-        overflow-y: auto;
+        min-width: 200px;
     }
-    .menuesquerdo.aberto{
-        transform: translateX(0);
-    }
-
-    /* removido botão de fechar */
     
     .menuesquerdo button {
         padding: 0 12px;
@@ -324,6 +350,9 @@ const menuAberto = ref(false)
         height: clamp(45px, 5vh, 60px);
         font-size: clamp(0.8rem, 1.2vw, 1rem);
     }
+    .menu-toggle.ao-lado {
+        left: calc(85vw - 1px);
+    }
 }
 
 @media (max-width: 480px) {
@@ -333,9 +362,9 @@ const menuAberto = ref(false)
     }
     
     .menuesquerdo {
-        width: 28vw;
-        max-width: 130px;
-        min-width: 120px;
+        width: 90vw;
+        max-width: 380px;
+        min-width: 220px;
         padding: 0;
         box-sizing: border-box;
         border-radius: 0;
@@ -370,6 +399,26 @@ const menuAberto = ref(false)
         height: clamp(40px, 4vh, 50px);
         font-size: clamp(0.7rem, 1vw, 0.9rem);
     }
+    /* Ajustes mobile */
+    .menuesquerdo {
+        width: 85vw;
+        max-width: none;
+        min-width: 0;
+    }
+    .menuesquerdo h2 {
+        font-size: clamp(1.1rem, 5vw, 1.4rem);
+    }
+    .menuesquerdo h3 {
+        font-size: clamp(1rem, 4.5vw, 1.3rem);
+    }
+    .menuesquerdo button {
+        font-size: clamp(0.9rem, 4vw, 1.1rem);
+        height: clamp(45px, 6vh, 60px);
+        padding: 0 12px;
+    }
+    .menu-toggle.ao-lado {
+        left: calc(85vw - 1px);
+    }
 }
 
 @media (max-width: 320px) {
@@ -379,9 +428,9 @@ const menuAberto = ref(false)
     }
     
     .menuesquerdo {
-        width: 32vw;
-        max-width: 100px;
-        min-width: 90px;
+        width: 85vw;
+        max-width: none;
+        min-width: 0;
         border-radius: 0;
     }
     
@@ -407,6 +456,9 @@ const menuAberto = ref(false)
         margin: 6px 6px 4px 6px;
         padding: 4px 6px;
         font-size: clamp(0.8rem, 1.2vw, 1.1rem);
+    }
+    .menu-toggle.ao-lado {
+        left: calc(85vw - 1px);
     }
 }
 

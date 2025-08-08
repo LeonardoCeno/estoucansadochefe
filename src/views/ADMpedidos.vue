@@ -335,7 +335,7 @@ onMounted(async () => {
     padding: 24px;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 24px;
+    margin-bottom: 12px;
 }
 
 .header-section h1 {
@@ -377,7 +377,7 @@ onMounted(async () => {
     padding: 16px;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 24px;
+    margin-bottom: 12px;
 }
 
 .filtros-container {
@@ -473,11 +473,6 @@ onMounted(async () => {
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 16px;
     padding: 16px;
-    height: 50vh;
-    max-height: calc(100vh - 400px);
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #c0c4c9 #f1f3f5;
 }
 
 .pedidos-grid::-webkit-scrollbar { width: 8px; height: 8px; }

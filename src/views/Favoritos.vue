@@ -188,7 +188,7 @@ function confirmarRemocao() {
     display: flex;
     align-items: center;
     gap: 8px;
-    background-color: #02060af5;
+    background: linear-gradient(90deg, #b30026 0%, #e11d48 100%);
     color: white;
     border: none;
     padding: 8px 16px;
@@ -668,5 +668,22 @@ function confirmarRemocao() {
     .nome-preco-imagem p {
         font-size: 16px;
     }
+}
+
+/* Ajustes de estilo coerentes */
+.tudo {
+    background-color: #f9f9f9;
+}
+.titulo {
+    background: linear-gradient(90deg, #079ac7 0%, #34b8ff 100%);
+}
+.titulo h3 {
+    color: #ffffff;
+}
+.lista {
+    overflow: visible;
+    max-height: none;
+    border: none;
+    background-color: transparent;
 }
 </style>

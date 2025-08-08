@@ -383,7 +383,7 @@ onUnmounted(() => {
 
 @media (max-width: 1500px) {
     .banner {
-        min-height: 370px;
+        min-height: 400px;
         margin-top: 20px;
     }
 }
