@@ -240,7 +240,7 @@ onMounted(carregarEnderecos)
 <style scoped>
 .tudo {
     width: 100%;
-    height: 100%;
+    min-height: 100%;
     background-color: #f8f9fa;
     overflow-y: auto;
     padding: 20px;
@@ -263,8 +263,8 @@ onMounted(carregarEnderecos)
     align-items: center;
     justify-content: space-between;
     background-color: #ffffff;
-    padding: 32px;
-    margin-bottom: 24px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
@@ -286,20 +286,21 @@ onMounted(carregarEnderecos)
     display: flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(135deg, #215564 0%, #4690e5 100%);
+    background: #079ac7;
     color: #fff;
     border: none;
     border-radius: 8px;
-    padding: 12px 24px;
-    font-size: 1rem;
+    padding: 10px 18px;
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
 .btn-novo-endereco:hover {
-    box-shadow: 0 1.5px 2.5px rgba(79,70,229,0.3);
+    background: #067aa0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .btn-novo-endereco span {
@@ -320,6 +321,7 @@ onMounted(carregarEnderecos)
     justify-content: center;
     z-index: 1000;
     padding: 20px;
+    overflow-y: auto;
 }
 
 .modal-form {
@@ -327,10 +329,9 @@ onMounted(carregarEnderecos)
     border-radius: 16px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.1);
     padding: 0;
-    min-width: 400px;
-    max-width: 500px;
-    width: 100%;
-    overflow: hidden;
+    width: min(640px, 96vw);
+    max-height: 90vh;
+    overflow: auto;
     border: 2px solid #02060af5;
 }
 
@@ -372,14 +373,14 @@ onMounted(carregarEnderecos)
 }
 
 .form-endereco {
-    padding: 32px;
+    padding: 24px;
 }
 
 .campos-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    margin-bottom: 24px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
 }
 
 .campo {
@@ -395,7 +396,7 @@ onMounted(carregarEnderecos)
 }
 
 .campo input {
-    padding: 14px 16px;
+    padding: 12px 14px;
     border: 2px solid #e1e5e9;
     border-radius: 8px;
     font-size: 1rem;
@@ -416,35 +417,35 @@ onMounted(carregarEnderecos)
 }
 
 .btn-salvar {
-    background: linear-gradient(135deg, #255f70 0%, #5b70e7 100%);
+    background: #079ac7;
     color: #fff;
     border: none;
     border-radius: 8px;
-    padding: 12px 24px;
-    font-size: 1rem;
+    padding: 10px 18px;
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background 0.2s;
 }
 
 .btn-salvar:hover {
-    background: linear-gradient(135deg, #14323b 0%, #4678e5 100%);
+    background: #067aa0;
 }
 
 .btn-cancelar {
-    background: linear-gradient(135deg, #525252 0%, #797979 100%);
+    background: #6c757d;
     color: #fff;
     border: none;
     border-radius: 8px;
-    padding: 12px 24px;
-    font-size: 1rem;
+    padding: 10px 18px;
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background 0.2s;
 }
 
 .btn-cancelar:hover {
-    background: linear-gradient(135deg, #505050 0%, #646464 100%);
+    background: #5a6268;
 }
 
 /* Lista de Endereços */
@@ -694,23 +695,29 @@ onMounted(carregarEnderecos)
     
     .barra-do-titulo {
         flex-direction: column;
-        gap: 16px;
+        gap: 12px;
         text-align: center;
-        padding: 24px;
+        padding: 16px;
     }
     
     .titulo h1 {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
     }
     
     .modal-form {
-        min-width: 100%;
+        width: 100%;
         max-width: 100%;
-        margin: 20px;
+        margin: 12px;
+        max-height: 90vh;
     }
     
     .form-endereco {
-        padding: 24px;
+        padding: 16px;
+    }
+
+    .campos-form {
+        grid-template-columns: 1fr;
+        gap: 12px;
     }
     
     .enderecos-grid {
@@ -738,24 +745,24 @@ onMounted(carregarEnderecos)
     }
     
     .barra-do-titulo {
-        padding: 20px;
+        padding: 14px;
     }
     
     .titulo h1 {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
     }
     
     .btn-novo-endereco {
-        padding: 10px 20px;
+        padding: 8px 14px;
         font-size: 0.9rem;
     }
     
     .form-endereco {
-        padding: 20px;
+        padding: 14px;
     }
     
     .campo input {
-        padding: 12px 14px;
+        padding: 10px 12px;
         font-size: 0.95rem;
     }
     
@@ -764,7 +771,7 @@ onMounted(carregarEnderecos)
     }
     
     .endereco-principal h3 {
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
     
     .endereco-principal p {

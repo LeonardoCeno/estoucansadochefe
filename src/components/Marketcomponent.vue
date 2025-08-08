@@ -381,10 +381,17 @@ onUnmounted(() => {
     MEDIA QUERIES - RESPONSIVIDADE
    ================================ */
 
+@media (max-width: 1500px) {
+    .banner {
+        min-height: 370px;
+        margin-top: 20px;
+    }
+}
+
 /* Desktop grande (>1400px) */
 @media (min-width: 1401px) {
     .banner {
-        min-height: 400px;
+        min-height: 340px;
         margin-top: 20px;
     }
 }

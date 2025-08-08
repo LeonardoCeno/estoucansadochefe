@@ -323,11 +323,11 @@ onMounted(async () => {
 
 <style scoped>
 .admin-pedidos {
-    padding: 20px;
+    padding: 16px;
     max-width: 1400px;
     margin: 0 auto;
-    background-color: #f8f9fa;
-    min-height: 100vh;
+    background-color: #ffffff;
+    min-height: 100%;
 }
 
 .header-section {
@@ -374,7 +374,7 @@ onMounted(async () => {
 
 .filtros-section {
     background: white;
-    padding: 20px;
+    padding: 16px;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 24px;
@@ -470,18 +470,26 @@ onMounted(async () => {
 
 .pedidos-grid {
     display: grid;
-    gap: 20px;
-    padding: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    padding: 16px;
     height: 50vh;
+    max-height: calc(100vh - 400px);
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #c0c4c9 #f1f3f5;
 }
+
+.pedidos-grid::-webkit-scrollbar { width: 8px; height: 8px; }
+.pedidos-grid::-webkit-scrollbar-track { background: #f1f3f5; }
+.pedidos-grid::-webkit-scrollbar-thumb { background-color: #c0c4c9; border-radius: 0; border: 1px solid #e5e7eb; }
 
 .pedido-card {
     border: 1px solid #e9ecef;
     border-radius: 12px;
-    padding: 20px;
-    background: #f8f9fa;
-    transition: all 0.3s ease;
+    padding: 16px;
+    background: #ffffff;
+    transition: box-shadow 0.25s ease, transform 0.2s ease;
 }
 
 .pedido-card:hover {
@@ -492,16 +500,19 @@ onMounted(async () => {
 .pedido-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 16px;
-    padding-bottom: 16px;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+    padding-bottom: 14px;
     border-bottom: 1px solid #e9ecef;
 }
 
 .pedido-info h3 {
-    margin: 0 0 8px 0;
-    color: #333;
+    margin: 0 0 6px 0;
+    color: #02060af5;
     font-size: 18px;
+    font-weight: 700;
 }
 
 .pedido-data {
@@ -550,7 +561,7 @@ onMounted(async () => {
 }
 
 .pedido-produtos {
-    margin-bottom: 16px;
+    margin-bottom: 14px;
 }
 
 .pedido-produtos h4 {
@@ -562,21 +573,23 @@ onMounted(async () => {
 .produtos-lista {
     display: grid;
     gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 }
 
 .produto-item {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     padding: 12px;
-    background: white;
+    background: #ffffff;
     border-radius: 8px;
     border: 1px solid #e9ecef;
 }
 
 .produto-img {
-    width: 50px;
-    height: 70px;
+    width: 64px;
+    height: 90px;
     object-fit: cover;
     border-radius: 4px;
 }
@@ -603,7 +616,8 @@ onMounted(async () => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
 .status-selector {
@@ -614,7 +628,7 @@ onMounted(async () => {
 
 .status-selector label {
     font-size: 14px;
-    font-weight: bold;
+    font-weight: 600;
     color: #333;
 }
 
@@ -627,8 +641,8 @@ onMounted(async () => {
 }
 
 .btn-detalhes {
-    padding: 8px 16px;
-    background: #4f79a3;
+    padding: 10px 16px;
+    background: #079ac7;
     color: white;
     border: none;
     border-radius: 6px;
@@ -639,7 +653,7 @@ onMounted(async () => {
 }
 
 .btn-detalhes:hover {
-    background: #3a5a7a;
+    background: #067aa0;
 }
 
 /* Modal */
@@ -783,7 +797,7 @@ onMounted(async () => {
 /* Responsividade */
 @media (max-width: 768px) {
     .admin-pedidos {
-        padding: 10px;
+        padding: 10px 8px;
     }
     
     .stats-container {
@@ -801,7 +815,7 @@ onMounted(async () => {
     
     .pedido-header {
         flex-direction: column;
-        gap: 12px;
+        gap: 8px;
     }
     
     .pedido-acoes {
@@ -821,5 +835,21 @@ onMounted(async () => {
         flex-direction: column;
         text-align: center;
     }
+}
+
+@media (max-width: 480px) {
+    .pedidos-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 12px;
+        max-height: calc(100vh - 320px);
+    }
+
+    .pedido-info h3 { font-size: 16px; }
+    .pedido-data { font-size: 12px; }
+    .pedido-user { font-size: 11px; }
+    .status-selector label { font-size: 12px; }
+    .status-selector select { font-size: 12px; }
+    .btn-detalhes { font-size: 13px; padding: 8px 14px; }
 }
 </style>

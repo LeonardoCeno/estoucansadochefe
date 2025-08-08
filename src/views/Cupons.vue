@@ -120,7 +120,28 @@ ul {
     list-style: none;
     max-height: 70vh;
     overflow-y: auto;
-    scrollbar-color: rgb(100, 100, 100) rgba(241, 241, 241, 0.527);
+    scrollbar-width: thin;
+    scrollbar-color: #c0c4c9 #f1f3f5; /* Firefox */
+}
+
+/* WebKit scrollbars (Chrome, Edge, Safari) */
+ul::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+ul::-webkit-scrollbar-track {
+    background: #f1f3f5;
+}
+
+ul::-webkit-scrollbar-thumb {
+    background-color: #c0c4c9;
+    border-radius: 0; /* pontas quadradas */
+    border: 1px solid #e5e7eb;
+}
+
+ul::-webkit-scrollbar-thumb:hover {
+    background-color: #aeb4bb;
 }
 
 .cupom {

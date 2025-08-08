@@ -448,7 +448,7 @@ function confirmarRemocao() {
     background-color: white;
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: calc(100vh - 200px);
+    max-height: calc(100vh - 230px);
     min-height: 400px;
     width: 100%;
     box-sizing: border-box;

@@ -1,7 +1,10 @@
 <template>
+<div class="painel-layout">
 <TopBar />
 <div class="Tudo">
-    <div class="menuesquerdo" >
+    <button class="menu-toggle" @click.stop="menuAberto = true">☰ Menu</button>
+    <div class="offcanvas-overlay" v-if="menuAberto" @click="menuAberto = false"></div>
+    <div class="menuesquerdo" :class="{ aberto: menuAberto }" >
         <h2> <span class="h2fake" > Olá, {{ usuario.name }}</span> 👋 </h2>
         <router-link to="/dados"> <button :class="{ active: $route.path === '/dados' }">Meus dados</button></router-link>
         <router-link to="/carrinho"> <button :class="{ active: $route.path === '/carrinho' }">Carrinho</button></router-link>
@@ -22,49 +25,66 @@
     <div class="menudireito" >
         <router-view></router-view>
     </div>
+    </div>
 </div>
 
 </template>
 
 <script setup>
 import TopBar from '../components/TopBar.vue'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useUserStore } from '../stores/user'
 
 const userStore = useUserStore()
 
 const usuario = computed(() => userStore.user || {})
 const userRole = computed(() => userStore.user?.role)
+const menuAberto = ref(false)
 </script>
 
 <style scoped>
 
 
 
+.painel-layout{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 .Tudo{
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: stretch;
     width: 100%;
-    height: 100vh;
-    padding: 15px;
+    flex: 1;
+    padding: 0;
     box-sizing: border-box;
-    overflow: hidden;
+    overflow: visible;
+}
+
+.menu-toggle{
+    display: none;
+}
+
+.offcanvas-overlay{
+    display: none;
 }
 
 .menuesquerdo{
     width: 18vw;
     max-width: 350px;
     min-width: 250px;
-    height: 95%;
+    height: auto;
     background: #02060af5;
     z-index: 10;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
     padding: 0;
-    overflow: hidden;
-    border-radius: 12px 0 0 12px;
-    border-left: 1px solid #02060af5;
+    overflow: visible;
+    border-radius: 0;
+    border: none;
 }
 
 .menuesquerdo h2 {
@@ -129,16 +149,15 @@ const userRole = computed(() => userStore.user?.role)
 }
 
 .menudireito{
-    width: calc(100% - 18vw);
-    max-width: calc(100% - 350px);
-    min-width: calc(100% - 250px);
-    height: 95%;
-    background-color: #ffffff;
-    border: 1px solid black;
-    overflow: hidden;
-    min-width: 0;
     flex: 1;
-    border-radius: 0 12px 12px 0;
+    min-width: 0;
+    height: auto;
+    width: auto;
+    max-width: none;
+    background-color: transparent;
+    border: none;
+    overflow: visible;
+    border-radius: 0;
 }
 
 .admin button{
@@ -158,10 +177,11 @@ const userRole = computed(() => userStore.user?.role)
     }
     
     .menudireito {
-        width: calc(100% - 16vw);
-        max-width: calc(100% - 450px);
-        min-width: calc(100% - 300px);
-        overflow: hidden;
+        flex: 1;
+        min-width: 0;
+        width: auto;
+        max-width: none;
+        overflow: visible;
     }
     
     .menuesquerdo h2 {
@@ -190,10 +210,11 @@ const userRole = computed(() => userStore.user?.role)
     }
     
     .menudireito {
-        width: calc(100% - 14vw);
-        max-width: calc(100% - 550px);
-        min-width: calc(100% - 350px);
-        overflow: hidden;
+        flex: 1;
+        min-width: 0;
+        width: auto;
+        max-width: none;
+        overflow: visible;
     }
     
     .menuesquerdo h2 {
@@ -218,20 +239,59 @@ const userRole = computed(() => userStore.user?.role)
 @media (max-width: 768px) {
     .Tudo {
         flex-direction: row;
-        height: 95vh;
-        padding: 12px;
+        height: auto;
+        padding: 0;
+    }
+    .menu-toggle{
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        z-index: 1200;
+        background: #079ac7;
+        color: #ffffff;
+        border: none;
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-weight: 700;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        cursor: pointer;
+    }
+    .menu-toggle:active{ transform: scale(0.98); }
+
+    .offcanvas-overlay{
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.35);
+        z-index: 1100;
     }
     
     .menuesquerdo {
-        width: 22vw;
-        max-width: 180px;
-        min-width: 160px;
-        height: 100%;
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        width: 85vw;
+        max-width: 320px;
+        min-width: 260px;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
         margin-bottom: 0;
         padding: 0;
         box-sizing: border-box;
-        border-radius: 0 10px 10px 0;
+        border-radius: 0;
+        z-index: 1201;
+        overflow-y: auto;
     }
+    .menuesquerdo.aberto{
+        transform: translateX(0);
+    }
+
+    /* removido botão de fechar */
     
     .menuesquerdo button {
         padding: 0 12px;
@@ -251,12 +311,13 @@ const userRole = computed(() => userStore.user?.role)
     }
     
     .menudireito {
-        width: calc(100% - 22vw);
-        max-width: calc(100% - 180px);
-        min-width: calc(100% - 160px);
-        height: 100%;
+        flex: 1;
+        min-width: 0;
+        width: auto;
+        max-width: none;
+        height: auto;
         min-height: auto;
-        overflow: hidden;
+        overflow: visible;
     }
     
     .menuesquerdo button {
@@ -267,8 +328,8 @@ const userRole = computed(() => userStore.user?.role)
 
 @media (max-width: 480px) {
     .Tudo {
-        height: 95vh;
-        padding: 8px;
+        height: auto;
+        padding: 0;
     }
     
     .menuesquerdo {
@@ -277,7 +338,7 @@ const userRole = computed(() => userStore.user?.role)
         min-width: 120px;
         padding: 0;
         box-sizing: border-box;
-        border-radius: 0 8px 8px 0;
+        border-radius: 0;
     }
     
     .menuesquerdo button {
@@ -298,10 +359,11 @@ const userRole = computed(() => userStore.user?.role)
     }
     
     .menudireito {
-        width: calc(100% - 28vw);
-        max-width: calc(100% - 130px);
-        min-width: calc(100% - 120px);
-        overflow: hidden;
+        flex: 1;
+        min-width: 0;
+        width: auto;
+        max-width: none;
+        overflow: visible;
     }
     
     .menuesquerdo button {
@@ -312,21 +374,22 @@ const userRole = computed(() => userStore.user?.role)
 
 @media (max-width: 320px) {
     .Tudo {
-        height: 95vh;
-        padding: 6px;
+        height: auto;
+        padding: 0;
     }
     
     .menuesquerdo {
         width: 32vw;
         max-width: 100px;
         min-width: 90px;
-        border-radius: 0 6px 6px 0;
+        border-radius: 0;
     }
     
     .menudireito {
-        width: calc(100% - 32vw);
-        max-width: calc(100% - 100px);
-        min-width: calc(100% - 90px);
+        flex: 1;
+        min-width: 0;
+        width: auto;
+        max-width: none;
     }
     
     .menuesquerdo button {
