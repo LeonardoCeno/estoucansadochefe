@@ -558,10 +558,10 @@ button:hover img {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 7.2vh;
-    background: linear-gradient(120deg, #0d4d3dda 0%, #000000d5 10% ,#000000d5 90%, #25768ada 100%);
+    min-height: 6vh;
+    background: linear-gradient(120deg, #0d4d3dda 0%, #000000e1 10% ,#000000e1 90%, #25768ada 100%);
     font-size: 14px;
-    gap: 55px;
+    gap: 3vw;
 }
 
 .Categorias img {
@@ -642,10 +642,12 @@ button:hover img {
     color: #000000;
     padding: 10px 18px;
     text-align: left;
-    width: 160px;
+    width: 150px;
     font-size: 15px;
     cursor: pointer;
     transition: background 0.2s;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .conta-dropdown-menu button:hover {

@@ -384,8 +384,7 @@ onUnmounted(() => {
 /* Desktop grande (>1400px) */
 @media (min-width: 1401px) {
     .banner {
-        height: 310px;
-        min-height: 290px;
+        min-height: 400px;
         margin-top: 20px;
     }
 }

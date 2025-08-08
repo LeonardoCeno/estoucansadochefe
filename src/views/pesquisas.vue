@@ -890,6 +890,17 @@ watch(totalPaginas, (novoTotal) => {
     gap: 20px;
 }
 
+/* Redução visual ~10% de todos os filhos diretos de .tudo, exceto o modal */
+.tudo > :not(.filtros-modal-overlay) { zoom: 0.9; }
+
+/* Fallback para navegadores sem suporte a zoom (ex.: Firefox) */
+@supports not (zoom: 1) {
+    .tudo > :not(.filtros-modal-overlay) {
+        transform: scale(0.9);
+        transform-origin: top center;
+    }
+}
+
 .inputpesquisa{
     display: flex;
     align-items: center;
@@ -901,7 +912,6 @@ watch(totalPaginas, (novoTotal) => {
 .inputpesquisa h2 {
     font-size: 3.5rem;
     font-family: roboto;
-    font-weight: none;
     color: rgb(41, 41, 41);
 }
 
@@ -1226,11 +1236,7 @@ watch(totalPaginas, (novoTotal) => {
     100% { transform: rotate(360deg); }
 }
 
-.carregando {
-    color: #3a9c73;
-    margin-top: 20px;
-    font-size: 1.1rem;
-}
+/* .carregando (não utilizada) removida para limpar CSS */
 .erro {
     color: #c0392b;
     margin-top: 20px;
@@ -1298,10 +1304,7 @@ watch(totalPaginas, (novoTotal) => {
     border-color: #dee2e6;
 }
 
-.paginacao-btn:disabled:hover {
-    background: #e9ecef;
-    border-color: #adb5bd;
-}
+/* (hover em disabled removido por redundância) */
 
 .paginacao-direita {
     display: flex;
@@ -1505,11 +1508,7 @@ watch(totalPaginas, (novoTotal) => {
    ================================ */
 
 /* Desktop grande */
-@media (max-width: 1200px) {
-    .lista-pesquisa {
-        grid-template-columns: repeat(4, 1fr);
-    }
-}
+/* (removido breakpoint redundante de 1200px) */
 
 /* Tablet grande */
 @media (max-width: 1024px) {
@@ -1559,11 +1558,7 @@ watch(totalPaginas, (novoTotal) => {
 }
 
 /* Tablet médio */
-@media (max-width: 950px) {
-    .lista-pesquisa {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
+/* (removido breakpoint redundante de 950px) */
 
 /* Mobile grande */
 @media (max-width: 768px) {

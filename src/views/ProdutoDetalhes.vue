@@ -53,6 +53,12 @@
                                 <button @click="aumentarQuantidade" :disabled="quantidade >= produto.stock" class="btn-quantidade"> + </button>
                             </div>
                         </div>
+                        <!-- Indicador de disponibilidade -->
+                        <div class="disponibilidade-indicador">
+                            <img :src="produto.stock >= 1 ? DISPONIVELREAL : INDISPONIVELREAL" 
+                                 :alt="produto.stock >= 1 ? 'Disponível' : 'Indisponível'" 
+                                 class="disponibilidade-img" />
+                        </div>
                         <div class="produto-acoes">
                             <div class="add">
                                 <button 
@@ -108,6 +114,8 @@ const isLoggedIn = computed(() => {
 import CORACAOFAV from '../components/img/coraçaofav.png'
 import CORACAOVAZIO from '../components/img/coraçaovazio.png'
 import MAISUMCARRINHO from '../components/img/maisumcarrinho.png'
+import DISPONIVELREAL from '../components/img/DISPONIVELREAL.png'
+import INDISPONIVELREAL from '../components/img/INDISPONIVELREAL.png'
 
 const cartStore = useCartStore()
 const favoritesStore = useFavoritesStore()
@@ -309,6 +317,21 @@ onMounted(async () => {
     color: #707070;
 }
 
+.disponibilidade-indicador {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 20px 0;
+}
+
+.disponibilidade-img {
+    width: 150px;
+    height: auto;
+    border-radius: 8px;
+    filter: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 .quantidade-container {
     margin-bottom: 15px;
 }
@@ -460,7 +483,13 @@ onMounted(async () => {
         font-size: 24px;
     }
     
-
+    .disponibilidade-indicador {
+        margin: 15px 0;
+    }
+    
+    .disponibilidade-img {
+        width: 160px;
+    }
 }
 
 </style> 

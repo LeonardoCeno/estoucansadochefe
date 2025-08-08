@@ -45,7 +45,7 @@ const userRole = computed(() => userStore.user?.role)
     display: flex;
     justify-content: center;
     width: 100%;
-    height: 95vh;
+    height: 100vh;
     padding: 15px;
     box-sizing: border-box;
     overflow: hidden;
@@ -55,7 +55,7 @@ const userRole = computed(() => userStore.user?.role)
     width: 18vw;
     max-width: 350px;
     min-width: 250px;
-    height: 100%;
+    height: 95%;
     background: #02060af5;
     z-index: 10;
     flex-shrink: 0;
@@ -132,7 +132,7 @@ const userRole = computed(() => userStore.user?.role)
     width: calc(100% - 18vw);
     max-width: calc(100% - 350px);
     min-width: calc(100% - 250px);
-    height: 100%;
+    height: 95%;
     background-color: #ffffff;
     border: 1px solid black;
     overflow: hidden;
