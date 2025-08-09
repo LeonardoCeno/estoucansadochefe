@@ -648,7 +648,7 @@ async function excluirContaUsuario() {
     .header-perfil {
         padding: 50px 30px;
     }
-
+    
     .foto-usuario {
         width: 180px;
         height: 180px;
@@ -679,12 +679,12 @@ async function excluirContaUsuario() {
     .info-value {
         font-size: 1.2rem;
     }
-
+    
     .info-input {
         padding: 14px 18px;
         font-size: 1.1rem;
     }
-
+    
     .edit-actions {
         flex-direction: column;
         gap: 12px;
@@ -699,7 +699,7 @@ async function excluirContaUsuario() {
         padding: 18px 25px;
         font-size: 1.1rem;
     }
-
+    
     .btn-primary, .btn-secondary, .btn-danger {
         padding: 14px 25px;
         font-size: 1rem;
@@ -732,7 +732,7 @@ async function excluirContaUsuario() {
     .header-perfil {
         padding: 40px 20px;
     }
-
+    
     .foto-usuario {
         width: 150px;
         height: 150px;
@@ -751,7 +751,7 @@ async function excluirContaUsuario() {
         grid-template-columns: 1fr;
         gap: 20px;
     }
-
+    
     .info-card {
         padding: 20px;
     }

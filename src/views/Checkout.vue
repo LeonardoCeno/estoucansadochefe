@@ -118,15 +118,17 @@
                         </div>
                     </div>
 
-                    <div id="itens-revisao" class="revisao-secao">
+                    <div class="itens-pedido-section">
                         <h3>Itens do Pedido</h3>
-                        <div v-for="item in itensCarrinho" :key="item.id" class="item-revisao">
-                            <img :src="item.image_path" :alt="item.name">
-                            <div class="item-info">
-                                <h4>{{ item.name }}</h4>
-                                <p>Qtd: {{ item.quantity }}</p>
+                        <div id="itens-revisao" class="revisao-secao">
+                            <div v-for="item in itensCarrinho" :key="item.id" class="item-revisao">
+                                <img :src="item.image_path" :alt="item.name">
+                                <div class="item-info">
+                                    <h4>{{ item.name }}</h4>
+                                    <p>Qtd: {{ item.quantity }}</p>
+                                </div>
+                                <span>R$ {{ formatarPreco(item.unit_price * item.quantity) }}</span>
                             </div>
-                            <span>R$ {{ formatarPreco(item.unit_price * item.quantity) }}</span>
                         </div>
                     </div>
                 </div>
@@ -461,122 +463,155 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* Layout principal */
 .checkout-container {
-    height: 100%;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    padding: 20px;
-    overflow-y: hidden;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 30px;
+    overflow-y: auto;
 }
 
+/* Header do checkout */
 .checkout-header {
-    max-width: 1200px;
-    margin: 0 auto 13px;
+    max-width: 1400px;
+    margin: 0 auto 20px;
     background: white;
-    border-radius: 12px;
-    padding: 10px 18px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-radius: 16px;
+    padding: 30px 40px;
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.12);
 }
 
 .voltar-btn {
-    color: #4f79a3;
+    color: #02060af5;
     text-decoration: none;
     font-weight: 600;
-    margin-bottom: 6px;
-    display: inline-block;
+    margin-bottom: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
 }
 
 .voltar-btn:hover {
-    color: #3a5a7a;
+    color: #079ac7;
+    transform: translateX(-3px);
 }
 
 .checkout-header h1 {
-    font-size: 32px;
+    font-size: 2.2rem;
     color: #333;
-    margin: 0 0 10px 0;
+    margin: 0 0 25px 0;
     text-align: center;
+    font-weight: 600;
+    background: linear-gradient(135deg, #02060af5 0%, #079ac7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
+/* Progress Bar Modernizada */
 .progress-bar {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
+    gap: 30px;
+    padding: 20px 0;
 }
 
 .progress-step {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    opacity: 0.5;
-    transition: opacity 0.3s;
+    gap: 12px;
+    opacity: 0.4;
+    transition: all 0.4s ease;
+    transform: scale(0.95);
 }
 
 .progress-step.active {
     opacity: 1;
+    transform: scale(1);
 }
 
 .step-number {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    background: #e9ecef;
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
     color: #6c757d;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
-    transition: all 0.3s;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.4s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .progress-step.active .step-number {
-    background: #4f79a3;
+    background: linear-gradient(135deg, #02060af5 0%, #079ac7 100%);
     color: white;
+    box-shadow: 0 6px 20px rgba(2, 6, 10, 0.3);
+    transform: scale(1.1);
 }
 
 .step-text {
-    font-size: 14px;
+    font-size: 1rem;
     color: #6c757d;
     font-weight: 500;
+    transition: all 0.3s ease;
 }
 
 .progress-step.active .step-text {
-    color: #4f79a3;
+    color: #02060af5;
+    font-weight: 600;
 }
 
 .progress-line {
-    width: 60px;
-    height: 2px;
-    background: #e9ecef;
-    transition: background 0.3s;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, #e9ecef 0%, #dee2e6 100%);
+    border-radius: 2px;
+    transition: all 0.4s ease;
 }
 
 .progress-line.active {
-    background: #4f79a3;
+    background: linear-gradient(90deg, #02060af5 0%, #079ac7 100%);
+    box-shadow: 0 2px 8px rgba(2, 6, 10, 0.2);
 }
 
 .checkout-content {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     display: flex;
-    gap: 30px;
-    height: 77%;
+    gap: 40px;
+    min-height: 70vh;
 }
 
 .checkout-step {
-    height: 100%;
     flex: 1;
     background: white;
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    border: 2px solid #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.checkout-step:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    border-color: #e9ecef;
 }
 
 .checkout-step h2 {
-    font-size: 24px;
+    font-size: 1.8rem;
     color: #333;
-    margin: 0 0 24px 0;
+    margin: 0 0 30px 0;
     text-align: center;
+    font-weight: 600;
+    border-bottom: 3px solid #02060af5;
+    padding-bottom: 15px;
 }
 
 .loading {
@@ -584,18 +619,26 @@ onMounted(async () => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 60px 20px;
+    padding: 80px 20px;
     text-align: center;
 }
 
+.loading p {
+    font-size: 1.2rem;
+    color: #666;
+    margin: 0;
+    font-weight: 500;
+}
+
 .spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #4f79a3;
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #02060af5;
     border-radius: 50%;
     animation: spin 1s linear infinite;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(2, 6, 10, 0.2);
 }
 
 @keyframes spin {
@@ -605,81 +648,95 @@ onMounted(async () => {
 
 .sem-enderecos {
     text-align: center;
-    padding: 40px 20px;
+    padding: 60px 40px;
+    max-width: 500px;
+    margin: 0 auto;
 }
 
 .sem-enderecos img {
-    width: 80px;
+    width: 120px;
     height: auto;
-    opacity: 0.6;
-    margin-bottom: 20px;
+    opacity: 0.7;
+    margin-bottom: 25px;
+    filter: grayscale(20%);
 }
 
 .sem-enderecos h3 {
-    font-size: 20px;
+    font-size: 1.5rem;
     color: #333;
-    margin: 0 0 12px 0;
+    margin: 0 0 15px 0;
+    font-weight: 600;
 }
 
 .sem-enderecos p {
     color: #666;
-    margin: 0 0 24px 0;
+    margin: 0 0 30px 0;
+    font-size: 1.1rem;
+    line-height: 1.5;
 }
 
 .btn-adicionar {
-    background: #4f79a3;
+    background: linear-gradient(135deg, #02060af5 0%, #079ac7 100%);
     color: white;
     border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
+    padding: 16px 32px;
+    border-radius: 12px;
     font-weight: 600;
+    font-size: 1.1rem;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(2, 6, 10, 0.3);
 }
 
 .btn-adicionar:hover {
-    background: #3a5a7a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(2, 6, 10, 0.4);
 }
 
 .enderecos-lista {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
 }
 
 .endereco-item {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 20px;
+    gap: 20px;
+    padding: 25px;
     border: 2px solid #e9ecef;
-    border-radius: 12px;
+    border-radius: 16px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
 }
 
 .endereco-item:hover {
-    border-color: #4f79a3;
-    box-shadow: 0 4px 12px rgba(79, 122, 163, 0.1);
+    border-color: #02060af5;
+    box-shadow: 0 8px 25px rgba(2, 6, 10, 0.1);
+    transform: translateY(-2px);
 }
 
 .endereco-item.selecionado {
-    border-color: #4f79a3;
-    background: rgba(79, 122, 163, 0.05);
+    border-color: #02060af5;
+    background: linear-gradient(135deg, rgba(2, 6, 10, 0.05) 0%, rgba(7, 154, 199, 0.05) 100%);
+    box-shadow: 0 8px 25px rgba(2, 6, 10, 0.15);
 }
 
 .radio {
-    width: 24px;
-    height: 24px;
-    border: 2px solid #dee2e6;
+    width: 28px;
+    height: 28px;
+    border: 3px solid #dee2e6;
     border-radius: 50%;
     position: relative;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .radio.checked {
-    border-color: #4f79a3;
-    background: #4f79a3;
+    border-color: #02060af5;
+    background: linear-gradient(135deg, #02060af5 0%, #079ac7 100%);
+    box-shadow: 0 4px 12px rgba(2, 6, 10, 0.3);
 }
 
 .radio.checked::after {
@@ -688,10 +745,11 @@ onMounted(async () => {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     background: white;
     border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .endereco-info {
@@ -699,106 +757,118 @@ onMounted(async () => {
 }
 
 .endereco-info h4 {
-    font-size: 16px;
+    font-size: 1.2rem;
     color: #333;
-    margin: 0 0 4px 0;
+    margin: 0 0 8px 0;
     font-weight: 600;
 }
 
 .endereco-info p {
-    font-size: 14px;
+    font-size: 1rem;
     color: #666;
-    margin: 0 0 2px 0;
+    margin: 0 0 4px 0;
+    line-height: 1.4;
 }
 
 .btn-editar {
     background: none;
     border: none;
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
-    padding: 8px;
-    border-radius: 6px;
-    transition: background 0.3s;
+    padding: 10px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    color: #666;
 }
 
 .btn-editar:hover {
-    background: #f8f9fa;
+    background: #e9ecef;
+    color: #02060af5;
+    transform: scale(1.1);
 }
 
 .btn-novo {
-    background: #28a745;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
     color: white;
     border: none;
-    padding: 16px 24px;
-    border-radius: 8px;
+    padding: 18px 30px;
+    border-radius: 12px;
     font-weight: 600;
+    font-size: 1.1rem;
     cursor: pointer;
-    transition: background 0.3s;
-    margin-top: 16px;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
 }
 
 .btn-novo:hover {
-    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
 }
 
 .formas-pagamento {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
 }
 
 .forma-pagamento {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 20px;
+    gap: 20px;
+    padding: 25px;
     border: 2px solid #e9ecef;
-    border-radius: 12px;
+    border-radius: 16px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
 }
 
 .forma-pagamento:hover {
-    border-color: #4f79a3;
-    box-shadow: 0 4px 12px rgba(79, 122, 163, 0.1);
+    border-color: #02060af5;
+    box-shadow: 0 8px 25px rgba(2, 6, 10, 0.1);
+    transform: translateY(-2px);
 }
 
 .forma-pagamento.selecionada {
-    border-color: #4f79a3;
-    background: rgba(79, 122, 163, 0.05);
+    border-color: #02060af5;
+    background: linear-gradient(135deg, rgba(2, 6, 10, 0.05) 0%, rgba(7, 154, 199, 0.05) 100%);
+    box-shadow: 0 8px 25px rgba(2, 6, 10, 0.15);
 }
 
 .forma-icone {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     object-fit: contain;
-    border-radius: 6px;
-    background: #f8f9fa;
-    padding: 4px;
+    border-radius: 10px;
+    background: white;
+    padding: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .forma-info h4 {
-    font-size: 16px;
+    font-size: 1.2rem;
     color: #333;
-    margin: 0 0 4px 0;
+    margin: 0 0 8px 0;
     font-weight: 600;
 }
 
 .forma-info p {
-    font-size: 14px;
+    font-size: 1rem;
     color: #666;
     margin: 0;
+    line-height: 1.4;
 }
 
 .revisao {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 30px;
 }
 
 .revisao-info-pedido {
     display: flex;
-    gap: 24px;
+    gap: 30px;
 }
 
 .revisao-info-pedido .revisao-secao {
@@ -808,71 +878,98 @@ onMounted(async () => {
 .pagamento-revisao {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background: #f8f9fa;
-    border-radius: 8px;
+    gap: 16px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
 }
 
 .pagamento-icone {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     object-fit: contain;
-    border-radius: 4px;
+    border-radius: 8px;
     background: white;
-    padding: 2px;
+    padding: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .pagamento-info p {
-    margin: 0 0 4px 0;
-    font-size: 14px;
+    margin: 0 0 6px 0;
+    font-size: 1rem;
+    font-weight: 500;
 }
 
 .pagamento-info p:last-child {
     margin: 0;
     color: #666;
-    font-size: 12px;
+    font-size: 0.9rem;
 }
 
 .revisao-secao {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 16px;
+    padding: 25px;
     overflow-y: auto;
+    border: 2px solid #e9ecef;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
-#itens-revisao {
-    height: 28vh;
-    overflow-y: auto;
-}
+ #itens-revisao {
+     max-height: 35vh;
+     overflow-y: auto;
+ }
 
-.revisao-secao h3 {
-    font-size: 18px;
-    color: #333;
-    margin: 0 0 16px 0;
-    font-weight: 600;
-}
+ .itens-pedido-section h3 {
+     font-size: 1.3rem;
+     color: #333;
+     margin: 0 0 20px 0;
+     font-weight: 600;
+     border-bottom: 2px solid #dee2e6;
+     padding-bottom: 10px;
+ }
+ 
+ .revisao-secao h3 {
+     font-size: 1.3rem;
+     color: #333;
+     margin: 0 0 20px 0;
+     font-weight: 600;
+     border-bottom: 2px solid #dee2e6;
+     padding-bottom: 10px;
+ }
 
 .revisao-secao p {
-    margin: 0 0 4px 0;
+    margin: 0 0 6px 0;
     color: #666;
+    font-size: 1rem;
+    line-height: 1.4;
 }
 
 .item-revisao {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 12px;
+    gap: 20px;
+    padding: 16px 20px;
     background: white;
-    border-radius: 8px;
-    margin-bottom: 12px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    border: 2px solid #f8f9fa;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.item-revisao:hover {
+    border-color: #e9ecef;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .item-revisao img {
-    width: 60px;
-    height: 80px;
+    width: 70px;
+    height: 90px;
     object-fit: cover;
-    border-radius: 6px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .item-revisao .item-info {
@@ -880,43 +977,55 @@ onMounted(async () => {
 }
 
 .item-revisao h4 {
-    font-size: 14px;
+    font-size: 1rem;
     color: #333;
-    margin: 0 0 4px 0;
+    margin: 0 0 6px 0;
     font-weight: 600;
+    line-height: 1.3;
 }
 
 .item-revisao p {
-    font-size: 12px;
+    font-size: 0.9rem;
     color: #666;
     margin: 0;
 }
 
+.item-revisao span {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+}
+
 .checkout-resumo {
-    width: 350px;
+    width: 400px;
     background: white;
-    border-radius: 12px;
-    padding: 24px;
-    height: 100%;
+    border-radius: 16px;
+    padding: 30px;
+    height: fit-content;
+    max-height: 80vh;
     position: sticky;
     top: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
     display: flex;
     flex-direction: column;
+    border: 2px solid #f8f9fa;
 }
 
 .checkout-resumo h3 {
-    font-size: 20px;
+    font-size: 1.5rem;
     color: #333;
-    margin: 0 0 20px 0;
+    margin: 0 0 25px 0;
     text-align: center;
     font-weight: 600;
     flex-shrink: 0;
+    border-bottom: 3px solid #02060af5;
+    padding-bottom: 15px;
 }
 
 .resumo-itens {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     flex: 1;
+    max-height: 300px;
     overflow-y: auto;
     padding-right: 8px;
     scrollbar-width: thin;
@@ -945,133 +1054,173 @@ onMounted(async () => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 0;
+    padding: 16px 0;
     border-bottom: 1px solid #e9ecef;
 }
 
+.resumo-item:last-child {
+    border-bottom: none;
+}
+
 .resumo-item img {
-    width: 50px;
-    height: 70px;
+    width: 60px;
+    height: 80px;
     object-fit: cover;
-    border-radius: 6px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .resumo-item h4 {
-    font-size: 14px;
+    font-size: 1rem;
     color: #333;
-    margin: 0 0 4px 0;
+    margin: 0 0 6px 0;
     font-weight: 600;
+    line-height: 1.3;
 }
 
 .resumo-item p {
-    font-size: 12px;
+    font-size: 0.9rem;
     color: #666;
     margin: 0;
 }
 
+.resumo-item span {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+}
+
 .resumo-totais {
-    margin-bottom: 24px;
+    margin-bottom: 30px;
     flex-shrink: 0;
 }
 
 .resumo-linha {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
-    font-size: 14px;
+    padding: 12px 0;
+    font-size: 1rem;
     color: #666;
+    font-weight: 500;
+}
+
+.resumo-linha.desconto {
+    color: #28a745;
+    font-weight: 600;
 }
 
 .resumo-total {
     display: flex;
     justify-content: space-between;
-    padding: 16px 0;
-    border-top: 2px solid #dee2e6;
-    margin-top: 8px;
-    font-size: 18px;
+    padding: 20px 0;
+    border-top: 3px solid #02060af5;
+    margin-top: 15px;
+    font-size: 1.4rem;
     font-weight: 600;
     color: #333;
+    background: rgba(2, 6, 10, 0.02);
+    margin-left: -30px;
+    margin-right: -30px;
+    padding-left: 30px;
+    padding-right: 30px;
+    border-radius: 0 0 16px 16px;
 }
 
 .resumo-acoes {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 }
 
 .btn-continuar,
 .btn-finalizar {
-    padding: 16px;
-    background: #28a745;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, #02060af5 0%, #079ac7 100%);
     color: white;
     border: none;
-    border-radius: 8px;
-    font-size: 16px;
+    border-radius: 12px;
+    font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(2, 6, 10, 0.3);
+    letter-spacing: 0.5px;
 }
 
 .btn-continuar:hover:not(:disabled),
 .btn-finalizar:hover:not(:disabled) {
-    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(2, 6, 10, 0.4);
 }
 
 .btn-continuar:disabled,
 .btn-finalizar:disabled {
     background: #ccc;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 .btn-voltar {
-    padding: 12px;
+    padding: 14px 20px;
     background: #6c757d;
     color: white;
     border: none;
-    border-radius: 8px;
-    font-size: 14px;
+    border-radius: 10px;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
 }
 
 .btn-voltar:hover {
     background: #5a6268;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
 }
 
+/* Modal Modernizado */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 2000;
+    padding: 20px;
 }
 
 .modal {
     background: white;
-    border-radius: 12px;
-    padding: 24px;
-    max-width: 500px;
-    width: 90%;
+    border-radius: 16px;
+    padding: 30px;
+    max-width: 600px;
+    width: 100%;
     max-height: 90vh;
     overflow-y: auto;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    border: 3px solid #02060af5;
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #f8f9fa;
+    padding-bottom: 15px;
 }
 
 .modal-header h3 {
     margin: 0;
     color: #333;
+    font-size: 1.4rem;
+    font-weight: 600;
 }
 
 .btn-fechar {
@@ -1080,131 +1229,276 @@ onMounted(async () => {
     font-size: 24px;
     cursor: pointer;
     color: #666;
-    padding: 4px;
-    border-radius: 4px;
-    transition: background 0.3s;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
 }
 
 .btn-fechar:hover {
     background: #f8f9fa;
+    color: #dc3545;
+    transform: scale(1.1);
 }
 
 .form-endereco {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
 }
 
 .form-row {
     display: flex;
-    gap: 16px;
+    gap: 20px;
 }
 
 .form-group {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
 .form-group label {
     font-weight: 600;
     color: #333;
-    font-size: 14px;
+    font-size: 1rem;
 }
 
 .form-group input {
-    padding: 12px;
+    padding: 14px 16px;
     border: 2px solid #e9ecef;
-    border-radius: 8px;
-    font-size: 16px;
-    transition: border 0.3s;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
 }
 
 .form-group input:focus {
     outline: none;
-    border-color: #4f79a3;
+    border-color: #02060af5;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(2, 6, 10, 0.1);
 }
 
 .form-actions {
     display: flex;
-    gap: 12px;
-    margin-top: 24px;
+    gap: 16px;
+    margin-top: 30px;
+    border-top: 2px solid #f8f9fa;
+    padding-top: 20px;
 }
 
 .btn-cancelar {
     flex: 1;
-    padding: 12px;
+    padding: 14px 20px;
     background: #6c757d;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     font-weight: 600;
+    font-size: 1rem;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
 }
 
 .btn-cancelar:hover {
     background: #5a6268;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
 }
 
 .btn-salvar {
     flex: 1;
-    padding: 12px;
-    background: #4f79a3;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #02060af5 0%, #079ac7 100%);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     font-weight: 600;
+    font-size: 1rem;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(2, 6, 10, 0.3);
 }
 
 .btn-salvar:hover:not(:disabled) {
-    background: #3a5a7a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(2, 6, 10, 0.4);
 }
 
 .btn-salvar:disabled {
     background: #ccc;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 @media (max-width: 1024px) {
     .checkout-content {
         flex-direction: column;
+        gap: 30px;
     }
     
     .checkout-resumo {
         width: 100%;
         position: static;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .revisao-info-pedido {
+        flex-direction: column;
+        gap: 20px;
     }
 }
 
 @media (max-width: 768px) {
     .checkout-container {
-        padding: 10px;
+        padding: 20px;
     }
     
     .checkout-header {
-        padding: 16px;
+        padding: 25px 30px;
     }
     
     .checkout-header h1 {
-        font-size: 24px;
+        font-size: 1.8rem;
+    }
+    
+    .voltar-btn {
+        font-size: 1rem;
+        margin-bottom: 12px;
     }
     
     .progress-bar {
-        gap: 12px;
+        gap: 20px;
     }
     
     .step-number {
-        width: 32px;
-        height: 32px;
-        font-size: 14px;
+        width: 45px;
+        height: 45px;
+        font-size: 1rem;
     }
     
     .step-text {
-        font-size: 12px;
+        font-size: 0.9rem;
+    }
+    
+    .progress-line {
+        width: 60px;
+    }
+    
+    .checkout-step {
+        padding: 30px;
+    }
+    
+    .checkout-step h2 {
+        font-size: 1.5rem;
+        margin-bottom: 25px;
+    }
+    
+    .endereco-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 20px;
+    }
+    
+    .forma-pagamento {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 20px;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .modal {
+        width: 95%;
+        padding: 25px;
+        max-width: 500px;
+    }
+    
+    .modal-header h3 {
+        font-size: 1.2rem;
+    }
+    
+    .item-revisao {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .resumo-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px 0;
+    }
+    
+    .checkout-resumo {
+        padding: 25px;
+    }
+    
+    .checkout-resumo h3 {
+        font-size: 1.3rem;
+    }
+    
+    .resumo-total {
+        font-size: 1.2rem;
+        margin-left: -25px;
+        margin-right: -25px;
+        padding-left: 25px;
+        padding-right: 25px;
+    }
+    
+    .btn-continuar,
+    .btn-finalizar {
+        font-size: 1rem;
+        padding: 16px 20px;
+    }
+    
+    .btn-voltar {
+        font-size: 0.95rem;
+        padding: 12px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .checkout-container {
+        padding: 15px;
+    }
+    
+    .checkout-header {
+        padding: 20px 25px;
+    }
+    
+    .checkout-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .voltar-btn {
+        font-size: 0.95rem;
+    }
+    
+    .progress-bar {
+        gap: 15px;
+        padding: 15px 0;
+    }
+    
+    .step-number {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+    }
+    
+    .step-text {
+        font-size: 0.8rem;
     }
     
     .progress-line {
@@ -1212,111 +1506,153 @@ onMounted(async () => {
     }
     
     .checkout-step {
+        padding: 25px;
+    }
+    
+    .checkout-step h2 {
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+    }
+    
+    .sem-enderecos {
+        padding: 40px 20px;
+    }
+    
+    .sem-enderecos img {
+        width: 100px;
+    }
+    
+    .sem-enderecos h3 {
+        font-size: 1.3rem;
+    }
+    
+    .sem-enderecos p {
+        font-size: 1rem;
+    }
+    
+    .btn-adicionar {
+        padding: 14px 28px;
+        font-size: 1rem;
+    }
+    
+    .endereco-item,
+    .forma-pagamento {
+        padding: 20px;
+        gap: 15px;
+    }
+    
+    .endereco-info h4,
+    .forma-info h4 {
+        font-size: 1.1rem;
+    }
+    
+    .endereco-info p,
+    .forma-info p {
+        font-size: 0.95rem;
+    }
+    
+    .forma-icone {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .radio {
+        width: 25px;
+        height: 25px;
+    }
+    
+    .btn-novo {
+        padding: 16px 26px;
+        font-size: 1rem;
+    }
+    
+    .revisao-secao {
         padding: 20px;
     }
     
-    .checkout-step h2 {
-        font-size: 20px;
-    }
-    
-    .endereco-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-    }
-    
-    .forma-pagamento {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-    }
-    
-    .form-row {
-        flex-direction: column;
-        gap: 12px;
-    }
-    
-    .modal {
-        width: 95%;
-        padding: 16px;
+    .revisao-secao h3 {
+        font-size: 1.2rem;
     }
     
     .item-revisao {
-        flex-direction: column;
-        align-items: flex-start;
+        padding: 14px 16px;
         gap: 12px;
     }
     
-    .resumo-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-    
-    .revisao-info-pedido {
-        flex-direction: column;
-        gap: 16px;
-    }
-    
-    .pagamento-revisao {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-        text-align: center;
-    }
-}
-
-@media (max-width: 480px) {
-    .checkout-header h1 {
-        font-size: 20px;
-    }
-    
-    .progress-bar {
-        gap: 8px;
-    }
-    
-    .step-number {
-        width: 28px;
-        height: 28px;
-        font-size: 12px;
-    }
-    
-    .step-text {
-        font-size: 10px;
-    }
-    
-    .progress-line {
-        width: 30px;
-    }
-    
-    .checkout-step {
-        padding: 16px;
-    }
-    
-    .checkout-step h2 {
-        font-size: 18px;
-    }
-    
-    .endereco-item {
-        padding: 16px;
-    }
-    
-    .forma-pagamento {
-        padding: 16px;
+    .item-revisao img {
+        width: 60px;
+        height: 80px;
     }
     
     .checkout-resumo {
-        padding: 16px;
+        padding: 20px;
     }
     
     .checkout-resumo h3 {
-        font-size: 18px;
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
+    
+    .resumo-item {
+        padding: 12px 0;
+    }
+    
+    .resumo-item img {
+        width: 50px;
+        height: 70px;
+    }
+    
+    .resumo-item h4 {
+        font-size: 0.95rem;
+    }
+    
+    .resumo-item p {
+        font-size: 0.85rem;
+    }
+    
+    .resumo-linha {
+        font-size: 0.95rem;
+        padding: 10px 0;
+    }
+    
+    .resumo-total {
+        font-size: 1.1rem;
+        padding: 16px 0;
+        margin-left: -20px;
+        margin-right: -20px;
+        padding-left: 20px;
+        padding-right: 20px;
     }
     
     .btn-continuar,
     .btn-finalizar {
-        font-size: 14px;
-        padding: 14px;
+        font-size: 1rem;
+        padding: 16px 20px;
+    }
+    
+    .btn-voltar {
+        font-size: 0.9rem;
+        padding: 12px 16px;
+    }
+    
+    .modal {
+        padding: 20px;
+        max-width: 90%;
+    }
+    
+    .modal-header h3 {
+        font-size: 1.1rem;
+    }
+    
+    .form-group input {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+    }
+    
+    .btn-cancelar,
+    .btn-salvar {
+        font-size: 0.95rem;
+        padding: 12px 18px;
     }
 }
 </style> 
