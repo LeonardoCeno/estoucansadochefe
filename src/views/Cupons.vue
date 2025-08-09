@@ -85,85 +85,85 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100%;
-    background-color: #ffffff;
-    padding: 30px 0px 0px 70px;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 30px;
+    box-sizing: border-box;
 }
 
 .cupons {
-    width: 95%;
-    height: 30%;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(0, 0, 0, 0.05);
 }
 
 .titulo-principal {
-    margin: 0 0 20px 0;
-    color: #333;
-    font-size: 1.8rem;
-    font-weight: bold;
+    margin: 0 0 30px 0;
+    background: linear-gradient(135deg, #02060af5 0%, #079ac7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 2.2rem;
+    font-weight: 700;
     text-align: center;
     padding: 20px 0;
-    border-bottom: 2px solid #e0e0e0;
+    border-bottom: 3px solid #02060af5;
+    position: relative;
+}
+
+.titulo-principal::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, #079ac7 0%, #02060af5 100%);
+    border-radius: 2px;
 }
 
 .lista {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    justify-items: center;
-    padding: 4px;
-    gap: 20px;
-    position: relative;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    padding: 20px 0;
+    width: 100%;
 }
 
 ul {
     margin-top: 1rem;
     padding-left: 0;
     list-style: none;
-    max-height: 70vh;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #c0c4c9 #f1f3f5; /* Firefox */
-}
-
-/* WebKit scrollbars (Chrome, Edge, Safari) */
-ul::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-ul::-webkit-scrollbar-track {
-    background: #f1f3f5;
-}
-
-ul::-webkit-scrollbar-thumb {
-    background-color: #c0c4c9;
-    border-radius: 0; /* pontas quadradas */
-    border: 1px solid #e5e7eb;
-}
-
-ul::-webkit-scrollbar-thumb:hover {
-    background-color: #aeb4bb;
+    width: 100%;
 }
 
 .cupom {
-    background-color: #f0f0f0;
-    padding: 20px;
-    margin-bottom: 10px;
-    border-radius: 7px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 25px;
+    margin-bottom: 0;
+    border-radius: 16px;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     font-size: 1.1rem;
-    border: 1px solid #a9b5b6;
+    border: 2px solid #e9ecef;
     width: 100%;
-    max-width: 280px;
-    min-height: 140px;
-    transition: all 0.3s ease;
+    min-height: 160px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
+
+
 
 .cupom-info {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
     flex: 1;
     min-width: 0;
 }
@@ -171,62 +171,69 @@ ul::-webkit-scrollbar-thumb:hover {
 .codigo-desconto {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 8px;
 }
 
 .codigo-desconto h4 {
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: #333;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1e293b;
     margin: 0;
     word-break: break-word;
     line-height: 1.2;
+    background: linear-gradient(135deg, #02060af5 0%, #079ac7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .percentual {
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #4CAF50;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #22c55e;
     margin: 0;
+    text-shadow: 0 1px 3px rgba(34, 197, 94, 0.3);
 }
 
 .datas {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 6px;
     margin-top: 5px;
 }
 
 .datas p {
     margin: 0;
-    font-size: 0.9rem;
-    color: #666;
-    line-height: 1.3;
+    font-size: 1rem;
+    color: #64748b;
+    line-height: 1.4;
+    font-weight: 500;
 }
 
 .status {
     margin-top: auto;
-    padding-top: 10px;
+    padding-top: 15px;
 }
 
 .status span {
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: bold;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
     text-transform: uppercase;
     display: inline-block;
+    letter-spacing: 0.5px;
 }
 
 .cupom-ativo {
-    border: 2px solid #4CAF50 !important;
-    background-color: #f8fff8 !important;
+    border: 2px solid #22c55e !important;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%) !important;
 }
 
 .status-ativo {
-    background-color: #e8f5e8;
-    color: #2e7d32;
-    border: 1px solid #4CAF50;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
 }
 
 .loading-container {
@@ -239,13 +246,14 @@ ul::-webkit-scrollbar-thumb:hover {
 }
 
 .loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #02060af5;
     border-radius: 50%;
     animation: spin 1s linear infinite;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(2, 6, 10, 0.2);
 }
 
 @keyframes spin {
@@ -257,57 +265,121 @@ ul::-webkit-scrollbar-thumb:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 40px;
+    padding: 60px;
     text-align: center;
     color: #dc3545;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
+    font-weight: 500;
 }
 
 .sem-cupons {
     text-align: center;
-    padding: 40px;
-    color: #666;
-    font-size: 1.1rem;
+    padding: 60px;
+    color: #64748b;
+    font-size: 1.2rem;
+    font-weight: 500;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
 }
 
-@media (max-width: 1200px) {
-    .lista {
-        grid-template-columns: repeat(3, 1fr);
+/* Responsividade Aprimorada */
+@media (max-width: 1024px) {
+    .tudo {
+        padding: 25px;
     }
     
-    .cupom {
-        max-width: 320px;
-    }
-}
-
-@media (max-width: 900px) {
-    .lista {
-        grid-template-columns: repeat(2, 1fr);
+    .cupons {
+        padding: 25px;
     }
     
-    .cupom {
-        max-width: 350px;
+    .lista {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
     }
 }
 
 @media (max-width: 768px) {
     .tudo {
-        padding: 20px 15px 0px 15px;
+        padding: 20px;
     }
     
     .cupons {
-        width: 100%;
-        height: auto;
+        padding: 20px;
+        border-radius: 12px;
+    }
+    
+    .titulo-principal {
+        font-size: 1.8rem;
+        margin-bottom: 25px;
     }
     
     .lista {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        padding: 15px 0;
     }
     
     .cupom {
-        max-width: 100%;
+        padding: 20px;
+        min-height: 140px;
+        border-radius: 12px;
+    }
+    
+    .codigo-desconto h4 {
+        font-size: 1.2rem;
+    }
+    
+    .percentual {
+        font-size: 1.1rem;
+    }
+    
+    .datas p {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .lista {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .cupom {
+        padding: 18px;
+        min-height: 130px;
+    }
+}
+
+@media (max-width: 480px) {
+    .tudo {
+        padding: 15px;
+    }
+    
+    .cupons {
+        padding: 15px;
+        border-radius: 8px;
+    }
+    
+    .titulo-principal {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        padding: 15px 0;
+    }
+    
+    .lista {
+        gap: 12px;
+        padding: 10px 0;
+    }
+    
+    .cupom {
         padding: 15px;
         min-height: 120px;
+        border-radius: 8px;
+    }
+    
+    .cupom-info {
+        gap: 12px;
     }
     
     .codigo-desconto h4 {
@@ -317,11 +389,33 @@ ul::-webkit-scrollbar-thumb:hover {
     .percentual {
         font-size: 1rem;
     }
+    
+    .datas p {
+        font-size: 0.9rem;
+    }
+    
+    .status span {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+    }
+    
+    .sem-cupons {
+        padding: 40px 20px;
+        font-size: 1.1rem;
+    }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 360px) {
     .tudo {
-        padding: 15px 10px 0px 10px;
+        padding: 10px;
+    }
+    
+    .cupons {
+        padding: 12px;
+    }
+    
+    .titulo-principal {
+        font-size: 1.3rem;
     }
     
     .cupom {
@@ -338,12 +432,12 @@ ul::-webkit-scrollbar-thumb:hover {
     }
     
     .datas p {
-        font-size: 0.8rem;
+        font-size: 0.85rem;
     }
     
     .status span {
-        font-size: 0.7rem;
-        padding: 3px 6px;
+        font-size: 0.75rem;
+        padding: 5px 8px;
     }
 }
 </style>

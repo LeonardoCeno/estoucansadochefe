@@ -241,9 +241,10 @@ function abrirCriacao() {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100%;
-    background-color: #ffffff;
-    padding: 50px 0px 0px 70px;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 30px;
+    box-sizing: border-box;
 }
 
 .nova-categoria-btn {
@@ -344,68 +345,84 @@ function abrirCriacao() {
 }
 
 .categorias {
-    width: 94%;
-    height: 30%;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(0, 0, 0, 0.05);
 }
 
 .botoes h3 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     font-family: helvetica;
+    background: linear-gradient(135deg, #02060af5 0%, #079ac7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    margin: 0;
 }
 
 .categorias ul {
-    max-height: 70vh;
-    overflow-y: auto;
+    padding: 10px 0;
+    width: 100%;
 }
 
 .categorias li {
-    background-color: #e4e4e4;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 7px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     font-size: 1.1rem;
-    border: 1px solid #a9b5b6;
+    border: 2px solid #e9ecef;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease;
+}
+
+.categorias li:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #dee2e6;
 }
 
 .categorias li img {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     object-fit: cover;
     aspect-ratio: 1/1;
-    border-radius: 50%;
+    border-radius: 12px;
     background: #fff;
-    border: 1px solid #ccc;
+    border: 2px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .categorias li button {
-    background-color: #6c757d;
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
     color: white;
-    padding: 5px 10px;
+    padding: 8px 16px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 0.9rem;
-    margin-left: 10px;
+    margin-left: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.categorias li .edit-button {
-    background-color: #007bff;
+.categorias li button:hover {
+    background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.categorias li .edit-button:hover {
-    background-color: #0056b3;
-}
 
-.categorias li .delete-button {
-    background-color: #dc3545;
-}
-
-.categorias li .delete-button:hover {
-    background-color: #c82333;
-}
 
 .categorias p {
     font-size: 1.1rem;
@@ -425,35 +442,57 @@ function abrirCriacao() {
 }
 
 .excluir-btn {
-    background-color: #dc3545 !important;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
     color: white !important;
 }
 .excluir-btn:hover {
-    background-color: #b71c1c !important;
+    background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%) !important;
 }
 
 .botoes {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 25px;
-    border-bottom: 1px solid rgb(134, 134, 134);
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 3px solid #02060af5;
+    position: relative;
+}
+
+.botoes::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, #079ac7 0%, #02060af5 100%);
+    border-radius: 2px;
 }
 
 .categoria-info {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
+    flex: 1;
+}
+
+.categoria-info b {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1e293b;
 }
 
 .produtos-count {
     font-size: 0.85rem;
-    color: #666;
-    font-weight: normal;
-    background-color: #f0f0f0;
-    padding: 2px 8px;
-    border-radius: 12px;
-    border: 1px solid #ddd;
+    color: #475569;
+    font-weight: 600;
+    background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .loading-container {
@@ -466,13 +505,14 @@ function abrirCriacao() {
 }
 
 .loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #02060af5;
     border-radius: 50%;
     animation: spin 1s linear infinite;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(2, 6, 10, 0.2);
 }
 
 @keyframes spin {
@@ -495,184 +535,357 @@ function abrirCriacao() {
 
 .modal-confirmacao {
     background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    max-width: 400px;
+    padding: 35px;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    max-width: 450px;
     width: 90%;
     text-align: center;
-    border: 2px solid #02060af5;
+    border: 3px solid #02060af5;
+    position: relative;
+}
+
+.modal-confirmacao::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #02060af5 0%, #079ac7 100%);
+    border-radius: 16px 16px 0 0;
 }
 
 .modal-confirmacao h3 {
-    margin: 0 0 15px 0;
-    color: #333;
-    font-size: 1.3rem;
+    margin: 0 0 20px 0;
+    color: #1e293b;
+    font-size: 1.4rem;
+    font-weight: 600;
 }
 
 .modal-confirmacao p {
-    margin: 0 0 25px 0;
-    color: #666;
-    font-size: 1rem;
+    margin: 0 0 30px 0;
+    color: #64748b;
+    font-size: 1.1rem;
+    line-height: 1.5;
 }
 
 .modal-botoes {
     display: flex;
-    gap: 15px;
+    gap: 20px;
     justify-content: center;
 }
 
 .btn-confirmar {
-    background-color: #dc3545;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: 12px 24px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 1rem;
-    transition: background-color 0.2s;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
 }
 
 .btn-confirmar:hover {
-    background-color: #b71c1c;
+    background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
 }
 
 .btn-cancelar {
-    background-color: #6c757d;
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: 12px 24px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 1rem;
-    transition: background-color 0.2s;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
 }
 
 .btn-cancelar:hover {
-    background-color: #545b62;
+    background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
 }
 
-@media (max-width: 768px) {
-    .produtos-count {
-        font-size: 0.8rem;
-        padding: 1px 6px;
-    }
+/* Responsividade Aprimorada */
+@media (max-width: 1024px) {
     .tudo {
-        padding: 20px 15px 0px 15px;
+        padding: 25px;
     }
-    .categoria-info {
-        gap: 6px;
-    }
-    .botoes {
-        flex-direction: column;
-        gap: 15px;
-        align-items: flex-start;
-    }
-    .separador {
-        gap: 10px;
-        width: 100%;
-    }
-    .BTli {
-        gap: 10px;
-        width: 100%;
-        justify-content: flex-end;
-    }
-    .categorias li button {
-        padding: 4px 8px;
-        font-size: 0.8rem;
-        margin-left: 5px;
-    }
-    .categorias li {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-        padding: 12px;
-        font-size: 1rem;
-    }
+    
     .categorias {
-        width: 100%;
-        height: auto;
+        padding: 25px;
     }
+    
     .botoes h3 {
         font-size: 2rem;
     }
-    .criacao-form button {
-        padding: 8px 16px;
+    
+    .nova-categoria-btn {
+        padding: 10px 18px;
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .tudo {
+        padding: 20px;
+    }
+    
+    .categorias {
+        padding: 20px;
+        border-radius: 12px;
+    }
+    
+    .produtos-count {
+        font-size: 0.8rem;
+        padding: 3px 8px;
+    }
+    
+    .categoria-info {
+        gap: 10px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .categoria-info b {
+        font-size: 1.1rem;
+    }
+    
+    .botoes {
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .botoes h3 {
+        font-size: 1.8rem;
+    }
+    
+    .separador {
+        gap: 15px;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .BTli {
+        gap: 15px;
+        width: 100%;
+        justify-content: center;
+        margin-top: 15px;
+    }
+    
+    .categorias li {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
         font-size: 1rem;
+        text-align: center;
     }
-    .criacao-form h2 {
-        font-size: 2rem;
-        margin-bottom: 15px;
+    
+    .categorias li button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        margin-left: 0;
+        min-width: 80px;
     }
+    
+    .categorias li img {
+        width: 70px;
+        height: 70px;
+    }
+    
     .criacao-form {
         width: 95%;
-        padding: 20px;
-        margin: 10px;
+        padding: 25px;
+        margin: 15px;
+        border-radius: 12px;
     }
-    .nova-categoria-btn {
-        padding: 8px 16px;
+    
+    .criacao-form h2 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+    }
+    
+    .criacao-form button {
+        padding: 10px 20px;
         font-size: 1rem;
+    }
+    
+    .nova-categoria-btn {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+    
+    .modal-confirmacao {
+        padding: 25px;
+        margin: 20px;
+    }
+    
+    .modal-botoes {
+        gap: 15px;
     }
 }
 
 @media (max-width: 480px) {
-    .modal-confirmacao {
-        padding: 20px;
-        margin: 20px;
-    }
-    .modal-botoes {
-        flex-direction: column;
-        gap: 10px;
-    }
-    .btn-confirmar,
-    .btn-cancelar {
-        padding: 12px 20px;
-    }
-    .nova-categoria-btn {
-        padding: 6px 12px;
-        font-size: 0.9rem;
-    }
     .tudo {
-        padding: 15px 10px 0px 10px;
-    }
-    .criacao-form {
-        width: 98%;
         padding: 15px;
-        margin: 5px;
     }
-    .criacao-form h2 {
-        font-size: 1.5rem;
-        margin-bottom: 10px;
+    
+    .categorias {
+        padding: 15px;
+        border-radius: 8px;
     }
-    .criacao-form button {
-        padding: 6px 12px;
-        font-size: 0.9rem;
-        margin-bottom: 5px;
-    }
+    
     .botoes h3 {
         font-size: 1.5rem;
     }
-    .categorias li {
-        padding: 10px;
+    
+    .nova-categoria-btn {
+        padding: 8px 16px;
         font-size: 0.9rem;
     }
+    
+    .categorias li {
+        padding: 15px;
+        font-size: 0.95rem;
+        gap: 12px;
+    }
+    
+    .categorias li img {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .categoria-info b {
+        font-size: 1rem;
+    }
+    
     .categorias li button {
-        padding: 3px 6px;
-        font-size: 0.75rem;
-        margin-left: 3px;
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        min-width: 70px;
     }
+    
     .BTli {
-        gap: 5px;
-    }
-    .separador {
-        gap: 8px;
-    }
-    .botoes {
         gap: 10px;
     }
+    
     .produtos-count {
         font-size: 0.75rem;
+        padding: 2px 6px;
+    }
+    
+    .criacao-form {
+        width: 98%;
+        padding: 20px;
+        margin: 10px;
+        border-radius: 8px;
+    }
+    
+    .criacao-form h2 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+    
+    .criacao-form button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .modal-confirmacao {
+        padding: 20px;
+        margin: 15px;
+        border-radius: 12px;
+    }
+    
+    .modal-confirmacao h3 {
+        font-size: 1.2rem;
+    }
+    
+    .modal-confirmacao p {
+        font-size: 1rem;
+        margin-bottom: 25px;
+    }
+    
+    .modal-botoes {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .btn-confirmar,
+    .btn-cancelar {
+        padding: 12px 20px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 360px) {
+    .tudo {
+        padding: 10px;
+    }
+    
+    .categorias {
+        padding: 12px;
+    }
+    
+    .botoes h3 {
+        font-size: 1.3rem;
+    }
+    
+    .nova-categoria-btn {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .categorias li {
+        padding: 12px;
+        gap: 10px;
+    }
+    
+    .categorias li img {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .categoria-info b {
+        font-size: 0.95rem;
+    }
+    
+    .categorias li button {
+        padding: 5px 10px;
+        font-size: 0.75rem;
+        min-width: 60px;
+    }
+    
+    .produtos-count {
+        font-size: 0.7rem;
         padding: 1px 4px;
+    }
+    
+    .criacao-form {
+        padding: 15px;
+        margin: 5px;
+    }
+    
+    .criacao-form h2 {
+        font-size: 1.3rem;
+    }
+    
+    .criacao-form button {
+        padding: 6px 12px;
+        font-size: 0.85rem;
     }
 }
 

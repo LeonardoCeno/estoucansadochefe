@@ -280,74 +280,94 @@ onMounted(async () => {
 
 .tudo {
     width: 100%;
-    height: 100vh;
-    background-color: #ffffff;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 20px;
+    padding: 30px;
     box-sizing: border-box;
 }
 
 .pedidos-container {
     width: 100%;
-    max-width: 1200px;
-    height: 100%;
+    max-width: 1400px;
+    min-height: 85vh;
     display: flex;
     flex-direction: column;
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    border: 2px solid rgba(2, 6, 10, 0.1);
 }
 
 .titulo-secao {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #4f79a3;
-    height: 4.5rem;
+    background: linear-gradient(135deg, #02060af5 0%, #079ac7 100%);
+    height: 5rem;
     width: 100%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    margin-bottom: 15px;
+    box-shadow: 0 8px 25px rgba(2, 6, 10, 0.2);
+    border-radius: 16px;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+.titulo-secao::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+    pointer-events: none;
 }
 
 .titulo-secao h2 {
-    font-size: 26px;
-    color: rgb(255, 255, 255);
+    font-size: 2rem;
+    color: white;
     margin: 0;
-    font-weight: bold;
+    font-weight: 700;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 1;
 }
 
 .filtros-container {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin-bottom: 15px;
+    gap: 15px;
+    margin-bottom: 25px;
     flex-wrap: wrap;
+    padding: 20px 0;
 }
 
 .btn-filtro {
-    padding: 10px 20px;
-    border: 2px solid #4f79a3;
+    padding: 14px 24px;
+    border: 2px solid #007bff;
     border-radius: 8px;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    background-color: transparent;
-    color: #4f79a3;
-    min-width: 120px;
+    background: white;
+    color: #007bff;
+    min-width: 140px;
 }
 
 .btn-filtro:hover:not(.ativo) {
-    background-color: #4f79a3;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
     color: white;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(79, 121, 163, 0.3);
 }
 
 .btn-filtro.ativo {
-    background-color: #4f79a3;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
     color: white;
-    box-shadow: 0 2px 8px rgba(79, 121, 163, 0.4);
 }
 
 .btn-filtro-wrapper {
@@ -357,28 +377,48 @@ onMounted(async () => {
 
 .filtro-badge {
     position: absolute;
-    top: -8px;
-    right: -8px;
-    background-color: #e11d48;
+    top: -10px;
+    right: -10px;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
     color: white;
     border-radius: 50%;
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 10px;
-    font-weight: bold;
-    min-width: 18px;
-    border: 2px solid white;
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 22px;
+    border: 3px solid white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    z-index: 1;
+    z-index: 2;
 }
 
 .pedidos-content {
-    height: 70%;
+    flex: 1;
     overflow-y: auto;
-    padding-right: 10px;
+    padding-right: 15px;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.pedidos-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.pedidos-content::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.pedidos-content::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.pedidos-content::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }
 
 .loading-container {
@@ -394,13 +434,14 @@ onMounted(async () => {
 }
 
 .loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #02060af5;
     border-radius: 50%;
     animation: spin 1s linear infinite;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(2, 6, 10, 0.2);
 }
 
 @keyframes spin {
@@ -444,58 +485,96 @@ onMounted(async () => {
 }
 
 .btn-comprar-agora {
-    background-color: #4f79a3;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
     color: white;
-    padding: 12px 24px;
+    padding: 16px 32px;
     border-radius: 8px;
     text-decoration: none;
-    font-weight: bold;
-    transition: background-color 0.3s;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+    border: none;
 }
 
 .btn-comprar-agora:hover {
-    background-color: #3a5a7a;
+    background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
 }
 
 .pedidos-lista {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 25px;
 }
 
 .pedido-card {
-    background-color: #f8f9fa;
-    border-radius: 12px;
-    border: 1px solid #e9ecef;
-    padding: 24px;
+    background: white;
+    border-radius: 20px;
+    border: 2px solid #f1f5f9;
+    padding: 30px;
     transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.pedido-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #02060af5 0%, #079ac7 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .pedido-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transform: translateY(-1px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+    border-color: #e2e8f0;
+}
+
+.pedido-card:hover::before {
+    opacity: 1;
 }
 
 .pedido-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #e9ecef;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f1f5f9;
+    position: relative;
+}
+
+.pedido-header::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, #02060af5 0%, #079ac7 100%);
 }
 
 .pedido-info h4 {
-    font-size: 20px;
-    color: #333;
-    margin: 0 0 5px 0;
-    font-weight: bold;
+    font-size: 1.4rem;
+    color: #1e293b;
+    margin: 0 0 8px 0;
+    font-weight: 700;
+    background: linear-gradient(135deg, #02060af5 0%, #079ac7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .pedido-data {
-    font-size: 14px;
-    color: #666;
+    font-size: 0.95rem;
+    color: #64748b;
     margin: 0;
+    font-weight: 500;
 }
 
 
@@ -507,13 +586,22 @@ onMounted(async () => {
 .produto-item {
     display: flex;
     align-items: center;
-    gap: 15px;
-    padding: 12px 0;
-    border-bottom: 1px solid #f0f0f0;
+    gap: 20px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background: #fafbfc;
 }
 
 .produto-item:last-child {
     border-bottom: none;
+}
+
+.produto-item:hover {
+    background: #f8fafc;
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .produto-imagem {
@@ -521,11 +609,18 @@ onMounted(async () => {
 }
 
 .produto-imagem img {
-    width: 60px;
-    height: 84px;
+    width: 70px;
+    height: 95px;
     object-fit: cover;
-    border-radius: 6px;
-    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.produto-item:hover .produto-imagem img {
+    transform: scale(1.05);
+    border-color: #02060af5;
 }
 
 .produto-info {
@@ -533,41 +628,57 @@ onMounted(async () => {
 }
 
 .produto-info h5 {
-    font-size: 16px;
-    color: #333;
-    margin: 0 0 5px 0;
-    font-weight: bold;
+    font-size: 1.1rem;
+    color: #1e293b;
+    margin: 0 0 8px 0;
+    font-weight: 600;
+    line-height: 1.4;
 }
 
 .produto-preco {
-    font-size: 14px;
-    color: #666;
+    font-size: 1rem;
+    color: #02060af5;
     margin: 0;
+    font-weight: 600;
 }
 
 .pedido-total {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 20px 0;
-    padding: 15px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    border: 1px solid #e9ecef;
+    margin: 25px 0;
+    padding: 20px 25px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 16px;
+    border: 2px solid #e2e8f0;
+    position: relative;
+    overflow: hidden;
+}
+
+.pedido-total::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #02060af5 0%, #079ac7 100%);
 }
 
 .total-label {
-    font-size: 16px;
-    font-weight: bold;
-    color: #333;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #334155;
     margin: 0;
+    letter-spacing: 0.3px;
 }
 
 .total-valor {
-    font-size: 18px;
-    font-weight: bold;
-    color: #4f79a3;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #02060af5;
     margin: 0;
+    text-shadow: 0 1px 3px rgba(2, 6, 10, 0.1);
 }
 
 .pedido-acoes {
@@ -577,26 +688,23 @@ onMounted(async () => {
 }
 
 .btn-cancelar-pedido {
-    padding: 8px 16px;
+    padding: 12px 20px;
     border: none;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: bold;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.btn-cancelar-pedido {
-    background-color: #dc3545;
+    transition: background-color 0.3s ease;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
     color: white;
 }
 
 .btn-cancelar-pedido:hover:not(:disabled) {
-    background-color: #c82333;
+    background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
 }
 
 .btn-cancelar-pedido:disabled {
-    background-color: #ccc;
+    background: #ccc;
     cursor: not-allowed;
 }
 
@@ -615,13 +723,25 @@ onMounted(async () => {
 }
 
 .modal-content {
-    background-color: white;
-    border-radius: 10px;
-    padding: 20px;
-    max-width: 400px;
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 450px;
     width: 90%;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    border: 2px solid #02060af5;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    border: 3px solid #02060af5;
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #02060af5 0%, #079ac7 100%);
 }
 
 .modal-header {
@@ -653,69 +773,173 @@ onMounted(async () => {
 }
 
 .btn-cancelar {
-    background-color: #6c757d;
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
     color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
+    padding: 12px 20px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 0.95rem;
+    font-weight: 600;
     transition: background-color 0.3s ease;
 }
 
 .btn-cancelar:hover {
-    background-color: #5a6268;
+    background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
 }
 
 .btn-confirmar {
-    background-color: #e11d48;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
     color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
+    padding: 12px 20px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 0.95rem;
+    font-weight: 600;
     transition: background-color 0.3s ease;
 }
 
 .btn-confirmar:hover:not(:disabled) {
-    background-color: #c81e3a;
+    background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
 }
 
 .btn-confirmar:disabled {
-    background-color: #ccc;
+    background: #ccc;
     cursor: not-allowed;
 }
 
 /* Responsividade */
+@media (max-width: 1024px) {
+    .pedidos-container {
+        max-width: 95%;
+        padding: 30px;
+    }
+    
+    .filtros-container {
+        gap: 12px;
+    }
+    
+    .btn-filtro {
+        min-width: 120px;
+        padding: 12px 20px;
+    }
+}
+
 @media (max-width: 768px) {
     .tudo {
-        padding: 10px;
+        padding: 15px;
+    }
+    
+    .pedidos-container {
+        padding: 25px;
+        border-radius: 16px;
     }
     
     .titulo-secao {
-        height: 3.5rem;
+        height: 4rem;
     }
     
     .titulo-secao h2 {
-        font-size: 20px;
+        font-size: 1.6rem;
     }
     
     .filtros-container {
         flex-direction: column;
-        gap: 8px;
+        gap: 10px;
+        padding: 15px 0;
     }
 
     .btn-filtro {
         width: 100%;
         text-align: center;
+        min-width: auto;
     }
     
     .filtro-badge {
-        top: -6px;
-        right: -6px;
+        top: -8px;
+        right: -8px;
+        width: 18px;
+        height: 18px;
+        font-size: 10px;
+        min-width: 18px;
+    }
+    
+    .pedido-card {
+        padding: 20px;
+        border-radius: 16px;
+    }
+    
+    .pedido-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+    }
+    
+    .produto-item {
+        gap: 15px;
+        padding: 12px 16px;
+    }
+    
+    .produto-imagem img {
+        width: 60px;
+        height: 80px;
+    }
+    
+    .pedido-total {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+        padding: 16px 20px;
+    }
+    
+    .pedido-acoes {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn-cancelar-pedido {
+        width: 100%;
+        padding: 14px;
+    }
+    
+    .modal-content {
+        padding: 25px;
+        max-width: 95%;
+    }
+}
+
+@media (max-width: 480px) {
+    .tudo {
+        padding: 10px;
+    }
+    
+    .pedidos-container {
+        padding: 20px;
+        border-radius: 12px;
+    }
+    
+    .titulo-secao {
+        height: 3.5rem;
+        margin-bottom: 20px;
+    }
+    
+    .titulo-secao h2 {
+        font-size: 1.3rem;
+    }
+    
+    .filtros-container {
+        padding: 10px 0;
+    }
+    
+    .btn-filtro {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .filtro-badge {
         width: 16px;
         height: 16px;
         font-size: 9px;
@@ -724,46 +948,16 @@ onMounted(async () => {
     
     .pedido-card {
         padding: 16px;
-    }
-    
-    .pedido-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-    
-    .pedido-total {
-        flex-direction: column;
-        gap: 10px;
-        text-align: center;
-    }
-    
-    .pedido-acoes {
-        flex-direction: column;
-        gap: 8px;
-    }
-    
-    .btn-cancelar-pedido {
-        width: 100%;
-        padding: 10px;
-    }
-}
-
-@media (max-width: 480px) {
-    .tudo {
-        padding: 5px;
-    }
-    
-    .titulo-secao h2 {
-        font-size: 16px;
-    }
-    
-    .pedido-card {
-        padding: 12px;
+        gap: 15px;
     }
     
     .pedido-info h4 {
-        font-size: 18px;
+        font-size: 1.2rem;
+    }
+    
+    .produto-item {
+        gap: 12px;
+        padding: 10px 12px;
     }
     
     .produto-imagem img {
@@ -772,25 +966,39 @@ onMounted(async () => {
     }
     
     .produto-info h5 {
-        font-size: 14px;
+        font-size: 1rem;
     }
     
     .produto-preco {
-        font-size: 12px;
+        font-size: 0.9rem;
     }
     
     .pedido-total {
-        padding: 10px;
+        padding: 14px 16px;
     }
     
     .total-label {
-        font-size: 14px;
+        font-size: 1rem;
     }
     
     .total-valor {
-        font-size: 16px;
+        font-size: 1.2rem;
     }
     
-
+    .btn-cancelar-pedido {
+        font-size: 0.9rem;
+        padding: 12px;
+    }
+    
+    .modal-content {
+        padding: 20px;
+        border-radius: 16px;
+    }
+    
+    .btn-cancelar,
+    .btn-confirmar {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
 }
 </style>

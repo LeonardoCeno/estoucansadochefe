@@ -439,7 +439,7 @@ function confirmarRemocao() {
 
 .lista {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(5, 1fr);
     justify-items: center;
     padding: 20px;
     position: relative;
@@ -512,7 +512,7 @@ function confirmarRemocao() {
 
 @media (max-width: 1200px) {
     .lista {
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-template-columns: repeat(4, 1fr);
         gap: 12px;
         padding: 15px;
     }
@@ -527,7 +527,7 @@ function confirmarRemocao() {
 
 @media (max-width: 950px) {
     .lista {
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        grid-template-columns: repeat(3, 1fr);
         gap: 10px;
         padding: 12px;
     }
@@ -542,21 +542,28 @@ function confirmarRemocao() {
         width: 100px;
         font-size: 12px;
     }
+    
+    /* Botões sempre visíveis no tablet - sem hover */
+    .add {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+    }
 }
 
 @media (max-width: 768px) {
     .lista {
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
         gap: 8px;
         padding: 10px;
     }
     .produto {
+        width: 100%;
         max-width: 180px;
         padding: 8px;
     }
     .nome-preco-imagem img {
-        width: 100px;
-        height: 150px;
+        width: 140px;
+        height: 200px;
     }
     .titulo, .soumdetalhe, .produtos {
         max-width: 100%;
@@ -568,12 +575,14 @@ function confirmarRemocao() {
         padding: 15px;
     }
     .add button {
-        width: 90px;
-        font-size: 11px;
+        width: 120px;
+        font-size: 12px;
         padding: 6px;
     }
     .add {
         gap: 8px;
+        opacity: 1 !important;
+        pointer-events: auto !important;
     }
     .add img {
         width: 22px;
@@ -582,18 +591,18 @@ function confirmarRemocao() {
 
 @media (max-width: 480px) {
     .lista {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 6px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
         padding: 8px;
     }
     .produto {
-        max-width: 160px;
+        width: 100%;
         padding: 6px;
         margin-top: 2vh;
     }
     .nome-preco-imagem img {
-        width: 80px;
-        height: 120px;
+        height: 180px;
+        width: 125px;
     }
     .titulo, .soumdetalhe, .produtos {
         max-width: 100%;
@@ -617,56 +626,67 @@ function confirmarRemocao() {
         padding: 10px;
     }
     .add button {
-        width: 80px;
-        font-size: 10px;
+        width: 100px;
+        font-size: 11px;
         padding: 5px;
+        gap: 4px;
     }
     .add {
         gap: 6px;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        margin-top: 8px !important;
+        margin-bottom: 8px !important;
     }
     .add img {
         width: 20px;
+        height: 20px;
     }
     .produto h4 {
-        font-size: 13px;
-        height: 35px;
+        font-size: 12px;
+        height: 30px;
+        margin-top: 8px;
     }
     .nome-preco-imagem p {
-        font-size: 18px;
+        font-size: 16px;
     }
 }
 
 @media (max-width: 360px) {
     .lista {
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-        gap: 5px;
-        padding: 5px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 8px;
     }
     .produto {
-        max-width: 140px;
-        padding: 5px;
+        width: 100%;
+        padding: 6px;
     }
     .nome-preco-imagem img {
-        width: 70px;
-        height: 100px;
+        width: 100px;
+        height: 140px;
     }
     .add button {
-        width: 70px;
-        font-size: 9px;
+        width: 85px;
+        font-size: 10px;
         padding: 4px;
+        gap: 3px;
     }
     .add {
         gap: 5px;
+        opacity: 1 !important;
+        pointer-events: auto !important;
     }
     .add img {
         width: 18px;
+        height: 18px;
     }
     .produto h4 {
-        font-size: 12px;
-        height: 30px;
+        font-size: 11px;
+        height: 28px;
     }
     .nome-preco-imagem p {
-        font-size: 16px;
+        font-size: 14px;
     }
 }
 
