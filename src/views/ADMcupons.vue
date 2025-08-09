@@ -23,8 +23,10 @@
               <input type="datetime-local" v-model="dataFimForm" required />
             </div>
           </div>
-          <button type="submit">{{ editando ? 'Salvar' : 'Criar Cupom' }}</button>
-          <button type="button" @click="editando ? cancelarEdicao() : fecharFormulario()">Cancelar</button>
+          <div class="botoes-form">
+            <button type="submit">{{ editando ? 'Salvar' : 'Criar Cupom' }}</button>
+            <button type="button" @click="editando ? cancelarEdicao() : fecharFormulario()">Cancelar</button>
+          </div>
         </form>
         <p v-if="editando ? mensagemEdicao : mensagem">{{ editando ? mensagemEdicao : mensagem }}</p>
       </div>
@@ -342,14 +344,25 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
-  background-color: #ffffff;
-  padding: 30px 0px 0px 70px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 30px;
+  box-sizing: border-box;
+  min-width: 0;
+  overflow-x: hidden;
 }
 
 .cupons {
-  width: 95%;
-  height: 30%;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
 }
 
 .criacao-form-wrapper {
@@ -364,76 +377,116 @@ onMounted(async () => {
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1000;
   overflow: auto;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .criacao-form {
   background-color: #fff;
-  padding: 32px 24px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  width: 98vw;
-  max-width: 540px;
+  padding: 0;
+  border-radius: 16px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  width: min(640px, 96vw);
   max-height: 90vh;
-  overflow-y: auto;
+  overflow: auto;
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   border: 2px solid #02060af5;
+  position: relative;
+}
+
+.criacao-form::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #02060af5 0%, #079ac7 100%);
+  border-radius: 16px 16px 0 0;
 }
 
 .criacao-form h2 {
-  font-size: 2.5rem;
-  font-family: helvetica;
-  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+  color: #1e293b;
+  padding: 24px 32px 0 32px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 20px;
 }
 
 .criacao-form label {
   display: block;
-  margin-bottom: 10px;
-  font-size: 1.1rem;
-  font-weight: bold;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
 }
 
 .criacao-form input[type="text"],
 .criacao-form input[type="number"],
 .criacao-form input[type="datetime-local"] {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
   font-size: 1rem;
+  background: #fff;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.criacao-form input[type="text"]:focus,
+.criacao-form input[type="number"]:focus,
+.criacao-form input[type="datetime-local"]:focus {
+  border-color: #667eea;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .criacao-form button {
-  background-color: #1565C0;
+  background: #079ac7;
   color: white;
-  padding: 10px 20px;
+  padding: 10px 18px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 1.1rem;
-  margin-right: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-right: 12px;
+  transition: background 0.2s;
+}
+
+.criacao-form button:hover {
+  background: #067aa0;
 }
 
 .criacao-form button:last-child {
-  background-color: #f44336;
+  background: #6c757d;
+  margin-right: 0;
 }
 
 .criacao-form button:last-child:hover {
-  background-color: #da190b;
+  background: #5a6268;
 }
 
 .criacao-form form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  padding: 24px 32px;
 }
 
-.criacao-form form button {
-  margin-right: 10px;
-  margin-bottom: 0;
+.criacao-form form .botoes-form {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 8px;
 }
 
 .cupons-header {
@@ -464,13 +517,29 @@ onMounted(async () => {
 }
 
 .titulo-principal {
-  margin: 0 0 20px 0;
-  color: #333;
-  font-size: 1.8rem;
-  font-weight: bold;
+  margin: 0 0 30px 0;
+  background: linear-gradient(135deg, #02060af5 0%, #079ac7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 2.2rem;
+  font-weight: 700;
   text-align: center;
   padding: 20px 0;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 3px solid #02060af5;
+  position: relative;
+}
+
+.titulo-principal::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, #079ac7 0%, #02060af5 100%);
+  border-radius: 2px;
 }
 
 .input-busca {
@@ -533,19 +602,24 @@ onMounted(async () => {
 }
 
 .novo-cupom-btn {
-  padding: 10px 20px;
+  padding: 10px 18px;
   font-size: 1.2rem;
   color: white;
-  background-color: #1565C0;
+  background: #079ac7;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   white-space: nowrap;
   display: inline-block;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(7, 154, 199, 0.3);
 }
 
 .novo-cupom-btn:hover {
-  background-color: #0D47A1;
+  background: #067aa0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(7, 154, 199, 0.4);
 }
 
 .lista {
@@ -567,19 +641,25 @@ ul {
 }
 
 .cupom {
-  background-color: #f0f0f0;
-  padding: 20px;
-  margin-bottom: 10px;
-  border-radius: 7px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 25px;
+  margin-bottom: 0;
+  border-radius: 16px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   font-size: 1.1rem;
-  border: 1px solid #a9b5b6;
+  border: 2px solid #e9ecef;
   width: 100%;
-  max-width: 280px;
-  min-height: 140px;
+  max-width: 300px;
+  min-height: 160px;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.cupom:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
 .cupom-info {
@@ -684,28 +764,35 @@ ul {
 .BTli button {
   padding: 8px 12px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: white;
   white-space: nowrap;
   min-width: 70px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .BTli button:first-child {
-  background-color: #6c757d;
+  background: linear-gradient(135deg, #2f6f83 0%, #4698e5 100%);
 }
 
 .BTli button:first-child:hover {
-  background-color: #5a6268;
+  background: linear-gradient(135deg, #1e4a5c 0%, #2d6bb8 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .excluir-btn {
-  background-color: #dc3545 !important;
+  background: linear-gradient(135deg, #8b2121d0 0%, #df3737 100%) !important;
 }
 
 .excluir-btn:hover {
-  background-color: #b71c1c !important;
+  background: linear-gradient(135deg, #6d1919 0%, #b92c2c 100%) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .loading-container {
@@ -787,28 +874,34 @@ ul {
 .btn-confirmar,
 .btn-cancelar {
   border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+  padding: 12px 24px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 1rem;
-  transition: background-color 0.2s;
+  font-weight: 500;
+  transition: all 0.2s ease;
   color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .btn-confirmar {
-  background-color: #1565C0;
+  background: #079ac7;
 }
 
 .btn-confirmar:hover {
-  background-color: #0D47A1;
+  background: #067aa0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(7, 154, 199, 0.3);
 }
 
 .btn-cancelar {
-  background-color: #6c757d;
+  background: #6c757d;
 }
 
 .btn-cancelar:hover {
-  background-color: #545b62;
+  background: #5a6268;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
 }
 
 .linha-dupla {
@@ -822,35 +915,85 @@ ul {
   flex-direction: column;
 }
 
-@media (max-width: 768px) {
+/* ===== RESPONSIVIDADE COMPLETA ===== */
+
+/* Desktop Grande (1024px+) */
+@media (max-width: 1200px) {
   .tudo {
-    padding: 20px 15px 0px 15px;
+    padding: 25px;
   }
   
   .cupons {
-    width: 100%;
-    height: auto;
+    padding: 25px;
+  }
+  
+  .titulo-principal {
+    font-size: 2rem;
+  }
+  
+  .novo-cupom-btn {
+    padding: 10px 16px;
+    font-size: 1.1rem;
+  }
+  
+  .lista {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  
+  .cupom {
+    max-width: 320px;
+  }
+  
+  .input-busca {
+    max-width: 400px;
+  }
+}
+
+/* Tablet (768px) */
+@media (max-width: 768px) {
+  .tudo {
+    padding: 20px;
+  }
+  
+  .cupons {
+    padding: 20px;
+    border-radius: 12px;
+  }
+  
+  .titulo-principal {
+    font-size: 1.8rem;
+    margin-bottom: 25px;
   }
   
   .cupons-header {
     flex-direction: column;
     gap: 15px;
     align-items: stretch;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 15px;
   }
   
   .header-left {
     order: 1;
+    display: flex;
+    justify-content: center;
   }
   
   .header-right {
     order: 2;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
     align-items: center;
   }
   
   .filtro-status {
     order: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
   }
   
   .botoes-acoes {
@@ -860,42 +1003,47 @@ ul {
   
   .criacao-form {
     width: 95%;
-    padding: 20px;
     margin: 10px;
+    border-radius: 12px;
   }
   
   .criacao-form h2 {
-    font-size: 2rem;
-    margin-bottom: 15px;
+    font-size: 1.3rem;
+    padding: 20px 24px 0 24px;
+    padding-bottom: 15px;
+  }
+  
+  .criacao-form form {
+    padding: 20px 24px;
   }
   
   .criacao-form label {
-    font-size: 1rem;
-    margin-bottom: 8px;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
   }
   
   .criacao-form input[type="text"],
   .criacao-form input[type="number"],
   .criacao-form input[type="datetime-local"] {
-    padding: 8px;
-    margin-bottom: 15px;
-    font-size: 0.9rem;
+    padding: 10px 12px;
+    margin-bottom: 14px;
+    font-size: 0.95rem;
   }
   
   .criacao-form button {
-    padding: 8px 16px;
-    font-size: 1rem;
+    padding: 10px 16px;
+    font-size: 0.9rem;
   }
   
   .novo-cupom-btn {
-    padding: 8px 16px;
+    padding: 10px 16px;
     font-size: 1rem;
   }
   
   .input-busca {
     width: 100%;
-    max-width: 300px;
-    height: 45px;
+    max-width: 350px;
+    height: 40px;
   }
   
   .input-busca input {
@@ -906,15 +1054,14 @@ ul {
     height: 18px;
   }
   
-  .filtro-status {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 4px;
+  .filtro-status label {
+    font-size: 0.9rem !important;
   }
   
   .filtro-status select {
-    padding: 3px 6px;
+    padding: 6px 8px;
     font-size: 0.85rem;
+    min-width: 120px;
   }
   
   .linha-dupla {
@@ -926,47 +1073,30 @@ ul {
     flex: none;
   }
   
-  @media (max-width: 1200px) {
-    .lista {
-      grid-template-columns: repeat(3, 1fr);
-    }
-    
-    .cupom {
-      max-width: 320px;
-    }
-  }
-  
-  @media (max-width: 900px) {
-    .lista {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .cupom {
-      max-width: 350px;
-    }
-  }
-  
   .lista {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding: 15px 0;
   }
   
   .cupom {
     max-width: 100%;
-    padding: 15px;
-    min-height: 120px;
+    padding: 20px;
+    min-height: 140px;
+    border-radius: 12px;
   }
   
   .codigo-desconto h4 {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
   
   .percentual {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
   
   .BTli {
-    gap: 6px;
-    margin-left: 10px;
+    gap: 8px;
+    margin-left: 12px;
   }
   
   .BTli button {
@@ -976,52 +1106,69 @@ ul {
   }
 }
 
-@media (max-width: 480px) {
+/* Mobile (600px) */
+@media (max-width: 600px) {
   .tudo {
-    padding: 15px 10px 0px 10px;
+    padding: 15px;
+  }
+  
+  .cupons {
+    padding: 15px;
+    border-radius: 8px;
+  }
+  
+  .titulo-principal {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
   }
   
   .cupons-header {
-    gap: 10px;
+    gap: 12px;
+    padding-bottom: 12px;
   }
   
   .criacao-form {
     width: 98%;
-    padding: 15px;
-    margin: 5px;
+    margin: 8px;
+    border-radius: 8px;
   }
   
   .criacao-form h2 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
+    font-size: 1.2rem;
+    padding: 16px 20px 0 20px;
+    padding-bottom: 12px;
+  }
+  
+  .criacao-form form {
+    padding: 16px 20px;
   }
   
   .criacao-form label {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     margin-bottom: 6px;
   }
   
   .criacao-form input[type="text"],
   .criacao-form input[type="number"],
   .criacao-form input[type="datetime-local"] {
-    padding: 6px;
-    margin-bottom: 10px;
-    font-size: 0.8rem;
+    padding: 8px 10px;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
   }
   
   .criacao-form button {
-    padding: 6px 12px;
-    font-size: 0.9rem;
-    margin-bottom: 5px;
+    padding: 8px 14px;
+    font-size: 0.85rem;
   }
   
   .novo-cupom-btn {
-    padding: 6px 12px;
+    padding: 8px 14px;
     font-size: 0.9rem;
   }
   
   .input-busca {
-    height: 40px;
+    max-width: 280px;
+    height: 35px;
   }
   
   .input-busca input {
@@ -1032,13 +1179,141 @@ ul {
     height: 16px;
   }
   
-  .filtro-status {
-    gap: 2px;
+  .filtro-status label {
+    font-size: 0.8rem !important;
   }
   
   .filtro-status select {
-    padding: 2px 4px;
+    padding: 4px 6px;
     font-size: 0.75rem;
+    min-width: 100px;
+  }
+  
+  .linha-dupla {
+    gap: 10px;
+  }
+  
+  .lista {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 12px 0;
+  }
+  
+  .cupom {
+    max-width: 100%;
+    padding: 15px;
+    min-height: 120px;
+    border-radius: 8px;
+  }
+  
+  .codigo-desconto h4 {
+    font-size: 1.1rem;
+  }
+  
+  .percentual {
+    font-size: 1rem;
+  }
+  
+  .datas p {
+    font-size: 0.85rem;
+  }
+  
+  .status span {
+    font-size: 0.75rem;
+    padding: 4px 6px;
+  }
+  
+  .BTli {
+    gap: 6px;
+    margin-left: 10px;
+  }
+  
+  .BTli button {
+    padding: 5px 8px;
+    font-size: 0.75rem;
+    min-width: 55px;
+  }
+}
+
+/* Mobile Pequeno (480px) */
+@media (max-width: 480px) {
+  .tudo {
+    padding: 12px;
+  }
+  
+  .cupons {
+    padding: 12px;
+  }
+  
+  .titulo-principal {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+  }
+  
+  .cupons-header {
+    gap: 10px;
+    padding-bottom: 10px;
+  }
+  
+  .criacao-form {
+    width: 98%;
+    margin: 5px;
+  }
+  
+  .criacao-form h2 {
+    font-size: 1.1rem;
+    padding: 14px 16px 0 16px;
+    padding-bottom: 10px;
+  }
+  
+  .criacao-form form {
+    padding: 14px 16px;
+  }
+  
+  .criacao-form label {
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+  }
+  
+  .criacao-form input[type="text"],
+  .criacao-form input[type="number"],
+  .criacao-form input[type="datetime-local"] {
+    padding: 6px 8px;
+    margin-bottom: 10px;
+    font-size: 0.8rem;
+  }
+  
+  .criacao-form button {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+  
+  .novo-cupom-btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+  
+  .input-busca {
+    max-width: 250px;
+    height: 32px;
+  }
+  
+  .input-busca input {
+    font-size: 12px;
+  }
+  
+  .input-busca img {
+    height: 14px;
+  }
+  
+  .filtro-status label {
+    font-size: 0.75rem !important;
+  }
+  
+  .filtro-status select {
+    padding: 3px 4px;
+    font-size: 0.7rem;
+    min-width: 80px;
   }
   
   .linha-dupla {
@@ -1064,23 +1339,24 @@ ul {
   
   .status span {
     font-size: 0.7rem;
-    padding: 3px 6px;
+    padding: 3px 5px;
   }
   
   .BTli {
-    gap: 5px;
+    gap: 4px;
     margin-left: 8px;
   }
   
   .BTli button {
-    padding: 4px 8px;
-    font-size: 0.75rem;
-    min-width: 50px;
+    padding: 4px 6px;
+    font-size: 0.7rem;
+    min-width: 45px;
   }
   
   .modal-confirmacao {
     padding: 20px;
-    margin: 20px;
+    margin: 15px;
+    border-radius: 12px;
   }
   
   .modal-botoes {
@@ -1090,11 +1366,137 @@ ul {
   
   .btn-confirmar,
   .btn-cancelar {
-    padding: 12px 20px;
+    padding: 10px 16px;
+    width: 100%;
   }
 }
 
 
+/* Mobile Muito Pequeno (360px) */
+@media (max-width: 360px) {
+  .tudo {
+    padding: 8px;
+  }
+  
+  .cupons {
+    padding: 8px;
+  }
+  
+  .titulo-principal {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+  
+  .criacao-form h2 {
+    font-size: 1rem;
+    padding: 12px 14px 0 14px;
+    padding-bottom: 8px;
+  }
+  
+  .criacao-form form {
+    padding: 12px 14px;
+  }
+  
+  .criacao-form label {
+    font-size: 0.75rem;
+    margin-bottom: 4px;
+  }
+  
+  .criacao-form input[type="text"],
+  .criacao-form input[type="number"],
+  .criacao-form input[type="datetime-local"] {
+    padding: 5px 6px;
+    margin-bottom: 8px;
+    font-size: 0.75rem;
+  }
+  
+  .criacao-form button {
+    padding: 5px 8px;
+    font-size: 0.75rem;
+  }
+  
+  .novo-cupom-btn {
+    padding: 5px 8px;
+    font-size: 0.75rem;
+  }
+  
+  .input-busca {
+    max-width: 200px;
+    height: 28px;
+  }
+  
+  .input-busca input {
+    font-size: 11px;
+  }
+  
+  .input-busca img {
+    height: 12px;
+  }
+  
+  .filtro-status label {
+    font-size: 0.7rem !important;
+  }
+  
+  .filtro-status select {
+    padding: 2px 3px;
+    font-size: 0.65rem;
+    min-width: 70px;
+  }
+  
+  .cupom {
+    padding: 10px;
+    min-height: 100px;
+  }
+  
+  .codigo-desconto h4 {
+    font-size: 0.9rem;
+  }
+  
+  .percentual {
+    font-size: 0.8rem;
+  }
+  
+  .datas p {
+    font-size: 0.75rem;
+  }
+  
+  .status span {
+    font-size: 0.65rem;
+    padding: 2px 4px;
+  }
+  
+  .BTli {
+    gap: 3px;
+    margin-left: 6px;
+  }
+  
+  .BTli button {
+    padding: 3px 5px;
+    font-size: 0.65rem;
+    min-width: 40px;
+  }
+  
+  .modal-confirmacao {
+    padding: 15px;
+    margin: 10px;
+  }
+  
+  .modal-confirmacao h3 {
+    font-size: 1rem;
+  }
+  
+  .modal-confirmacao p {
+    font-size: 0.85rem;
+  }
+  
+  .btn-confirmar,
+  .btn-cancelar {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Desktop Responsivo */
 @media (min-width: 1200px) {
   .cupons-header {
     flex-direction: row;

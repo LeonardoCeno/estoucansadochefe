@@ -250,17 +250,22 @@ function abrirCriacao() {
 .nova-categoria-btn {
     padding: 10px 20px;
     font-size: 1.2rem;
-    background: linear-gradient(135deg, #2d7083 0%, #4690e5 100%);
+    background: #079ac7;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     align-self: flex-start;
     margin-bottom: 1px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(7, 154, 199, 0.3);
 }
 
 .nova-categoria-btn:hover {
-    background: linear-gradient(135deg, #2d7083 0%, #3c79be 100%);
+    background: #067aa0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(7, 154, 199, 0.4);
 }
 
 .criacao-form-wrapper {
@@ -312,25 +317,32 @@ function abrirCriacao() {
 }
 
 .criacao-form button {
-    background-color: #1565C0;
+    background: #079ac7;
     color: white;
     padding: 10px 20px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(7, 154, 199, 0.3);
 }
 
 .criacao-form button:hover {
-    background-color: #0D47A1;
+    background: #067aa0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(7, 154, 199, 0.4);
 }
 
 .criacao-form button:last-child {
-    background-color: #f44336;
+    background: #6c757d;
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
 }
 
 .criacao-form button:last-child:hover {
-    background-color: #da190b;
+    background: #5a6268;
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
 }
 
 .criacao-form form {
@@ -364,6 +376,8 @@ function abrirCriacao() {
     background-clip: text;
     font-weight: 700;
     margin: 0;
+    padding: 20px 0;
+    position: relative;
 }
 
 .categorias ul {
@@ -403,7 +417,7 @@ function abrirCriacao() {
 }
 
 .categorias li button {
-    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    background: linear-gradient(135deg, #2f6f83 0%, #4698e5 100%);
     color: white;
     padding: 8px 16px;
     border: none;
@@ -417,7 +431,7 @@ function abrirCriacao() {
 }
 
 .categorias li button:hover {
-    background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+    background: linear-gradient(135deg, #1e4a5c 0%, #2d6bb8 100%);
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
@@ -442,11 +456,11 @@ function abrirCriacao() {
 }
 
 .excluir-btn {
-    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+    background: linear-gradient(135deg, #8b2121d0 0%, #df3737 100%) !important;
     color: white !important;
 }
 .excluir-btn:hover {
-    background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%) !important;
+    background: linear-gradient(135deg, #6d1919 0%, #b92c2c 100%) !important;
 }
 
 .botoes {
@@ -459,10 +473,10 @@ function abrirCriacao() {
     position: relative;
 }
 
-.botoes::after {
+.botoes h3::after {
     content: '';
     position: absolute;
-    bottom: -3px;
+    bottom: -23px;
     left: 50%;
     transform: translateX(-50%);
     width: 100px;
@@ -577,7 +591,7 @@ function abrirCriacao() {
 }
 
 .btn-confirmar {
-    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    background: #079ac7;
     color: white;
     border: none;
     padding: 12px 24px;
@@ -586,17 +600,17 @@ function abrirCriacao() {
     font-size: 1rem;
     font-weight: 500;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+    box-shadow: 0 2px 8px rgba(7, 154, 199, 0.3);
 }
 
 .btn-confirmar:hover {
-    background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+    background: #067aa0;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+    box-shadow: 0 4px 12px rgba(7, 154, 199, 0.4);
 }
 
 .btn-cancelar {
-    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    background: #6c757d;
     color: white;
     border: none;
     padding: 12px 24px;
@@ -609,7 +623,7 @@ function abrirCriacao() {
 }
 
 .btn-cancelar:hover {
-    background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+    background: #5a6268;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
 }

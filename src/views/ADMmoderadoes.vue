@@ -152,10 +152,28 @@ async function criarModerador() {
 
 .titulo h1 {
     margin: 0 0 8px 0;
-    color: #1a1a1a;
+    background: linear-gradient(135deg, #02060af5 0%, #079ac7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     font-size: 1.8rem;
     font-weight: 700;
     text-align: center;
+    padding: 20px 0;
+    border-bottom: 3px solid #02060af5;
+    position: relative;
+}
+
+.titulo h1::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, #079ac7 0%, #02060af5 100%);
+    border-radius: 2px;
 }
 
 .subtitulo {
@@ -188,10 +206,28 @@ async function criarModerador() {
 
 .tituloformulario h2 {
     margin: 0 0 20px 0;
-    color: #1a1a1a;
+    background: linear-gradient(135deg, #02060af5 0%, #079ac7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     font-size: 1.3rem;
     font-weight: 700;
     text-align: center;
+    padding: 10px 0;
+    border-bottom: 2px solid #e9ecef;
+    position: relative;
+}
+
+.tituloformulario h2::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, #079ac7 0%, #02060af5 100%);
+    border-radius: 1px;
 }
 
 .formulario {
@@ -245,20 +281,23 @@ async function criarModerador() {
 .btn-criar {
     width: 100%;
     padding: 14px 24px;
-    background: linear-gradient(135deg, #2d7083 0%, #4690e5 100%);
+    background: #079ac7;
     color: #fff;
     border: none;
     border-radius: 8px;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     box-sizing: border-box;
     min-width: 0;
+    box-shadow: 0 2px 8px rgba(7, 154, 199, 0.3);
 }
 
 .btn-criar:hover {
-    background: linear-gradient(135deg, #2d7083 0%, #3c79be 100%);
+    background: #067aa0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(7, 154, 199, 0.4);
 }
 
 .btn-criar:disabled {

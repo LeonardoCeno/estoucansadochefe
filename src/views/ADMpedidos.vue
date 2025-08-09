@@ -345,7 +345,7 @@ onMounted(async () => {
 }
 
 .header-section h1 {
-    margin: 0 0 25px 0;
+    margin: 0 0 30px 0;
     background: linear-gradient(135deg, #02060af5 0%, #079ac7 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -353,6 +353,21 @@ onMounted(async () => {
     font-size: 2.2rem;
     font-weight: 700;
     text-align: center;
+    padding: 20px 0;
+    border-bottom: 3px solid #02060af5;
+    position: relative;
+}
+
+.header-section h1::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, #079ac7 0%, #02060af5 100%);
+    border-radius: 2px;
 }
 
 .stats-container {
@@ -676,13 +691,14 @@ onMounted(async () => {
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s, box-shadow 0.2s;
+    transition: all 0.2s ease;
     box-shadow: 0 2px 8px rgba(7, 154, 199, 0.3);
 }
 
 .btn-detalhes:hover {
     background: #067aa0;
-    box-shadow: 0 2px 10px rgba(7, 154, 199, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(7, 154, 199, 0.4);
 }
 
 /* Modal */
@@ -835,12 +851,14 @@ onMounted(async () => {
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
     box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
 }
 
 .btn-fechar-modal:hover {
     background: #5a6268;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
 }
 
 /* Responsividade Aprimorada */
