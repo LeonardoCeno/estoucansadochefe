@@ -36,8 +36,8 @@
     </div>
     </div>
     <div class="borda-mostrar" >
-    <button v-if="produtos.length > 10" class="mostrar-mais" @click="alternarObras">
-        {{ estadoBotaoObras === 'mais' ? 'Mostrar mais' : 'Mostrar menos' }}
+    <button class="mostrar-mais" @click="irParaMangás">
+        Mostrar mais
     </button>
     </div>
 </div>
@@ -76,8 +76,8 @@
     </div>
     </div>
     <div class="borda-mostrar">
-    <button v-if="produtos.length > 10" class="mostrar-mais" @click="alternarOfertas">
-        {{ estadoBotaoOfertas === 'mais' ? 'Mostrar mais' : 'Mostrar menos' }}
+    <button class="mostrar-mais" @click="irParaLivros">
+        Mostrar mais
     </button>
     </div>
 </div>
@@ -91,6 +91,7 @@ import api from '../services/api'
 import { useUserStore } from '../stores/user'
 import { useCartStore } from '../stores/cart'
 import { useFavoritesStore } from '../stores/favorites'
+import { useRouter } from 'vue-router'
 
 import DISPONIVELREAL from './img/DISPONIVELREAL.png'
 import INDISPONIVELREAL from './img/INDISPONIVELREAL.png'
@@ -99,16 +100,13 @@ import CORACAOVAZIO from './img/coraçaovazio.png'
 import MAISUMCARRINHO from './img/maisumcarrinho.png'
 
 const apiBase = 'http://35.196.79.227:8000'
+const router = useRouter()
 const userStore = useUserStore()
 const cartStore = useCartStore()
 const favoritesStore = useFavoritesStore()
 const produtos = ref([])
 const carregando = ref(true)
 const erro = ref(null)
-const mostrarQuantidadeObras = ref(10)
-const mostrarQuantidadeOfertas = ref(10)
-const estadoBotaoObras = ref('mais')
-const estadoBotaoOfertas = ref('mais')
 
 // Verificar se o usuário está logado (usando o store)
 const isLoggedIn = computed(() => userStore.isAuthenticated)
@@ -135,35 +133,19 @@ onMounted(async () => {
 })
 
 const produtosVisiveisObras = computed(() => {
-    return produtos.value.slice(0, mostrarQuantidadeObras.value)
+    return produtos.value.slice(0, 10)
 })
 
 const produtosVisiveisOfertas = computed(() => {
-    return produtos.value.slice(0, mostrarQuantidadeOfertas.value)
+    return produtos.value.slice(0, 10)
 })
 
-function alternarObras() {
-    if (estadoBotaoObras.value === 'mais') {
-        mostrarQuantidadeObras.value = Math.min(produtos.value.length, mostrarQuantidadeObras.value + 10)
-        estadoBotaoObras.value = 'menos'
-    } else {
-        mostrarQuantidadeObras.value = Math.max(10, mostrarQuantidadeObras.value - 10)
-        if (mostrarQuantidadeObras.value === 10) {
-            estadoBotaoObras.value = 'mais'
-        }
-    }
+function irParaMangás() {
+    router.push({ path: '/pesquisas', query: { categoriaId: 318 } })
 }
 
-function alternarOfertas() {
-    if (estadoBotaoOfertas.value === 'mais') {
-        mostrarQuantidadeOfertas.value = Math.min(produtos.value.length, mostrarQuantidadeOfertas.value + 10)
-        estadoBotaoOfertas.value = 'menos'
-    } else {
-        mostrarQuantidadeOfertas.value = Math.max(10, mostrarQuantidadeOfertas.value - 10)
-        if (mostrarQuantidadeOfertas.value === 10) {
-            estadoBotaoOfertas.value = 'mais'
-        }
-    }
+function irParaLivros() {
+    router.push({ path: '/pesquisas', query: { categoriaId: 316 } })
 }
 
 </script>

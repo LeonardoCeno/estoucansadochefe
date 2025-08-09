@@ -86,7 +86,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import Header from '../components/Headercomponent.vue'
@@ -176,6 +176,18 @@ onMounted(async () => {
     }
     favoritesStore.carregarFavoritos()
 })
+
+// Watch para detectar mudanças no ID do produto na rota
+watch(
+    () => route.params.id,
+    async (novoId) => {
+        if (novoId) {
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+            quantidade.value = 1 // Reset da quantidade
+            await carregarProduto()
+        }
+    }
+)
 
 </script>
 

@@ -584,6 +584,9 @@ function filtrarProdutos() {
 
 // busca os produtos da categoria da vez que foi selecionada pelo usuario
 onMounted(async () => {
+    // Fazer scroll para o topo sempre que entrar na página
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    
     termoBusca.value = route.query.termo ? String(route.query.termo) : ''
     isLancamentos.value = !!route.query.lancamentos
     await buscarCategorias()
@@ -606,6 +609,9 @@ onMounted(async () => {
 watch(
     () => route.query,
     (query) => {
+        // Fazer scroll para o topo quando mudar os parâmetros da busca
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        
         termoBusca.value = query.termo ? String(query.termo) : ''
         isLancamentos.value = !!query.lancamentos
     // resetar filtros quando muda categoria ou lançamento
