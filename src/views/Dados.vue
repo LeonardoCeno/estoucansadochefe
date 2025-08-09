@@ -1,58 +1,90 @@
 <template>
-<div class="tudo" >
+<div class="dados-page">
     <div class="dados-container">
         <input type="file" ref="fileInput" accept="image/*" style="display:none" @change="onFileChange" />
-        <img :src="userImageUrl" alt="" class="foto-usuario" @click="triggerFileInput" title="Clique para alterar a foto" />
+        
+        <!-- Header com foto -->
+        <div class="header-perfil">
+            <img :src="userImageUrl" alt="Foto do usuário" class="foto-usuario" @click="triggerFileInput" title="Clique para alterar a foto" />
+        </div>
+
         <div v-if="carregando" class="loading-container">
             <div class="loading-spinner"></div>
             <p>Carregando dados...</p>
         </div>
+        
         <div v-else-if="erro" class="erro">{{ erro }}</div>
-            <div class="informacoes" ref="informacoesRef">
-                <div class="info-item">
-                    <img src="/src/components/img/editando.png" alt="editar" class="edit-icon" @click="editarNome" />
+        
+        <div v-else class="content-area">
+            <!-- Seção de informações pessoais -->
+            <div class="info-section">
+                <h3 class="section-title">Informações Pessoais</h3>
+                <div class="info-grid" ref="informacoesRef">
+                    <div class="info-card">
+                        <div class="info-header">
+                            <span class="info-title">Nome</span>
+                            <button class="edit-btn" @click="editarNome" title="Editar nome">
+                                <img src="/src/components/img/editando.png" alt="editar" />
+                            </button>
+                        </div>
+                        <div class="info-content">
                     <template v-if="editandoNome">
-                        <input v-model="novoNome" ref="nomeInputRef" type="text" class="info-input" autofocus />
+                                <input v-model="novoNome" ref="nomeInputRef" type="text" class="info-input" placeholder="Digite seu nome" autofocus />
                     </template>
                     <template v-else>
-                        <p class="info-label"><strong>Nome:</strong> {{ usuario.name }}</p>
+                                <span class="info-value">{{ usuario.name }}</span>
                     </template>
                 </div>
-                <div class="info-item">
-                    <img src="/src/components/img/editando.png" alt="editar" class="edit-icon" @click="editarEmail" />
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-header">
+                            <span class="info-title">Email</span>
+                            <button class="edit-btn" @click="editarEmail" title="Editar email">
+                                <img src="/src/components/img/editando.png" alt="editar" />
+                            </button>
+                        </div>
+                        <div class="info-content">
                     <template v-if="editandoEmail">
-                        <input v-model="novoEmail" ref="emailInputRef" type="email" class="info-input" autofocus />
+                                <input v-model="novoEmail" ref="emailInputRef" type="email" class="info-input" placeholder="Digite seu email" autofocus />
                     </template>
                     <template v-else>
-                        <p class="info-label"><strong>Email:</strong> {{ usuario.email }}</p>
+                                <span class="info-value">{{ usuario.email }}</span>
                     </template>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="botoes-container">
-                    <button v-if="editandoNome || editandoEmail" class="confirmar-btn" @click="confirmarEdicao">Confirmar alterações</button>
-                    <button v-if="editandoNome || editandoEmail" class="cancelar-btn" @click="cancelarEdicao">Cancelar</button>
+                <!-- Botões de confirmação -->
+                <div v-if="editandoNome || editandoEmail" class="edit-actions">
+                    <button class="btn-primary" @click="confirmarEdicao">Salvar alterações</button>
+                    <button class="btn-secondary" @click="cancelarEdicao">Cancelar</button>
+                </div>
                 </div>
                 
-                <!-- Botões de ação da conta -->
-                <div class="acoes-conta">
-                    <button class="logout-btn" @click="fazerLogout">
+            <!-- Seção de ações da conta -->
+            <div class="actions-section">
+                <h3 class="section-title">Ações da Conta</h3>
+                <div class="actions-grid">
+                    <button class="action-btn logout-btn" @click="fazerLogout">
                         <span>Fazer Logout</span>
                     </button>
-                    <button class="excluir-conta-btn" @click="abrirModalExclusao">
+                    <button class="action-btn delete-btn" @click="abrirModalExclusao">
                         <span>Excluir Conta</span>
                     </button>
+                </div>
                 </div>
             </div>
     </div>
     
     <!-- Modal de Confirmação de Exclusão -->
-    <div v-if="mostrarModalExclusao" class="modal-overlay">
-        <div class="modal-confirmacao">
+    <div v-if="mostrarModalExclusao" class="modal-overlay" @click="fecharModalExclusao">
+        <div class="modal-content" @click.stop>
             <h3>Confirmar Exclusão de Conta</h3>
             <p>{{ mensagemModal }}</p>
-            <div class="modal-botoes">
-                <button @click="confirmarExclusao" class="btn-confirmar">Confirmar</button>
-                <button @click="fecharModalExclusao" class="btn-cancelar">Cancelar</button>
+            <div class="modal-actions">
+                <button @click="confirmarExclusao" class="btn-danger">Confirmar</button>
+                <button @click="fecharModalExclusao" class="btn-secondary">Cancelar</button>
             </div>
         </div>
     </div>
@@ -249,73 +281,77 @@ async function excluirContaUsuario() {
 </script>
 
 <style scoped>
-
-.tudo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+/* Layout principal */
+.dados-page {
     width: 100%;
-    height: 100%;
-    background-color: #f8f9fa;
-    padding: 20px;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 30px;
     box-sizing: border-box;
-    min-height: 100%;
 }
 
 .dados-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 450px;
-    width: 100%;
-    background: #fff;
-    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
     border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
-    position: relative;
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
 }
 
-/* ===== FOTO DO USUÁRIO ===== */
+/* Header do perfil */
+.header-perfil {
+    background: linear-gradient(135deg, #02060af5 0%, #079ac7 100%);
+    padding: 70px 40px;
+    text-align: center;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .foto-usuario {
-    width: 200px;
-    height: 200px;
+    width: 240px;
+    height: 240px;
     border-radius: 50%;
-    border: 4px solid #e1e5e9;
+    border: 6px solid rgba(255, 255, 255, 0.4);
     cursor: pointer;
     transition: all 0.3s ease;
     object-fit: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-    margin-bottom: 30px;
+    margin: 0;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
 }
 
 .foto-usuario:hover {
     transform: scale(1.05);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
-    border-color: #4CAF50;
+    border-color: rgba(255, 255, 255, 0.6);
 }
 
-/* ===== ESTADOS DE CARREGAMENTO ===== */
+
+
+/* Loading e erro */
 .loading-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 40px;
+    padding: 80px 40px;
     text-align: center;
 }
 
+.loading-container p {
+    font-size: 1.2rem;
+    margin: 0;
+}
+
 .loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #02060af5;
     border-radius: 50%;
     animation: spin 1s linear infinite;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 @keyframes spin {
@@ -323,169 +359,161 @@ async function excluirContaUsuario() {
     100% { transform: rotate(360deg); }
 }
 
-
-
 .erro {
-    color: #dc3545;
-    text-align: center;
-    margin: 20px 0;
     background: #f8d7da;
-    padding: 16px;
-    border-radius: 8px;
-    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 20px 40px;
+    margin: 30px;
+    border-radius: 10px;
+    border-left: 5px solid #dc3545;
     font-weight: 500;
+    font-size: 1.1rem;
 }
 
-/* ===== INFORMAÇÕES ===== */
-.informacoes {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+/* Área de conteúdo */
+.content-area {
+    padding: 40px;
 }
 
-.botoes-container {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
+/* Seções */
+.info-section,
+.actions-section {
+    margin-bottom: 50px;
 }
 
-.info-item {
+.section-title {
+    margin: 0 0 30px 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 3px solid #02060af5;
+    padding-bottom: 12px;
+}
+
+/* Grid de informações */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.info-card {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 30px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.info-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    background: #f8f9fa;
-    padding: 12px 16px;
-    border-radius: 12px;
-    border: 1px solid #e9ecef;
-    transition: 0.3s;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
 
-.info-item:hover {
-    background: #f1f3f4;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transform: translateY(-1px);
+.info-title {
+    font-weight: 600;
+    color: #495057;
+    flex: 1;
+    font-size: 1.3rem;
 }
 
-.info-label {
-    margin: 0;
+.edit-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.edit-btn:hover {
+    background: rgba(2, 6, 10, 0.1);
+}
+
+.edit-btn img {
+    width: 22px;
+    height: 22px;
+    opacity: 0.7;
+}
+
+.edit-btn:hover img {
+    opacity: 1;
+}
+
+.info-content {
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.info-value {
+    font-size: 1.3rem;
     color: #333;
     font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
-.info-label strong {
-    color: #1a1a1a;
-    font-weight: 600;
-}
-
-.edit-icon {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    opacity: 0.7;
-    flex-shrink: 0;
-}
-
-.edit-icon:hover {
-    opacity: 1;
-    transform: scale(1.1);
-}
-
-/* ===== INPUTS ===== */
 .info-input {
-    flex: 1;
-    padding: 12px 16px;
-    border: 2px solid #e1e5e9;
-    border-radius: 8px;
-    background: #fff;
-    font-size: 1rem;
-    transition: all 0.2s ease;
-    box-sizing: border-box;
-    min-width: 0;
+    width: 100%;
+    padding: 16px 20px;
+    border: 2px solid #dee2e6;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    transition: border-color 0.3s ease;
+    background: white;
 }
 
 .info-input:focus {
     outline: none;
-    border-color: #4CAF50;
-    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+    border-color: #02060af5;
+    box-shadow: 0 0 0 3px rgba(2, 6, 10, 0.1);
 }
 
-/* ===== BOTÕES ===== */
-.confirmar-btn {
-    padding: 12px 24px;
-    background: #4CAF50;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-    width: 100%;
-    display: block;
-}
-
-.confirmar-btn:hover {
-    background: #45a049;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
-}
-
-.cancelar-btn {
-    padding: 12px 24px;
-    background: #6c757d;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
-    width: 100%;
-    display: block;
-}
-
-.cancelar-btn:hover {
-    background: #5a6268;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4);
-}
-
-/* ===== AÇÕES DA CONTA ===== */
-.acoes-conta {
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 2px solid #e9ecef;
+/* Botões de edição */
+.edit-actions {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-    width: 100%;
+    gap: 16px;
+    justify-content: flex-end;
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 2px solid #e9ecef;
 }
 
-.logout-btn {
-    padding: 12px 24px;
-    background: #6c757d;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
-    width: 100%;
+/* Grid de ações */
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.action-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 10px;
+    padding: 20px 30px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+
+
+.logout-btn {
+    background: #6c757d;
+    color: white;
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
 }
 
 .logout-btn:hover {
@@ -494,397 +522,278 @@ async function excluirContaUsuario() {
     box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4);
 }
 
-.excluir-conta-btn {
-    padding: 12px 24px;
+.delete-btn {
     background: #dc3545;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    color: white;
     box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
 }
 
-.excluir-conta-btn:hover {
+.delete-btn:hover {
     background: #c82333;
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(220, 53, 69, 0.4);
 }
 
-/* ===== MODAL DE CONFIRMAÇÃO ===== */
+/* Botões gerais */
+.btn-primary {
+    background: #02060af5;
+    color: white;
+    border: none;
+    padding: 16px 30px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(2, 6, 10, 0.3);
+    font-size: 1.1rem;
+}
+
+.btn-primary:hover {
+    background: #02060acc;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(2, 6, 10, 0.4);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 16px 30px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+    font-size: 1.1rem;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4);
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 16px 30px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    font-size: 1.1rem;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(220, 53, 69, 0.4);
+}
+
+/* Modal */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 2000;
+    padding: 20px;
 }
 
-.modal-confirmacao {
+.modal-content {
     background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    max-width: 400px;
-    width: 90%;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    width: 100%;
     text-align: center;
-    border: 2px solid #02060af5;
+    border: 3px solid #02060af5;
 }
 
-.modal-confirmacao h3 {
-    margin: 0 0 15px 0;
+.modal-content h3 {
+    margin: 0 0 20px 0;
     color: #333;
-    font-size: 1.3rem;
+    font-size: 1.6rem;
+    font-weight: 600;
 }
 
-.modal-confirmacao p {
-    margin: 0 0 25px 0;
+.modal-content p {
+    margin: 0 0 30px 0;
     color: #666;
-    font-size: 1rem;
-    line-height: 1.5;
+    line-height: 1.6;
+    font-size: 1.2rem;
 }
 
-.modal-botoes {
+.modal-actions {
     display: flex;
-    gap: 15px;
+    gap: 16px;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
-.btn-confirmar {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.2s;
-}
-
-.btn-confirmar:hover {
-    background-color: #b71c1c;
-}
-
-.btn-cancelar {
-    background-color: #6c757d;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.2s;
-}
-
-.btn-cancelar:hover {
-    background-color: #545b62;
-}
-
-/* ===== RESPONSIVIDADE ===== */
-
-/* Tablets */
+/* Responsividade */
 @media (max-width: 768px) {
-    .tudo {
-        padding: 16px;
-    }
-    
-    .dados-container {
-        padding: 30px 24px;
-        max-width: 400px;
-    }
-    
-    .foto-usuario {
-        width: 160px;
-        height: 160px;
-        margin-bottom: 25px;
-    }
-    
-    .info-item {
-        padding: 14px 16px;
-        gap: 10px;
-    }
-    
-    .info-label {
-        font-size: 1rem;
-    }
-    
-    .info-input {
-        padding: 10px 14px;
-        font-size: 0.95rem;
-    }
-    
-    .confirmar-btn,
-    .cancelar-btn {
-        padding: 10px 20px;
-        font-size: 0.95rem;
-    }
-    
-    .acoes-conta {
-        margin-top: 25px;
-        padding-top: 15px;
-    }
-    
-    .logout-btn,
-    .excluir-conta-btn {
-        padding: 10px 20px;
-        font-size: 0.95rem;
-    }
-    
-    .modal-confirmacao {
+    .dados-page {
         padding: 20px;
-        margin: 20px;
     }
     
-    .modal-botoes {
-        flex-direction: column;
-        gap: 10px;
+    .header-perfil {
+        padding: 50px 30px;
     }
-    
-    .btn-confirmar,
-    .btn-cancelar {
-        padding: 12px 20px;
-    }
-}
 
-/* Mobile */
-@media (max-width: 480px) {
-    .tudo {
-        padding: 12px;
-    }
-    
-    .dados-container {
-        padding: 24px 20px;
-        max-width: 100%;
-        border-radius: 12px;
-    }
-    
     .foto-usuario {
-        width: 140px;
-        height: 140px;
-        margin-bottom: 20px;
+        width: 180px;
+        height: 180px;
     }
-    
-    .informacoes {
-        gap: 12px;
-    }
-    
-    .info-item {
-        padding: 12px 14px;
-        gap: 8px;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .info-label {
-        font-size: 0.9rem;
-        width: 100%;
-    }
-    
-    .info-input {
-        width: 100%;
-        padding: 8px 12px;
-        font-size: 0.9rem;
-    }
-    
-    .edit-icon {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        width: 18px;
-        height: 18px;
-    }
-    
-    .botoes-container {
-        margin-top: 16px;
-        gap: 6px;
-    }
-    
-    .confirmar-btn,
-    .cancelar-btn {
-        padding: 10px 18px;
-        font-size: 0.9rem;
-    }
-    
-    .acoes-conta {
-        margin-top: 20px;
-        padding-top: 12px;
-    }
-    
-    .logout-btn,
-    .excluir-conta-btn {
-        padding: 10px 18px;
-        font-size: 0.9rem;
-    }
-}
 
-/* Telas muito pequenas */
-@media (max-width: 360px) {
-    .dados-container {
-        padding: 20px 16px;
+    .content-area {
+        padding: 30px;
     }
-    
-    .foto-usuario {
-        width: 120px;
-        height: 120px;
-        margin-bottom: 16px;
-    }
-    
-    .info-item {
-        padding: 10px 12px;
-    }
-    
-    .info-label {
-        font-size: 0.85rem;
-    }
-    
-    .info-input {
-        padding: 6px 10px;
-        font-size: 0.85rem;
-    }
-    
-    .confirmar-btn,
-    .cancelar-btn {
-        padding: 8px 16px;
-        font-size: 0.85rem;
-    }
-    
-    .acoes-conta {
-        margin-top: 16px;
-        padding-top: 10px;
-    }
-    
-    .logout-btn,
-    .excluir-conta-btn {
-        padding: 8px 16px;
-        font-size: 0.85rem;
-    }
-}
 
-/* Telas grandes */
-@media (min-width: 1200px) {
-    .dados-container {
-        max-width: 500px;
-        padding: 50px;
+    .section-title {
+        font-size: 1.6rem;
     }
-    
-    .foto-usuario {
-        width: 240px;
-        height: 240px;
-        margin-bottom: 40px;
+
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     }
-    
-    .info-item {
-        padding: 20px 24px;
-        gap: 16px;
+
+    .info-card {
+        padding: 25px;
     }
-    
-    .info-label {
+
+    .info-title {
         font-size: 1.2rem;
     }
-    
+
+    .info-value {
+        font-size: 1.2rem;
+    }
+
     .info-input {
         padding: 14px 18px;
         font-size: 1.1rem;
     }
-    
-    .confirmar-btn,
-    .cancelar-btn {
-        padding: 14px 28px;
-        font-size: 1.1rem;
-    }
-    
-    .acoes-conta {
-        margin-top: 35px;
-        padding-top: 25px;
-    }
-    
-    .logout-btn,
-    .excluir-conta-btn {
-        padding: 14px 28px;
-        font-size: 1.1rem;
-    }
-}
 
-/* Telas muito grandes */
-@media (min-width: 1600px) {
-    .dados-container {
-        max-width: 550px;
-        padding: 60px;
+    .edit-actions {
+        flex-direction: column;
+        gap: 12px;
     }
-    
-    .foto-usuario {
-        width: 280px;
-        height: 280px;
-        margin-bottom: 50px;
-    }
-    
-    .info-item {
-        padding: 24px 28px;
+
+    .actions-grid {
+        grid-template-columns: 1fr;
         gap: 20px;
     }
-    
-    .info-label {
-        font-size: 1.3rem;
+
+    .action-btn {
+        padding: 18px 25px;
+        font-size: 1.1rem;
     }
-    
-    .info-input {
-        padding: 16px 20px;
-        font-size: 1.2rem;
+
+    .btn-primary, .btn-secondary, .btn-danger {
+        padding: 14px 25px;
+        font-size: 1rem;
     }
-    
-    .confirmar-btn,
-    .cancelar-btn {
-        padding: 16px 32px;
-        font-size: 1.2rem;
+
+    .modal-content {
+        padding: 30px;
+        max-width: 500px;
     }
-    
-    .acoes-conta {
-        margin-top: 40px;
-        padding-top: 30px;
+
+    .modal-content h3 {
+        font-size: 1.4rem;
     }
-    
-    .logout-btn,
-    .excluir-conta-btn {
-        padding: 16px 32px;
-        font-size: 1.2rem;
+
+    .modal-content p {
+        font-size: 1.1rem;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+        gap: 12px;
     }
 }
 
-/* Orientação landscape em mobile */
-@media (max-width: 768px) and (orientation: landscape) {
-    .tudo {
-        padding: 10px;
+@media (max-width: 480px) {
+    .dados-page {
+        padding: 15px;
     }
-    
-    .dados-container {
-        padding: 20px;
-        max-width: 90%;
+
+    .header-perfil {
+        padding: 40px 20px;
     }
-    
+
     .foto-usuario {
-        width: 120px;
-        height: 120px;
-        margin-bottom: 20px;
+        width: 150px;
+        height: 150px;
     }
     
-    .informacoes {
-        gap: 10px;
+    .content-area {
+        padding: 25px;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        margin-bottom: 25px;
     }
     
-    .info-item {
-        padding: 10px 14px;
+        .info-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .info-card {
+        padding: 20px;
+    }
+
+    .info-title {
+        font-size: 1.1rem;
+    }
+
+    .info-value {
+        font-size: 1.1rem;
+    }
+
+    .info-input {
+        padding: 12px 16px;
+        font-size: 1rem;
+    }
+
+    .actions-grid {
+        gap: 16px;
+    }
+
+    .action-btn {
+        padding: 16px 20px;
+        font-size: 1rem;
+    }
+
+    .btn-primary, .btn-secondary, .btn-danger {
+        padding: 12px 20px;
+        font-size: 0.95rem;
+    }
+
+    .modal-content {
+        padding: 25px;
+        margin: 15px;
+    }
+
+    .modal-content h3 {
+        font-size: 1.3rem;
+    }
+
+    .modal-content p {
+        font-size: 1rem;
     }
 }
 </style>

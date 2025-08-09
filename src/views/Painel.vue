@@ -43,7 +43,7 @@ const userRole = computed(() => userStore.user?.role)
 const menuAberto = ref(false)
 
 function fecharMenu() {
-  menuAberto.value = false
+    menuAberto.value = false
 }
 </script>
 
@@ -85,16 +85,18 @@ function fecharMenu() {
     font-weight: 600;
     box-shadow: none;
     cursor: pointer;
-    transition: left 0.25s ease, background 0.2s ease, color 0.2s ease;
+    transition: left 0.25s ease, transform 0.25s ease, background 0.2s ease, color 0.2s ease;
     
 }
 .menu-toggle.ao-lado {
-    left: calc(28vw - 1px);
+    left: 28vw;
+    transform: translateX(-100%);
 }
 
 @media (min-width: 769px) {
     .menu-toggle.ao-lado {
-        left: calc(22vw - 1px);
+        left: 22vw;
+        transform: translateX(-100%);
     }
 }
 .menu-toggle:hover {
@@ -351,7 +353,8 @@ function fecharMenu() {
         font-size: clamp(0.8rem, 1.2vw, 1rem);
     }
     .menu-toggle.ao-lado {
-        left: calc(85vw - 1px);
+        left: 85vw;
+        transform: translateX(-100%);
     }
 }
 
@@ -417,7 +420,8 @@ function fecharMenu() {
         padding: 0 12px;
     }
     .menu-toggle.ao-lado {
-        left: calc(85vw - 1px);
+        left: 85vw;
+        transform: translateX(-100%);
     }
 }
 
@@ -458,7 +462,8 @@ function fecharMenu() {
         font-size: clamp(0.8rem, 1.2vw, 1.1rem);
     }
     .menu-toggle.ao-lado {
-        left: calc(85vw - 1px);
+        left: 85vw;
+        transform: translateX(-100%);
     }
 }
 
